@@ -1,0 +1,6 @@
+requests
+pandas
+scipy
+nsepython
+tqdm
+tradingview-ta
