@@ -1,8 +1,22 @@
-from nsepython import *
+import sys
+import os
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from nsepython import *
+# symbol_data = {
+#     'ARE&M': 'ARE%26M',
+#     'GMRP&UI': 'GMRP&UI',
+#     'GVT&D': 'GVT&D',
+#     'IL&FSENGG': 'IL&FSENGG',
+#     'IL&FSTRANS': 'IL&FSTRANS',
+#     'J&KBANK': 'J&KBANK',
+#     'M&M': 'M&M',
+#     'M&MFIN': 'M&MFIN',
+#     'S&SPOWER': 'S&SPOWER'
+# }
 def fetch_industry_info(symbol):
     if '&' in symbol:
-        symbol = symbol.replace('&', '%')
+        symbol = symbol.replace('&', '%26')
 
     url = f"https://www.nseindia.com/api/quote-equity?symbol={symbol}"
     try:

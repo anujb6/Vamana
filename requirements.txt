@@ -3,6 +3,7 @@ pandas
 scipy
 nsepython
 tqdm
+plotly
 tradingview-ta
 Unidecode>=1.1.1
 setuptools>=41.2.0
@@ -12,3 +13,4 @@ lxml>=4.4.1
 requests>=2.22.0
 pytz>=2019.3
 numpy>=1.21.2
+streamlit

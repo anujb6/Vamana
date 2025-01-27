@@ -1,16 +1,20 @@
-from nsepython import *
 import pandas as pd
 from tqdm import tqdm 
+import os 
+import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import meta_data_utils
 
-df = pd.read_csv(r"")
+df = pd.read_csv(r"C:\Users\AnujBhor\Desktop\nosedive\data\symbols\equity_symbols.csv")
 df = df[['SYMBOL', 'NAME OF COMPANY']]
 tqdm.pandas()
 industry_data = df['SYMBOL'].apply(meta_data_utils.fetch_industry_info)
 industry_df = pd.DataFrame(industry_data.tolist())
 df = pd.concat([df, industry_df], axis=1)
-df.to_csv(r'')
+df.rename(columns={'SYMBOL': 'symbol', 'NAME OF COMPANY': 'name of company', 'macro': 'macro sector', 'basicIndustry': 'basic industry'}, inplace=True)
+df = df[['symbol', 'name of company', 'macro sector', 'sector', 'industry', 'basic industry']]
+df.sort_values(by=['industry'], inplace=True)
+df.to_csv(r'C:\Users\AnujBhor\Desktop\nosedive\data\symbols\symbol_data.csv')
 
 
