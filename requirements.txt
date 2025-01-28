@@ -14,3 +14,9 @@ requests>=2.22.0
 pytz>=2019.3
 numpy>=1.21.2
 streamlit
+bs4
+peewee
+frozendict
+multitasking
+platformdirs
+matplotlib
