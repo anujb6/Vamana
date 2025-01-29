@@ -90,7 +90,7 @@ for sector, companies in sector_dict.items():
         avg_gain = gain.ewm(span=14, adjust=False).mean()
         avg_loss = loss.ewm(span=14, adjust=False).mean()
 
-        rs = avg_gain / avg_loss.replace(0, np.nan)  # Avoid division by zero
+        rs = avg_gain / avg_loss.replace(0, np.nan) 
         sector_price_df['rsi'] = 100 - (100 / (1 + rs))
         sector_price_df['rsi'] = sector_price_df['rsi'].fillna(100)
         
