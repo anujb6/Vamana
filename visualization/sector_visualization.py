@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 
 
-df = pd.read_csv(r'')
+df = pd.read_csv('../data/symbols/symbol_data.csv')
 fig = px.sunburst(
     df,
     path=['sector', 'industry', 'basic industry', 'symbol'],
