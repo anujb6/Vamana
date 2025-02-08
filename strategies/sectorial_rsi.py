@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-
+import mplfinance as mpf
 
 def compute(main_folder, symbol_data_path):
     symbol_df = pd.read_csv(symbol_data_path)
@@ -23,14 +23,15 @@ def compute(main_folder, symbol_data_path):
     def save_sector_chart(sector, price_df, save_path):
         plt.style.use('dark_background')
         
+        price_df.set_index('date', inplace=True)
+        
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(15, 10), gridspec_kw={'height_ratios': [2, 1]})
         
-        ax1.plot(price_df['date'], price_df['close'], color='#00ff00', linewidth=1.5)
+        mpf.plot(price_df, type='candle', ax=ax1, style='charles', volume=False)
         ax1.set_title(f'{sector} Sector Index', fontsize=14, pad=20)
-        ax1.grid(True, alpha=0.2)
         ax1.set_ylabel('Price', fontsize=12)
         
-        ax2.plot(price_df['date'], price_df['rsi'], color='#ff9900', linewidth=1.5)
+        ax2.plot(price_df.index, price_df['rsi'], color='#ff9900', linewidth=1.5)
         ax2.axhline(y=60, color='#ff0000', linestyle='--', alpha=0.5)
         ax2.axhline(y=40, color='#ffffff', linestyle='--', alpha=0.3)
         ax2.grid(True, alpha=0.2)
@@ -70,18 +71,18 @@ def compute(main_folder, symbol_data_path):
             total_mcap = sum(comp['market_cap'] for comp in valid_companies)
             
             sector_price_df = date_range.copy()
-            sector_price_df['close'] = 0
+            sector_price_df[['open', 'high', 'low', 'close']] = 0
             
             for i, company_info in enumerate(valid_companies):
                 weight = company_info['market_cap'] / total_mcap
                 df = company_data[i]
                 
-                company_prices = pd.merge(date_range, df[['date', 'close']], 
-                                        on='date', how='left')
-                company_prices['close'] = company_prices['close'].fillna(method='ffill')
-                company_prices['close'] = company_prices['close'].fillna(method='bfill')
+                company_prices = pd.merge(date_range, df[['date', 'open', 'high', 'low', 'close']], 
+                                          on='date', how='left')
+                company_prices = company_prices.fillna(method='ffill').fillna(method='bfill')
                 
-                sector_price_df['close'] += company_prices['close'] * weight
+                for col in ['open', 'high', 'low', 'close']:
+                    sector_price_df[col] += company_prices[col] * weight
             
             delta = sector_price_df['close'].diff()
             gain = (delta.where(delta > 0, 0)).fillna(0)
@@ -89,7 +90,7 @@ def compute(main_folder, symbol_data_path):
             
             avg_gain = gain.ewm(span=14, adjust=False).mean()
             avg_loss = loss.ewm(span=14, adjust=False).mean()
-
+            
             rs = avg_gain / avg_loss.replace(0, np.nan) 
             sector_price_df['rsi'] = 100 - (100 / (1 + rs))
             sector_price_df['rsi'] = sector_price_df['rsi'].fillna(100)
