@@ -10,10 +10,10 @@ end_date = datetime.today().strftime('%Y-%m-%d')
 
 monthly_data_folder = "data/monthly_data"
 
-# symbol_data.load(symbols_path=nse_symbols_path)
-# monthly_data.load(symbol_data_path=updated_symbols_path, start_date=start_date, end_date=end_date, interval=interval)
-# rsi.compute(main_folder=monthly_data_folder)
+symbol_data.load(symbols_path=nse_symbols_path)
+monthly_data.load(symbol_data_path=updated_symbols_path, start_date=start_date, end_date=end_date, interval=interval)
+rsi.compute(main_folder=monthly_data_folder)
 
-# industrial_rsi.compute(main_folder=monthly_data_folder, symbol_data_path=updated_symbols_path)
-# sectorial_rsi.compute(main_folder=monthly_data_folder, symbol_data_path=updated_symbols_path)
+industrial_rsi.compute(main_folder=monthly_data_folder, symbol_data_path=updated_symbols_path)
+sectorial_rsi.compute(main_folder=monthly_data_folder, symbol_data_path=updated_symbols_path)
 basic_indsutrial_rsi.compute(main_folder=monthly_data_folder, symbol_data_path=updated_symbols_path)
