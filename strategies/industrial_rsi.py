@@ -106,9 +106,10 @@ def compute(main_folder, symbol_data_path):
             price_df['rsi'] = 100 - (100 / (1 + rs))
             price_df['rsi'] = price_df['rsi'].fillna(100)
             
-            industry_dir = f'data/industries/{industry}'
+            ind = industry.lower().replace(' ', '_')
+            industry_dir = f'data/industries/{ind}'
             os.makedirs(industry_dir, exist_ok=True)
-            price_df.to_csv(f"{industry_dir}/{industry}_price.csv")
-            chart_path = f"{industry_dir}/{industry}_chart.html"
-            save_interactive_chart(industry, price_df, chart_path, f'{industry} Industry Index - Monthly')
-            print(f"Processed industry: {industry} - Chart saved at {chart_path}")
+            price_df.to_csv(f"{industry_dir}/{ind}_price.csv")
+            chart_path = f"{industry_dir}/{ind}_chart.html"
+            save_interactive_chart(ind, price_df, chart_path, f'{ind} Industry Index - Monthly')
+            print(f"Processed industry: {ind} - Chart saved at {chart_path}")
