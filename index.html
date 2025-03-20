@@ -335,7 +335,6 @@
                 </div>
                 
                 <div class="chart-container" id="sectors-container">
-                    <!-- Sector cards will be dynamically added here -->
                 </div>
             </div>
             
@@ -352,7 +351,6 @@
                 </div>
                 
                 <div class="chart-container" id="industries-container">
-                    <!-- Industry cards will be dynamically added here -->
                 </div>
             </div>
             
@@ -369,21 +367,16 @@
                 </div>
                 
                 <div class="chart-container" id="basic-industries-container">
-                    <!-- Basic industry cards will be dynamically added here -->
                 </div>
             </div>
         </div>
     </div>
     
     <script>
-        // Sample data structure to be replaced with actual data fetching
         let symbolData = [];
-        
-        // Sample data loading - this would be replaced with actual data loading
+
         async function loadSymbolData() {
             try {
-                // In a real application, you would fetch this data from your CSV or an API
-                // For demonstration, we're using a placeholder request
                 const response = await fetch('data/symbols/symbol_data.csv');
                 if (!response.ok) {
                     throw new Error('Failed to load symbol data');
@@ -395,7 +388,6 @@
                 updateDashboard();
             } catch (error) {
                 console.error('Error loading data:', error);
-                // For demo purposes, load sample data
                 loadSampleData();
                 updateDashboard();
             }
@@ -417,92 +409,6 @@
             });
         }
         
-        function loadSampleData() {
-            // Sample data based on your provided CSV format
-            symbolData = [
-                {
-                    "symbol": "EMSLIMITED",
-                    "name of company": "EMS Limited",
-                    "macro sector": "Utilities",
-                    "sector": "Utilities",
-                    "industry": "Other Utilities",
-                    "basic industry": "Waste Management",
-                    "market cap": "4525.76"
-                },
-                {
-                    "symbol": "AVANTEL",
-                    "name of company": "Avantel Limited",
-                    "macro sector": "Industrials",
-                    "sector": "Capital Goods",
-                    "industry": "Aerospace & Defense",
-                    "basic industry": "Aerospace & Defense",
-                    "market cap": "3356.79"
-                },
-                {
-                    "symbol": "MTARTECH",
-                    "name of company": "Mtar Technologies Limited",
-                    "macro sector": "Industrials",
-                    "sector": "Capital Goods",
-                    "industry": "Aerospace & Defense",
-                    "basic industry": "Aerospace & Defense",
-                    "market cap": "5029.19"
-                },
-                {
-                    "symbol": "BDL",
-                    "name of company": "Bharat Dynamics Limited",
-                    "macro sector": "Industrials",
-                    "sector": "Capital Goods",
-                    "industry": "Aerospace & Defense",
-                    "basic industry": "Aerospace & Defense",
-                    "market cap": "48019.69"
-                },
-                {
-                    "symbol": "GRSE",
-                    "name of company": "Garden Reach Shipbuilders & Engineers Limited",
-                    "macro sector": "Industrials",
-                    "sector": "Capital Goods",
-                    "industry": "Aerospace & Defense",
-                    "basic industry": "Aerospace & Defense",
-                    "market cap": "18625.58"
-                },
-                {
-                    "symbol": "HAL",
-                    "name of company": "Hindustan Aeronautics Limited",
-                    "macro sector": "Industrials",
-                    "sector": "Capital Goods",
-                    "industry": "Aerospace & Defense",
-                    "basic industry": "Aerospace & Defense",
-                    "market cap": "150000.00"
-                },
-                {
-                    "symbol": "INFY",
-                    "name of company": "Infosys Limited",
-                    "macro sector": "Information Technology",
-                    "sector": "IT Services",
-                    "industry": "Software",
-                    "basic industry": "IT Consulting",
-                    "market cap": "600000.00"
-                },
-                {
-                    "symbol": "TCS",
-                    "name of company": "Tata Consultancy Services",
-                    "macro sector": "Information Technology",
-                    "sector": "IT Services",
-                    "industry": "Software",
-                    "basic industry": "IT Consulting",
-                    "market cap": "1200000.00"
-                },
-                {
-                    "symbol": "RELIANCE",
-                    "name of company": "Reliance Industries",
-                    "macro sector": "Energy",
-                    "sector": "Oil & Gas",
-                    "industry": "Integrated Oil & Gas",
-                    "basic industry": "Oil & Gas Production",
-                    "market cap": "1800000.00"
-                }
-            ];
-        }
         
         function updateDashboard() {
             updateSectorsTab();
@@ -515,7 +421,6 @@
             const sectorsContainer = document.getElementById('sectors-container');
             sectorsContainer.innerHTML = '';
             
-            // Get unique sectors
             const uniqueSectors = [...new Set(symbolData.map(item => item.sector))];
             
             uniqueSectors.forEach(sector => {
@@ -545,7 +450,6 @@
             const industriesContainer = document.getElementById('industries-container');
             industriesContainer.innerHTML = '';
             
-            // Get unique industries
             const uniqueIndustries = [...new Set(symbolData.map(item => item.industry))];
             
             uniqueIndustries.forEach(industry => {
@@ -575,7 +479,6 @@
             const basicIndustriesContainer = document.getElementById('basic-industries-container');
             basicIndustriesContainer.innerHTML = '';
             
-            // Get unique basic industries
             const uniqueBasicIndustries = [...new Set(symbolData.map(item => item["basic industry"]))];
             
             uniqueBasicIndustries.forEach(basicIndustry => {
@@ -602,40 +505,32 @@
         }
         
         function updateStats() {
-            // Update sector stats
             const uniqueSectors = [...new Set(symbolData.map(item => item.sector).filter(Boolean))];
             document.getElementById('sectors-count').textContent = uniqueSectors.length;
             
-            // Update industry stats
             const uniqueIndustries = [...new Set(symbolData.map(item => item.industry).filter(Boolean))];
             document.getElementById('industries-count').textContent = uniqueIndustries.length;
             
-            // Update basic industry stats
             const uniqueBasicIndustries = [...new Set(symbolData.map(item => item["basic industry"]).filter(Boolean))];
             document.getElementById('basic-industries-count').textContent = uniqueBasicIndustries.length;
             
-            // Update company counts
             document.getElementById('sectors-companies').textContent = symbolData.length;
             document.getElementById('industries-companies').textContent = symbolData.length;
             document.getElementById('basic-industries-companies').textContent = symbolData.length;
         }
         
         function showChart(type, name) {
-            // Show the chart view
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
             
             document.getElementById('chart-view').style.display = 'block';
             
-            // Update breadcrumb
             document.getElementById('breadcrumb-separator').style.display = 'inline';
             document.getElementById('current-location').textContent = name;
             
-            // Set chart title
             document.getElementById('chart-title').textContent = `${name} ${type.charAt(0).toUpperCase() + type.slice(1)} Chart`;
             
-            // Format the name for file path
             const formattedName = name.replace(/\s+/g, '_').replace(/\//g, '-').toLowerCase();
             let chartPath;
             
@@ -651,25 +546,20 @@
                     break;
             }
             
-            // Load the chart in the iframe
             document.getElementById('chart-frame').src = chartPath;
         }
         
-        // Initialize tabs
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                // Hide chart view
                 document.getElementById('chart-view').style.display = 'none';
                 document.getElementById('breadcrumb-separator').style.display = 'none';
                 document.getElementById('current-location').textContent = '';
                 
-                // Activate the selected tab
                 document.querySelectorAll('.tab').forEach(t => {
                     t.classList.remove('active');
                 });
                 tab.classList.add('active');
                 
-                // Show the corresponding tab content
                 const tabId = tab.getAttribute('data-tab');
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.remove('active');
@@ -678,30 +568,25 @@
             });
         });
         
-        // Initialize nav links
         document.querySelectorAll('nav ul li a').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 
-                // Hide chart view
                 document.getElementById('chart-view').style.display = 'none';
                 document.getElementById('breadcrumb-separator').style.display = 'none';
                 document.getElementById('current-location').textContent = '';
                 
-                // Activate the selected nav link
                 document.querySelectorAll('nav ul li a').forEach(l => {
                     l.classList.remove('active');
                 });
                 link.classList.add('active');
                 
-                // Show the corresponding tab content
                 const tabId = link.getAttribute('data-tab');
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
                 document.getElementById(tabId).classList.add('active');
                 
-                // Activate the corresponding tab
                 document.querySelectorAll('.tab').forEach(t => {
                     t.classList.remove('active');
                     if (t.getAttribute('data-tab') === tabId) {
@@ -711,11 +596,9 @@
             });
         });
         
-        // Initialize search functionality
         document.getElementById('search-input').addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             
-            // Filter the cards in the active tab
             const activeTabId = document.querySelector('.tab-content.active').id;
             let selector;
             let items;
@@ -748,11 +631,9 @@
             }
         });
         
-        // Initialize sorting functionality
         document.getElementById('sort-select').addEventListener('change', (e) => {
             const sortBy = e.target.value;
             
-            // Sort the cards in the active tab
             const activeTabId = document.querySelector('.tab-content.active').id;
             let selector;
             let container;
@@ -790,16 +671,13 @@
             });
         });
         
-        // Initialize home link
         document.getElementById('home-link').addEventListener('click', (e) => {
             e.preventDefault();
             
-            // Hide chart view
             document.getElementById('chart-view').style.display = 'none';
             document.getElementById('breadcrumb-separator').style.display = 'none';
             document.getElementById('current-location').textContent = '';
             
-            // Show the active tab content
             const activeTabId = document.querySelector('.tab.active').getAttribute('data-tab');
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -807,16 +685,13 @@
             document.getElementById(activeTabId).classList.add('active');
         });
         
-        // Initialize back button
         document.getElementById('back-button').addEventListener('click', (e) => {
             e.preventDefault();
             
-            // Hide chart view
             document.getElementById('chart-view').style.display = 'none';
             document.getElementById('breadcrumb-separator').style.display = 'none';
             document.getElementById('current-location').textContent = '';
             
-            // Show the active tab content
             const activeTabId = document.querySelector('.tab.active').getAttribute('data-tab');
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -824,7 +699,6 @@
             document.getElementById(activeTabId).classList.add('active');
         });
         
-        // Load data when the page loads
         window.addEventListener('DOMContentLoaded', () => {
             loadSymbolData();
         });

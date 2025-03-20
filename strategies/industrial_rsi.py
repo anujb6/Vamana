@@ -21,14 +21,13 @@ def compute(main_folder, symbol_data_path):
         })
 
     def save_interactive_chart(category, price_df, save_path, title):
-        price_df.reset_index(inplace=True)  # Ensure 'date' is a column
+        price_df.reset_index(inplace=True)  
         
         price_df.set_index('date', inplace=True)
 
         fig = make_subplots(rows=2, cols=1, shared_xaxes=True, 
                             vertical_spacing=0.1, row_heights=[0.7, 0.3])
 
-        # Candlestick chart
         fig.add_trace(go.Candlestick(
             x=price_df.index,
             open=price_df['open'],
@@ -47,7 +46,6 @@ def compute(main_folder, symbol_data_path):
             line=dict(color='orange')
         ), row=2, col=1)
 
-        # Add RSI threshold lines
         fig.add_hline(y=70, line_dash="dash", line_color="red", row=2, col=1)
         fig.add_hline(y=30, line_dash="dash", line_color="green", row=2, col=1)
 

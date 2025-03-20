@@ -5,7 +5,6 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils import meta_data_utils
 
-
 def load(symbols_path):
     df = pd.read_csv(symbols_path)
     df = df[['SYMBOL', 'NAME OF COMPANY']]
