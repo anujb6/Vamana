@@ -84,7 +84,8 @@ def compute(main_folder, symbol_data_path):
             price_df[['open', 'high', 'low', 'close']] = 0
             
             for i, company_info in enumerate(valid_companies):
-                weight = company_info['market_cap'] / total_mcap
+                total_companies = len(valid_companies)
+                weight = 1 / total_companies   
                 df = company_data[i]
                 df = df[['date', 'open', 'high', 'low', 'close']]
                 
