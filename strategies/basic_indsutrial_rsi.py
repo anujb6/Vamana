@@ -128,7 +128,7 @@ def compute(main_folder, symbol_data_path):
                 'close': 'last',
                 'rsi': 'last'  
             })
-            
+            #test
             if len(monthly_price_df) <= 14:
                 print(f"Warning: Basic Industry {industry} has insufficient data for reliable RSI calculation")
             
