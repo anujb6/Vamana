@@ -333,7 +333,9 @@
                 <li><a href="#" class="active" data-tab="sectors">Sectors</a></li>
                 <li><a href="#" data-tab="industries">Industries</a></li>
                 <li><a href="#" data-tab="basic-industries">Basic Industries</a></li>
-                <li><a href="#" data-tab="rsi-filter">RSI 50-70</a></li>
+                <li><a href="#" data-tab="rsi-filter-above-65">RSI above 65</a></li>
+                <li><a href="#" data-tab="rsi-filter-55-65">RSI 50-65</a></li>
+                <li><a href="#" data-tab="rsi-filter-below-40">RSI below 40</a></li>
             </ul>
         </nav>
     </header>
@@ -358,7 +360,9 @@
                 <button class="tab active" data-tab="sectors">Sectors</button>
                 <button class="tab" data-tab="industries">Industries</button>
                 <button class="tab" data-tab="basic-industries">Basic Industries</button>
-                <button class="tab" data-tab="rsi-filter">RSI 50-70</button>
+                <button class="tab" data-tab="rsi-filter-above-65">RSI above 65</button>
+                <button class="tab" data-tab="rsi-filter-55-65">RSI 55-65</button>
+                <button class="tab" data-tab="rsi-filter-below-40">RSI below 40</button>
             </div>
 
             <div id="chart-view" style="display: none;">
@@ -418,19 +422,50 @@
                 </div>
             </div>
 
-            <div id="rsi-filter" class="tab-content">
+            <div id="rsi-filter-55-65" class="tab-content">
                 <div class="stats">
                     <div class="stat-card">
                         <h3>RSI Filter</h3>
-                        <div class="value">50-70</div>
+                        <div class="value">55-65</div>
                     </div>
                     <div class="stat-card">
                         <h3>Total charts</h3>
-                        <div class="value" id="rsi-companies-count">0</div>
+                        <div class="value" id="rsi-companies-count-55-65">0</div>
                     </div>
                 </div>
 
-                <div class="chart-container" id="rsi-container">
+                <div class="chart-container" id="rsi-container-55-65">
+                </div>
+            </div>
+
+            <div id="rsi-filter-above-65" class="tab-content">
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>RSI Filter</h3>
+                        <div class="value">above 65</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total charts</h3>
+                        <div class="value" id="rsi-companies-count-above-65">0</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="rsi-container-above-65">
+                </div>
+            </div>
+            <div id="rsi-filter-below-40" class="tab-content">
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>RSI Filter</h3>
+                        <div class="value">below 40</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total charts</h3>
+                        <div class="value" id="rsi-companies-count-below-40">0</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="rsi-container-below-40">
                 </div>
             </div>
         </div>
@@ -480,7 +515,9 @@
             updateSectorsTab();
             updateIndustriesTab();
             updateBasicIndustriesTab();
-            updateRsiFilterTab();
+            updateRsiFilterTab_below_40();
+            updateRsiFilterTab_55_65();
+            updateRsiFilterTab_above_65();
             updateStats();
         }
 
@@ -570,8 +607,23 @@
             });
         }
 
-        async function updateRsiFilterTab() {
-            const rsiContainer = document.getElementById('rsi-container');
+        function updateStats() {
+            const uniqueSectors = [...new Set(symbolData.map(item => item.sector).filter(Boolean))];
+            document.getElementById('sectors-count').textContent = uniqueSectors.length;
+
+            const uniqueIndustries = [...new Set(symbolData.map(item => item.industry).filter(Boolean))];
+            document.getElementById('industries-count').textContent = uniqueIndustries.length;
+
+            const uniqueBasicIndustries = [...new Set(symbolData.map(item => item["basic industry"]).filter(Boolean))];
+            document.getElementById('basic-industries-count').textContent = uniqueBasicIndustries.length;
+
+            document.getElementById('sectors-companies').textContent = symbolData.length;
+            document.getElementById('industries-companies').textContent = symbolData.length;
+            document.getElementById('basic-industries-companies').textContent = symbolData.length;
+        }
+
+        async function updateRsiFilterTab_below_40() {
+            const rsiContainer = document.getElementById('rsi-container-below-40');
             rsiContainer.innerHTML = '';
             
             const allCategories = [
@@ -590,7 +642,7 @@
                             const response = await fetch(`data/${type.toLowerCase().replaceAll(' ', '_')}/${category_1}/${category_1}_price.csv`);
                             const csvText = await response.text();
                             const data = parseCSV(csvText);
-                            if (data[data.length - 1].rsi >= 55 && data[data.length - 1].rsi < 70) {
+                            if (data[data.length - 1].rsi < 40) {
                                 let totalCompanies = 0;
                                 if (type === 'Sectors') {
                                     const companies = symbolData.filter(item => item.sector === category);
@@ -614,10 +666,165 @@
                     );
                 })
             )
-            
 
             // Update count
-            document.getElementById('rsi-companies-count').textContent = rsiFiltered.length;
+            document.getElementById('rsi-companies-count-below-40').textContent = rsiFiltered.length;
+            
+            rsiFiltered.forEach(item => {
+                let companiesInCategory = [];
+                
+                if (item.type === 'Sectors') {
+                    companiesInCategory = symbolData.filter(i => i.sector == item.category);
+                } else if (item.type === 'Industries') {
+                    companiesInCategory = symbolData.filter(i => i.industry == item.category);
+                } else if (item.type === 'Basic Industries') {
+                    companiesInCategory = symbolData.filter(i => i["basic industry"] == item.category);
+                }
+
+                const totalCompanies = companiesInCategory.length;
+
+                const cardElement = document.createElement('div');
+                cardElement.className = 'chart-card';
+                cardElement.innerHTML = `
+                    <i class="fas fa-chart-line icon"></i>
+                    <h3>${item.category}</h3>
+                    <p>${item.totalCompanies} Companies</p>
+                    <div class="companies">${companiesInCategory.slice(0, 3).map(c => c["name of company"]).join(', ')}${item.totalCompanies > 3 ? '...' : ''}</div>
+                `;
+
+                cardElement.addEventListener('click', () => {
+                    showRsiFilteredChart(item.category, companiesInCategory, item.type);
+                });
+
+                rsiContainer.appendChild(cardElement);
+            });
+        }
+
+        async function updateRsiFilterTab_55_65() {
+            const rsiContainer = document.getElementById('rsi-container-55-65');
+            rsiContainer.innerHTML = '';
+            
+            const allCategories = [
+                { type: 'Sectors', list: uniqueSectors },
+                { type: 'Industries', list: uniqueIndustries },
+                { type: 'Basic Industries', list: uniqueBasicIndustries }
+            ];
+            
+            let rsiFiltered = [];
+            
+            await Promise.all(
+                allCategories.map(async ({ type, list }) => {
+                    await Promise.all(
+                        list.map(async category => {
+                            let category_1 = category.replaceAll(' ', '_').replace('/', '-').toLowerCase();
+                            const response = await fetch(`data/${type.toLowerCase().replaceAll(' ', '_')}/${category_1}/${category_1}_price.csv`);
+                            const csvText = await response.text();
+                            const data = parseCSV(csvText);
+                            if (data[data.length - 1].rsi >= 55 && data[data.length - 1].rsi <= 65) {
+                                let totalCompanies = 0;
+                                if (type === 'Sectors') {
+                                    const companies = symbolData.filter(item => item.sector === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Industries') {
+                                    const companies = symbolData.filter(item => item.industry === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Basic Industries') {
+                                    const companies = symbolData.filter(item => item["basic industry"] === category);
+                                    totalCompanies = companies.length;
+                                }
+
+                                rsiFiltered.push({
+                                    type: type,
+                                    category: category,
+                                    rsi: data[data.length - 1].rsi,
+                                    totalCompanies: totalCompanies,
+                                });
+                            }
+                        })
+                    );
+                })
+            )
+
+            // Update count
+            document.getElementById('rsi-companies-count-55-65').textContent = rsiFiltered.length;
+            
+            rsiFiltered.forEach(item => {
+                let companiesInCategory = [];
+                
+                if (item.type === 'Sectors') {
+                    companiesInCategory = symbolData.filter(i => i.sector == item.category);
+                } else if (item.type === 'Industries') {
+                    companiesInCategory = symbolData.filter(i => i.industry == item.category);
+                } else if (item.type === 'Basic Industries') {
+                    companiesInCategory = symbolData.filter(i => i["basic industry"] == item.category);
+                }
+
+                const totalCompanies = companiesInCategory.length;
+
+                const cardElement = document.createElement('div');
+                cardElement.className = 'chart-card';
+                cardElement.innerHTML = `
+                    <i class="fas fa-chart-line icon"></i>
+                    <h3>${item.category}</h3>
+                    <p>${item.totalCompanies} Companies</p>
+                    <div class="companies">${companiesInCategory.slice(0, 3).map(c => c["name of company"]).join(', ')}${item.totalCompanies > 3 ? '...' : ''}</div>
+                `;
+
+                cardElement.addEventListener('click', () => {
+                    showRsiFilteredChart(item.category, companiesInCategory, item.type);
+                });
+
+                rsiContainer.appendChild(cardElement);
+            });
+        }
+
+        async function updateRsiFilterTab_above_65() {
+            const rsiContainer = document.getElementById('rsi-container-above-65');
+            rsiContainer.innerHTML = '';
+            
+            const allCategories = [
+                { type: 'Sectors', list: uniqueSectors },
+                { type: 'Industries', list: uniqueIndustries },
+                { type: 'Basic Industries', list: uniqueBasicIndustries }
+            ];
+            
+            let rsiFiltered = [];
+            
+            await Promise.all(
+                allCategories.map(async ({ type, list }) => {
+                    await Promise.all(
+                        list.map(async category => {
+                            let category_1 = category.replaceAll(' ', '_').replace('/', '-').toLowerCase();
+                            const response = await fetch(`data/${type.toLowerCase().replaceAll(' ', '_')}/${category_1}/${category_1}_price.csv`);
+                            const csvText = await response.text();
+                            const data = parseCSV(csvText);
+                            if (data[data.length - 1].rsi >= 65) {
+                                let totalCompanies = 0;
+                                if (type === 'Sectors') {
+                                    const companies = symbolData.filter(item => item.sector === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Industries') {
+                                    const companies = symbolData.filter(item => item.industry === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Basic Industries') {
+                                    const companies = symbolData.filter(item => item["basic industry"] === category);
+                                    totalCompanies = companies.length;
+                                }
+
+                                rsiFiltered.push({
+                                    type: type,
+                                    category: category,
+                                    rsi: data[data.length - 1].rsi,
+                                    totalCompanies: totalCompanies,
+                                });
+                            }
+                        })
+                    );
+                })
+            )
+
+            // Update count
+            document.getElementById('rsi-companies-count-above-65').textContent = rsiFiltered.length;
             
             rsiFiltered.forEach(item => {
                 let companiesInCategory = [];
@@ -657,9 +864,9 @@
             document.getElementById('chart-view').style.display = 'block';
 
             document.getElementById('breadcrumb-separator').style.display = 'inline';
-            document.getElementById('current-location').textContent = `RSI 55-70: ${hierarchy_pos}`;
+            document.getElementById('current-location').textContent = `RSI: ${hierarchy_pos}`;
 
-            document.getElementById('chart-title').textContent = `${hierarchy_pos} Companies with RSI 50-70`;
+            document.getElementById('chart-title').textContent = `${hierarchy_pos} Companies`;
 
             // For RSI filtered view, we might not have a specific chart to show
             // Instead, display the first company's chart if available or a sector chart
@@ -680,7 +887,7 @@
 
             if (companies.length > 0) {
                 const tableHTML = `
-                    <h3 style="margin-bottom: 15px; color: var(--accent-color);">Companies with RSI 50-70 (${companies.length})</h3>
+                    <h3 style="margin-bottom: 15px; color: var(--accent-color);">Companies with particular RSI (${companies.length})</h3>
                     <table>
                         <thead>
                             <tr>
@@ -713,21 +920,6 @@
             } else {
                 tableContainer.innerHTML = '<p>No companies found</p>';
             }
-        }
-
-        function updateStats() {
-            const uniqueSectors = [...new Set(symbolData.map(item => item.sector).filter(Boolean))];
-            document.getElementById('sectors-count').textContent = uniqueSectors.length;
-
-            const uniqueIndustries = [...new Set(symbolData.map(item => item.industry).filter(Boolean))];
-            document.getElementById('industries-count').textContent = uniqueIndustries.length;
-
-            const uniqueBasicIndustries = [...new Set(symbolData.map(item => item["basic industry"]).filter(Boolean))];
-            document.getElementById('basic-industries-count').textContent = uniqueBasicIndustries.length;
-
-            document.getElementById('sectors-companies').textContent = symbolData.length;
-            document.getElementById('industries-companies').textContent = symbolData.length;
-            document.getElementById('basic-industries-companies').textContent = symbolData.length;
         }
 
         function showChart(type, name) {
@@ -886,8 +1078,8 @@
                         card.style.display = basicIndustryName.includes(searchTerm) ? 'block' : 'none';
                     });
                     break;
-                case 'rsi-filter':
-                    selector = '#rsi-container .chart-card';
+                case 'rsi-filter-55-65':
+                    selector = '#rsi-container-55-65 .chart-card';
                     items = [...document.querySelectorAll(selector)];
                     items.forEach(card => {
                         const sectorName = card.querySelector('h3').textContent.toLowerCase();
@@ -918,9 +1110,17 @@
                     selector = '#basic-industries-container .chart-card';
                     container = document.getElementById('basic-industries-container');
                     break;
-                case 'rsi-filter':
-                    selector = '#rsi-container .chart-card';
-                    container = document.getElementById('rsi-container');
+                case 'rsi-filter-below-40':
+                    selector = '#rsi-container-below-40 .chart-card';
+                    container = document.getElementById('rsi-container-below-40');
+                    break;
+                case 'rsi-filter-55-65':
+                    selector = '#rsi-container-55-65 .chart-card';
+                    container = document.getElementById('rsi-container-55-65');
+                    break;
+                case "rsi-filter-above-65":
+                    selector = '#rsi-filter-above-65 .chart-card';
+                    container = document.getElementById('rsi-filter-above-65');
                     break;
             }
 
@@ -969,84 +1169,6 @@
             });
             document.getElementById(activeTabId).classList.add('active');
         });
-
-        // Sample data function for testing when CSV fails to load
-        function loadSampleData() {
-            symbolData = [
-                {
-                    "symbol": "AAPL",
-                    "name of company": "Apple Inc.",
-                    "sector": "Technology",
-                    "industry": "Computer Manufacturing",
-                    "basic industry": "Electronics",
-                    "price": "154.32",
-                    "rsi": "62.5"
-                },
-                {
-                    "symbol": "MSFT",
-                    "name of company": "Microsoft Corporation",
-                    "sector": "Technology",
-                    "industry": "Software",
-                    "basic industry": "Computer Software",
-                    "price": "326.78",
-                    "rsi": "58.4"
-                },
-                {
-                    "symbol": "GOOGL",
-                    "name of company": "Alphabet Inc.",
-                    "sector": "Technology",
-                    "industry": "Internet Services",
-                    "basic industry": "Computer Software",
-                    "price": "124.64",
-                    "rsi": "51.2"
-                },
-                {
-                    "symbol": "AMZN",
-                    "name of company": "Amazon.com Inc.",
-                    "sector": "Consumer Services",
-                    "industry": "E-commerce",
-                    "basic industry": "Retail",
-                    "price": "131.25",
-                    "rsi": "54.8"
-                },
-                {
-                    "symbol": "JNJ",
-                    "name of company": "Johnson & Johnson",
-                    "sector": "Healthcare",
-                    "industry": "Pharmaceuticals",
-                    "basic industry": "Medical",
-                    "price": "165.76",
-                    "rsi": "45.2"
-                },
-                {
-                    "symbol": "JPM",
-                    "name of company": "JPMorgan Chase & Co.",
-                    "sector": "Finance",
-                    "industry": "Banking",
-                    "basic industry": "Financial Services",
-                    "price": "141.92",
-                    "rsi": "67.5"
-                },
-                {
-                    "symbol": "V",
-                    "name of company": "Visa Inc.",
-                    "sector": "Finance",
-                    "industry": "Payment Services",
-                    "basic industry": "Financial Services",
-                    "price": "242.38",
-                    "rsi": "53.7"
-                },
-                {
-                    "symbol": "PG",
-                    "name of company": "Procter & Gamble Co.",
-                    "sector": "Consumer Goods",
-                    "industry": "Personal Products",
-                    "basic industry": "Household Products",
-                    "price": "152.11",
-                    "rsi": "48.6"
-                }
-            ];
-        }
 
         window.addEventListener('DOMContentLoaded', () => {
             loadSymbolData();
