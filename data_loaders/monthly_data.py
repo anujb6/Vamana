@@ -3,7 +3,8 @@ import os
 import sys
 
 sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))
-from yfinance import download
+# from yfinance import download
+import yfinance as yf
 
 
 
@@ -11,7 +12,7 @@ def load(symbol_data_path, start_date, end_date, interval):
     df = pd.read_csv(symbol_data_path)
 
     for index, row in df.iterrows():
-        data = download(
+        data = yf.download(
             tickers=row['symbol'] + '.NS', 
             interval=interval, 
             start=start_date, 
