@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Charts Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2d3748;
+            --secondary-color: #4a5568;
+            --accent-color: #38b2acfb;
+            --text-color: #e2e8f0;
+            --background-color: #1a202c;
+            --card-background: #2d3748;
+            --border-color: #4a5568;
+            --hover-color: #4fd1c5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--hover-color);
+        }
+
+        .active {
+            color: var(--accent-color) !important;
+            font-weight: 700;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: var(--primary-color);
+            border-radius: 5px;
+        }
+
+        .breadcrumb a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            color: var(--text-color);
+            margin: 0 8px;
+        }
+
+        .chart-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .chart-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .chart-card p {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-bottom: 15px;
+        }
+
+        .chart-card .companies {
+            font-size: 12px;
+            color: #cbd5e0;
+        }
+
+        .chart-card .icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: var(--accent-color);
+            opacity: 0.8;
+        }
+
+        .search-filter {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-filter input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
+
+        .search-filter select {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .tab.active {
+            background-color: #131314;
+            color: #1a202c;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .chart-frame {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--card-background);
+        }
+
+        .companies-table {
+            margin-top: 20px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .companies-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .companies-table th,
+        .companies-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .companies-table th {
+            background-color: var(--primary-color);
+            color: var(--accent-color);
+        }
+
+        .companies-table tr:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--accent-color);
+            color: #1a202c;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background-color: var(--hover-color);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 0 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        /* RSI indicators */
+        .rsi-value {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .rsi-neutral {
+            background-color: #4299e1;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin-top: 15px;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .stat-card {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1>Financial Charts Dashboard</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="active" data-tab="sectors">Sectors</a></li>
+                <li><a href="#" data-tab="industries">Industries</a></li>
+                <li><a href="#" data-tab="basic-industries">Basic Industries</a></li>
+                <li><a href="#" data-tab="rsi-filter-above-65">RSI above 65</a></li>
+                <li><a href="#" data-tab="rsi-filter-55-65">RSI 50-65</a></li>
+                <li><a href="#" data-tab="rsi-filter-below-40">RSI below 40</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="#" id="home-link">Home</a>
+            <span id="breadcrumb-separator" style="display: none;">></span>
+            <span id="current-location"></span>
+        </div>
+
+        <div class="search-filter">
+            <input type="text" id="search-input" placeholder="Search...">
+            <select id="sort-select">
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+            </select>
+        </div>
+
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab active" data-tab="sectors">Sectors</button>
+                <button class="tab" data-tab="industries">Industries</button>
+                <button class="tab" data-tab="basic-industries">Basic Industries</button>
+                <button class="tab" data-tab="rsi-filter-above-65">RSI above 65</button>
+                <button class="tab" data-tab="rsi-filter-55-65">RSI 55-65</button>
+                <button class="tab" data-tab="rsi-filter-below-40">RSI below 40</button>
+            </div>
+
+            <div id="chart-view" style="display: none;">
+                <a href="#" class="back-button" id="back-button">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <h2 id="chart-title"></h2>
+                <iframe id="chart-frame" class="chart-frame"></iframe>
+                <div id="companies-table" class="companies-table"></div>
+            </div>
+
+            <div id="sectors" class="tab-content active">
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>Total Sectors</h3>
+                        <div class="value" id="sectors-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Companies</h3>
+                        <div class="value" id="sectors-companies">0</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="sectors-container">
+                </div>
+            </div>
+
+            <div id="industries" class="tab-content">
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>Total Industries</h3>
+                        <div class="value" id="industries-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Companies</h3>
+                        <div class="value" id="industries-companies">0</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="industries-container">
+                </div>
+            </div>
+
+            <div id="basic-industries" class="tab-content">
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>Total Basic Industries</h3>
+                        <div class="value" id="basic-industries-count">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Companies</h3>
+                        <div class="value" id="basic-industries-companies">0</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="basic-industries-container">
+                </div>
+            </div>
+
+            <div id="rsi-filter-55-65" class="tab-content">
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>RSI Filter</h3>
+                        <div class="value">55-65</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total charts</h3>
+                        <div class="value" id="rsi-companies-count-55-65">0</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="rsi-container-55-65">
+                </div>
+            </div>
+
+            <div id="rsi-filter-above-65" class="tab-content">
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>RSI Filter</h3>
+                        <div class="value">above 65</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total charts</h3>
+                        <div class="value" id="rsi-companies-count-above-65">0</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="rsi-container-above-65">
+                </div>
+            </div>
+            <div id="rsi-filter-below-40" class="tab-content">
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>RSI Filter</h3>
+                        <div class="value">below 40</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total charts</h3>
+                        <div class="value" id="rsi-companies-count-below-40">0</div>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="rsi-container-below-40">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let symbolData = [];
+        let uniqueSectors = [];
+        let uniqueIndustries = [];
+        let uniqueBasicIndustries = [];
+
+        async function loadSymbolData() {
+            try {
+                const response = await fetch('data/symbols/symbol_data.csv');
+                if (!response.ok) {
+                    throw new Error('Failed to load symbol data');
+                }
+
+                const csvText = await response.text();
+                symbolData = parseCSV(csvText);
+
+                updateDashboard();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                loadSampleData();
+                updateDashboard();
+            }
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',');
+
+            return lines.slice(1).filter(line => line.trim() !== '').map(line => {
+                const values = line.split(',');
+                const entry = {};
+
+                headers.forEach((header, index) => {
+                    entry[header.trim()] = values[index] ? values[index].trim() : '';
+                });
+
+                return entry;
+            });
+        }
+
+        function updateDashboard() {
+            updateSectorsTab();
+            updateIndustriesTab();
+            updateBasicIndustriesTab();
+            updateRsiFilterTab_below_40();
+            updateRsiFilterTab_55_65();
+            updateRsiFilterTab_above_65();
+            updateStats();
+        }
+
+        function updateSectorsTab() {
+            const sectorsContainer = document.getElementById('sectors-container');
+            sectorsContainer.innerHTML = '';
+
+            uniqueSectors = [...new Set(symbolData.map(item => item.sector))];
+            uniqueSectors.forEach(sector => {
+                if (!sector) return;
+
+                const companiesInSector = symbolData.filter(item => item.sector === sector);
+                const totalCompanies = companiesInSector.length;
+
+                const cardElement = document.createElement('div');
+                cardElement.className = 'chart-card';
+                cardElement.innerHTML = `
+                    <i class="fas fa-chart-line icon"></i>
+                    <h3>${sector}</h3>
+                    <p>${totalCompanies} Companies</p>
+                    <div class="companies">${companiesInSector.slice(0, 3).map(c => c["name of company"]).join(', ')}${totalCompanies > 3 ? '...' : ''}</div>
+                `;
+
+                cardElement.addEventListener('click', () => {
+                    showChart('sector', sector);
+                });
+
+                sectorsContainer.appendChild(cardElement);
+            });
+        }
+
+        function updateIndustriesTab() {
+            const industriesContainer = document.getElementById('industries-container');
+            industriesContainer.innerHTML = '';
+
+            uniqueIndustries = [...new Set(symbolData.map(item => item.industry))];
+
+            uniqueIndustries.forEach(industry => {
+                if (!industry) return;
+
+                const companiesInIndustry = symbolData.filter(item => item.industry === industry);
+                const totalCompanies = companiesInIndustry.length;
+
+                const cardElement = document.createElement('div');
+                cardElement.className = 'chart-card';
+                cardElement.innerHTML = `
+                    <i class="fas fa-industry icon"></i>
+                    <h3>${industry}</h3>
+                    <p>${totalCompanies} Companies</p>
+                    <div class="companies">${companiesInIndustry.slice(0, 3).map(c => c["name of company"]).join(', ')}${totalCompanies > 3 ? '...' : ''}</div>
+                `;
+
+                cardElement.addEventListener('click', () => {
+                    showChart('industry', industry);
+                });
+
+                industriesContainer.appendChild(cardElement);
+            });
+        }
+
+        function updateBasicIndustriesTab() {
+            const basicIndustriesContainer = document.getElementById('basic-industries-container');
+            basicIndustriesContainer.innerHTML = '';
+
+            uniqueBasicIndustries = [...new Set(symbolData.map(item => item["basic industry"]))];
+
+            uniqueBasicIndustries.forEach(basicIndustry => {
+                if (!basicIndustry) return;
+
+                const companiesInBasicIndustry = symbolData.filter(item => item["basic industry"] === basicIndustry);
+                const totalCompanies = companiesInBasicIndustry.length;
+
+                const cardElement = document.createElement('div');
+                cardElement.className = 'chart-card';
+                cardElement.innerHTML = `
+                    <i class="fas fa-building icon"></i>
+                    <h3>${basicIndustry}</h3>
+                    <p>${totalCompanies} Companies</p>
+                    <div class="companies">${companiesInBasicIndustry.slice(0, 3).map(c => c["name of company"]).join(', ')}${totalCompanies > 3 ? '...' : ''}</div>
+                `;
+
+                cardElement.addEventListener('click', () => {
+                    showChart('basic_industry', basicIndustry);
+                });
+
+                basicIndustriesContainer.appendChild(cardElement);
+            });
+        }
+
+        function updateStats() {
+            const uniqueSectors = [...new Set(symbolData.map(item => item.sector).filter(Boolean))];
+            document.getElementById('sectors-count').textContent = uniqueSectors.length;
+
+            const uniqueIndustries = [...new Set(symbolData.map(item => item.industry).filter(Boolean))];
+            document.getElementById('industries-count').textContent = uniqueIndustries.length;
+
+            const uniqueBasicIndustries = [...new Set(symbolData.map(item => item["basic industry"]).filter(Boolean))];
+            document.getElementById('basic-industries-count').textContent = uniqueBasicIndustries.length;
+
+            document.getElementById('sectors-companies').textContent = symbolData.length;
+            document.getElementById('industries-companies').textContent = symbolData.length;
+            document.getElementById('basic-industries-companies').textContent = symbolData.length;
+        }
+
+        async function updateRsiFilterTab_below_40() {
+            const rsiContainer = document.getElementById('rsi-container-below-40');
+            rsiContainer.innerHTML = '';
+            
+            const allCategories = [
+                { type: 'Sectors', list: uniqueSectors },
+                { type: 'Industries', list: uniqueIndustries },
+                { type: 'Basic Industries', list: uniqueBasicIndustries }
+            ];
+            
+            let rsiFiltered = [];
+            
+            await Promise.all(
+                allCategories.map(async ({ type, list }) => {
+                    await Promise.all(
+                        list.map(async category => {
+                            let category_1 = category.replaceAll(' ', '_').replace('/', '-').toLowerCase();
+                            const response = await fetch(`data/${type.toLowerCase().replaceAll(' ', '_')}/${category_1}/${category_1}_price.csv`);
+                            const csvText = await response.text();
+                            const data = parseCSV(csvText);
+                            if (data[data.length - 1].rsi < 40) {
+                                let totalCompanies = 0;
+                                if (type === 'Sectors') {
+                                    const companies = symbolData.filter(item => item.sector === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Industries') {
+                                    const companies = symbolData.filter(item => item.industry === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Basic Industries') {
+                                    const companies = symbolData.filter(item => item["basic industry"] === category);
+                                    totalCompanies = companies.length;
+                                }
+
+                                rsiFiltered.push({
+                                    type: type,
+                                    category: category,
+                                    rsi: data[data.length - 1].rsi,
+                                    totalCompanies: totalCompanies,
+                                });
+                            }
+                        })
+                    );
+                })
+            )
+
+            // Update count
+            document.getElementById('rsi-companies-count-below-40').textContent = rsiFiltered.length;
+            
+            rsiFiltered.forEach(item => {
+                let companiesInCategory = [];
+                
+                if (item.type === 'Sectors') {
+                    companiesInCategory = symbolData.filter(i => i.sector == item.category);
+                } else if (item.type === 'Industries') {
+                    companiesInCategory = symbolData.filter(i => i.industry == item.category);
+                } else if (item.type === 'Basic Industries') {
+                    companiesInCategory = symbolData.filter(i => i["basic industry"] == item.category);
+                }
+
+                const totalCompanies = companiesInCategory.length;
+
+                const cardElement = document.createElement('div');
+                cardElement.className = 'chart-card';
+                cardElement.innerHTML = `
+                    <i class="fas fa-chart-line icon"></i>
+                    <h3>${item.category}</h3>
+                    <p>${item.totalCompanies} Companies</p>
+                    <div class="companies">${companiesInCategory.slice(0, 3).map(c => c["name of company"]).join(', ')}${item.totalCompanies > 3 ? '...' : ''}</div>
+                `;
+
+                cardElement.addEventListener('click', () => {
+                    showRsiFilteredChart(item.category, companiesInCategory, item.type);
+                });
+
+                rsiContainer.appendChild(cardElement);
+            });
+        }
+
+        async function updateRsiFilterTab_55_65() {
+            const rsiContainer = document.getElementById('rsi-container-55-65');
+            rsiContainer.innerHTML = '';
+            
+            const allCategories = [
+                { type: 'Sectors', list: uniqueSectors },
+                { type: 'Industries', list: uniqueIndustries },
+                { type: 'Basic Industries', list: uniqueBasicIndustries }
+            ];
+            
+            let rsiFiltered = [];
+            
+            await Promise.all(
+                allCategories.map(async ({ type, list }) => {
+                    await Promise.all(
+                        list.map(async category => {
+                            let category_1 = category.replaceAll(' ', '_').replace('/', '-').toLowerCase();
+                            const response = await fetch(`data/${type.toLowerCase().replaceAll(' ', '_')}/${category_1}/${category_1}_price.csv`);
+                            const csvText = await response.text();
+                            const data = parseCSV(csvText);
+                            if (data[data.length - 1].rsi >= 55 && data[data.length - 1].rsi <= 65) {
+                                let totalCompanies = 0;
+                                if (type === 'Sectors') {
+                                    const companies = symbolData.filter(item => item.sector === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Industries') {
+                                    const companies = symbolData.filter(item => item.industry === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Basic Industries') {
+                                    const companies = symbolData.filter(item => item["basic industry"] === category);
+                                    totalCompanies = companies.length;
+                                }
+
+                                rsiFiltered.push({
+                                    type: type,
+                                    category: category,
+                                    rsi: data[data.length - 1].rsi,
+                                    totalCompanies: totalCompanies,
+                                });
+                            }
+                        })
+                    );
+                })
+            )
+
+            // Update count
+            document.getElementById('rsi-companies-count-55-65').textContent = rsiFiltered.length;
+            
+            rsiFiltered.forEach(item => {
+                let companiesInCategory = [];
+                
+                if (item.type === 'Sectors') {
+                    companiesInCategory = symbolData.filter(i => i.sector == item.category);
+                } else if (item.type === 'Industries') {
+                    companiesInCategory = symbolData.filter(i => i.industry == item.category);
+                } else if (item.type === 'Basic Industries') {
+                    companiesInCategory = symbolData.filter(i => i["basic industry"] == item.category);
+                }
+
+                const totalCompanies = companiesInCategory.length;
+
+                const cardElement = document.createElement('div');
+                cardElement.className = 'chart-card';
+                cardElement.innerHTML = `
+                    <i class="fas fa-chart-line icon"></i>
+                    <h3>${item.category}</h3>
+                    <p>${item.totalCompanies} Companies</p>
+                    <div class="companies">${companiesInCategory.slice(0, 3).map(c => c["name of company"]).join(', ')}${item.totalCompanies > 3 ? '...' : ''}</div>
+                `;
+
+                cardElement.addEventListener('click', () => {
+                    showRsiFilteredChart(item.category, companiesInCategory, item.type);
+                });
+
+                rsiContainer.appendChild(cardElement);
+            });
+        }
+
+        async function updateRsiFilterTab_above_65() {
+            const rsiContainer = document.getElementById('rsi-container-above-65');
+            rsiContainer.innerHTML = '';
+            
+            const allCategories = [
+                { type: 'Sectors', list: uniqueSectors },
+                { type: 'Industries', list: uniqueIndustries },
+                { type: 'Basic Industries', list: uniqueBasicIndustries }
+            ];
+            
+            let rsiFiltered = [];
+            
+            await Promise.all(
+                allCategories.map(async ({ type, list }) => {
+                    await Promise.all(
+                        list.map(async category => {
+                            let category_1 = category.replaceAll(' ', '_').replace('/', '-').toLowerCase();
+                            const response = await fetch(`data/${type.toLowerCase().replaceAll(' ', '_')}/${category_1}/${category_1}_price.csv`);
+                            const csvText = await response.text();
+                            const data = parseCSV(csvText);
+                            if (data[data.length - 1].rsi >= 65) {
+                                let totalCompanies = 0;
+                                if (type === 'Sectors') {
+                                    const companies = symbolData.filter(item => item.sector === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Industries') {
+                                    const companies = symbolData.filter(item => item.industry === category);
+                                    totalCompanies = companies.length;
+                                } else if (type === 'Basic Industries') {
+                                    const companies = symbolData.filter(item => item["basic industry"] === category);
+                                    totalCompanies = companies.length;
+                                }
+
+                                rsiFiltered.push({
+                                    type: type,
+                                    category: category,
+                                    rsi: data[data.length - 1].rsi,
+                                    totalCompanies: totalCompanies,
+                                });
+                            }
+                        })
+                    );
+                })
+            )
+
+            // Update count
+            document.getElementById('rsi-companies-count-above-65').textContent = rsiFiltered.length;
+            
+            rsiFiltered.forEach(item => {
+                let companiesInCategory = [];
+                
+                if (item.type === 'Sectors') {
+                    companiesInCategory = symbolData.filter(i => i.sector == item.category);
+                } else if (item.type === 'Industries') {
+                    companiesInCategory = symbolData.filter(i => i.industry == item.category);
+                } else if (item.type === 'Basic Industries') {
+                    companiesInCategory = symbolData.filter(i => i["basic industry"] == item.category);
+                }
+
+                const totalCompanies = companiesInCategory.length;
+
+                const cardElement = document.createElement('div');
+                cardElement.className = 'chart-card';
+                cardElement.innerHTML = `
+                    <i class="fas fa-chart-line icon"></i>
+                    <h3>${item.category}</h3>
+                    <p>${item.totalCompanies} Companies</p>
+                    <div class="companies">${companiesInCategory.slice(0, 3).map(c => c["name of company"]).join(', ')}${item.totalCompanies > 3 ? '...' : ''}</div>
+                `;
+
+                cardElement.addEventListener('click', () => {
+                    showRsiFilteredChart(item.category, companiesInCategory, item.type);
+                });
+
+                rsiContainer.appendChild(cardElement);
+            });
+        }
+
+        function showRsiFilteredChart(hierarchy_pos, companies, type) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            document.getElementById('chart-view').style.display = 'block';
+
+            document.getElementById('breadcrumb-separator').style.display = 'inline';
+            document.getElementById('current-location').textContent = `RSI: ${hierarchy_pos}`;
+
+            document.getElementById('chart-title').textContent = `${hierarchy_pos} Companies`;
+
+            // For RSI filtered view, we might not have a specific chart to show
+            // Instead, display the first company's chart if available or a sector chart
+            const formattedpos = hierarchy_pos.replace(/\s+/g, '_').replace(/\//g, '-').toLowerCase();
+            let chartPath = ""
+            if (type === 'Sectors') {
+                chartPath = `data/sectors/${formattedpos}/${formattedpos}_chart.html`;
+            } else if (type === 'Industries') {
+                chartPath = `data/industries/${formattedpos}/${formattedpos}_chart.html`;
+            } else if (type === 'Basic Industries') {
+                chartPath = `data/basic_industries/${formattedpos}/${formattedpos}_chart.html`;
+            }
+            document.getElementById('chart-frame').src = chartPath;
+
+            // Create the company table
+            const tableContainer = document.getElementById('companies-table');
+            tableContainer.innerHTML = '';
+
+            if (companies.length > 0) {
+                const tableHTML = `
+                    <h3 style="margin-bottom: 15px; color: var(--accent-color);">Companies with particular RSI (${companies.length})</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Company Name</th>
+                                <th>Sector</th>
+                                <th>Industry</th>
+                                <th>Basic Industry</th>
+                                <th>Price</th>
+                                <th>RSI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${companies.map(company => {
+                                const rsiValue = parseFloat(company.rsi).toFixed(2);
+                                return `
+                                    <tr>
+                                        <td>${company["name of company"]}</td>
+                                        <td>${company.sector || 'N/A'}</td>
+                                        <td>${company.industry || 'N/A'}</td>
+                                        <td>${company["basic industry"] || 'N/A'}</td>
+                                        <td>${company.price || 'N/A'}</td>
+                                        <td><span class="rsi-value rsi-neutral">${rsiValue}</span></td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+                tableContainer.innerHTML = tableHTML;
+            } else {
+                tableContainer.innerHTML = '<p>No companies found</p>';
+            }
+        }
+
+        function showChart(type, name) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            document.getElementById('chart-view').style.display = 'block';
+
+            document.getElementById('breadcrumb-separator').style.display = 'inline';
+            document.getElementById('current-location').textContent = name;
+
+            document.getElementById('chart-title').textContent = `${name} ${type.charAt(0).toUpperCase() + type.slice(1)} Chart`;
+
+            const formattedName = name.replace(/\s+/g, '_').replace(/\//g, '-').toLowerCase();
+            let chartPath;
+
+            switch (type) {
+                case 'sector':
+                    chartPath = `data/sectors/${formattedName}/${formattedName}_chart.html`;
+                    break;
+                case 'industry':
+                    chartPath = `data/industries/${formattedName}/${formattedName}_chart.html`;
+                    break;
+                case 'basic_industry':
+                    chartPath = `data/basic_industries/${formattedName}/${formattedName}_chart.html`;
+                    break;
+            }
+
+            document.getElementById('chart-frame').src = chartPath;
+
+            // Clear previous table
+            const tableContainer = document.getElementById('companies-table');
+            tableContainer.innerHTML = '';
+
+            // Filter companies based on the selected category
+            const companies = symbolData.filter(item => {
+                switch(type) {
+                    case 'sector': return item.sector === name;
+                    case 'industry': return item.industry === name;
+                    case 'basic_industry': return item["basic industry"] === name;
+                    default: return false;
+                }
+            });
+
+            // Create table HTML
+            if (companies.length > 0) {
+                const tableHTML = `
+                    <h3 style="margin-bottom: 15px; color: var(--accent-color);">Companies (${companies.length})</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Company Name</th>
+                                <th>Price</th>
+                                <th>RSI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${companies.map(company => {
+                                const rsi = company.rsi ? Number(company.rsi).toFixed(2) : 'N/A';
+                                const rsiClass = company.rsi && Number(company.rsi) >= 50 && Number(company.rsi) < 70 ? ' class="rsi-value rsi-neutral"' : '';
+                                return `
+                                    <tr>
+                                        <td>${company["name of company"]}</td>
+                                        <td>${company.price || 'N/A'}</td>
+                                        <td><span${rsiClass}>${rsi}</span></td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                `;
+                tableContainer.innerHTML = tableHTML;
+            } else {
+                tableContainer.innerHTML = '<p>No companies found</p>';
+            }
+
+        }
+
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.getElementById('chart-view').style.display = 'none';
+                document.getElementById('breadcrumb-separator').style.display = 'none';
+                document.getElementById('current-location').textContent = '';
+
+                document.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                tab.classList.add('active');
+
+                const tabId = tab.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                document.getElementById('chart-view').style.display = 'none';
+                document.getElementById('breadcrumb-separator').style.display = 'none';
+                document.getElementById('current-location').textContent = '';
+
+                document.querySelectorAll('nav ul li a').forEach(l => {
+                    l.classList.remove('active');
+                });
+                link.classList.add('active');
+
+                const tabId = link.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+
+                document.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('active');
+                    if (t.getAttribute('data-tab') === tabId) {
+                        t.classList.add('active');
+                    }
+                });
+            });
+        });
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+
+            const activeTabId = document.querySelector('.tab-content.active').id;
+            let selector;
+            let items;
+
+            switch (activeTabId) {
+                case 'sectors':
+                    selector = '#sectors-container .chart-card';
+                    items = [...document.querySelectorAll(selector)];
+                    items.forEach(card => {
+                        const sectorName = card.querySelector('h3').textContent.toLowerCase();
+                        card.style.display = sectorName.includes(searchTerm) ? 'block' : 'none';
+                    });
+                    break;
+                case 'industries':
+                    selector = '#industries-container .chart-card';
+                    items = [...document.querySelectorAll(selector)];
+                    items.forEach(card => {
+                        const industryName = card.querySelector('h3').textContent.toLowerCase();
+                        card.style.display = industryName.includes(searchTerm) ? 'block' : 'none';
+                    });
+                    break;
+                case 'basic-industries':
+                    selector = '#basic-industries-container .chart-card';
+                    items = [...document.querySelectorAll(selector)];
+                    items.forEach(card => {
+                        const basicIndustryName = card.querySelector('h3').textContent.toLowerCase();
+                        card.style.display = basicIndustryName.includes(searchTerm) ? 'block' : 'none';
+                    });
+                    break;
+                case 'rsi-filter-55-65':
+                    selector = '#rsi-container-55-65 .chart-card';
+                    items = [...document.querySelectorAll(selector)];
+                    items.forEach(card => {
+                        const sectorName = card.querySelector('h3').textContent.toLowerCase();
+                        const companiesText = card.querySelector('.companies').textContent.toLowerCase();
+                        card.style.display = sectorName.includes(searchTerm) || companiesText.includes(searchTerm) ? 'block' : 'none';
+                    });
+                    break;
+            }
+        });
+
+        document.getElementById('sort-select').addEventListener('change', (e) => {
+            const sortBy = e.target.value;
+
+            const activeTabId = document.querySelector('.tab-content.active').id;
+            let selector;
+            let container;
+
+            switch (activeTabId) {
+                case 'sectors':
+                    selector = '#sectors-container .chart-card';
+                    container = document.getElementById('sectors-container');
+                    break;
+                    case 'industries':
+                    selector = '#industries-container .chart-card';
+                    container = document.getElementById('industries-container');
+                    break;
+                case 'basic-industries':
+                    selector = '#basic-industries-container .chart-card';
+                    container = document.getElementById('basic-industries-container');
+                    break;
+                case 'rsi-filter-below-40':
+                    selector = '#rsi-container-below-40 .chart-card';
+                    container = document.getElementById('rsi-container-below-40');
+                    break;
+                case 'rsi-filter-55-65':
+                    selector = '#rsi-container-55-65 .chart-card';
+                    container = document.getElementById('rsi-container-55-65');
+                    break;
+                case "rsi-filter-above-65":
+                    selector = '#rsi-filter-above-65 .chart-card';
+                    container = document.getElementById('rsi-filter-above-65');
+                    break;
+            }
+
+            const items = [...document.querySelectorAll(selector)];
+            items.sort((a, b) => {
+                const nameA = a.querySelector('h3').textContent;
+                const nameB = b.querySelector('h3').textContent;
+
+                if (sortBy === 'name-asc') {
+                    return nameA.localeCompare(nameB);
+                } else {
+                    return nameB.localeCompare(nameA);
+                }
+            });
+
+            container.innerHTML = '';
+            items.forEach(item => {
+                container.appendChild(item);
+            });
+        });
+
+        document.getElementById('home-link').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            document.getElementById('chart-view').style.display = 'none';
+            document.getElementById('breadcrumb-separator').style.display = 'none';
+            document.getElementById('current-location').textContent = '';
+
+            const activeTabId = document.querySelector('.tab.active').getAttribute('data-tab');
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(activeTabId).classList.add('active');
+        });
+
+        document.getElementById('back-button').addEventListener('click', (e) => {
+            e.preventDefault();
+
+            document.getElementById('chart-view').style.display = 'none';
+            document.getElementById('breadcrumb-separator').style.display = 'none';
+            document.getElementById('current-location').textContent = '';
+
+            const activeTabId = document.querySelector('.tab.active').getAttribute('data-tab');
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(activeTabId).classList.add('active');
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSymbolData();
+        });
+    </script>
+</body>
+
+</html>
