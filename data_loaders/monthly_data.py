@@ -1,51 +1,84 @@
 import pandas as pd
-import os
 import sys
+import os
 
 sys.path.append(os.path.abspath(os.path.join(os.getcwd(), '..')))
-# from yfinance import download
 import yfinance as yf
+from database import DatabaseWriter
 
 
+def load(symbol_data_path, start_date, end_date, interval, db_path='data/vamana.db'):
+    """
+    Load monthly price data from Yahoo Finance and store directly in SQLite database.
 
-def load(symbol_data_path, start_date, end_date, interval):
+    Args:
+        symbol_data_path: Path to CSV with symbol data
+        start_date: Start date for data fetch (e.g., '2010-01-01')
+        end_date: End date for data fetch
+        interval: Data interval (e.g., '1mo' for monthly)
+        db_path: Path to SQLite database
+    """
     df = pd.read_csv(symbol_data_path)
+    total_symbols = len(df)
+    successful = 0
+    failed = 0
 
-    for index, row in df.iterrows():
-        data = yf.download(
-            tickers=row['symbol'] + '.NS', 
-            interval=interval, 
-            start=start_date, 
-            end= end_date
-        )
+    with DatabaseWriter(db_path) as db:
+        # Pre-load symbol cache
+        db.get_all_symbols()
 
-        if isinstance(data.columns, pd.MultiIndex):
-            data.columns = data.columns.get_level_values(0)
+        for index, row in df.iterrows():
+            symbol = row['symbol']
+            company_name = row['name of company']
 
-        data['Symbol'] = row['symbol']
-        data.reset_index(inplace=True)
+            print(f"[{index + 1}/{total_symbols}] Fetching data for {symbol}...")
 
-        data = data[['Date', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume']]
-        data.rename(columns={
-            'Date': 'date', 
-            'Symbol': 'symbol', 
-            'Open': 'open', 
-            'High': 'high', 
-            'Low': 'low', 
-            'Close': 'close', 
-            'Volume': 'volume'
-        }, inplace=True)
+            try:
+                data = yf.download(
+                    tickers=symbol + '.NS',
+                    interval=interval,
+                    start=start_date,
+                    end=end_date,
+                    progress=False
+                )
 
-        folder_name = row['name of company'].replace(' ', '_').lower()
-        folder_path = f"data/monthly_data/{folder_name}"
+                if data.empty:
+                    print(f"  No data returned for {symbol}, skipping")
+                    failed += 1
+                    continue
 
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
-            print(f"Created folder: {folder_path}")
+                if isinstance(data.columns, pd.MultiIndex):
+                    data.columns = data.columns.get_level_values(0)
 
-        filename = f"{folder_path}/{row['name of company'].replace(' ', '_')}.csv"
+                data['symbol'] = symbol
+                data.reset_index(inplace=True)
 
-        data.to_csv(filename, index=False)
-        print(f"Saved data for {row['symbol']} to {filename}")
+                data = data[['Date', 'symbol', 'Open', 'High', 'Low', 'Close', 'Volume']]
+                data.rename(columns={
+                    'Date': 'date',
+                    'Open': 'open',
+                    'High': 'high',
+                    'Low': 'low',
+                    'Close': 'close',
+                    'Volume': 'volume'
+                }, inplace=True)
 
-    print(f"Total files in monthly_data folder: {len(os.listdir('data/monthly_data'))}")
+                # Insert into database
+                records = db.insert_monthly_prices(symbol, data)
+
+                if records > 0:
+                    print(f"  Saved {records} records for {symbol}")
+                    successful += 1
+                else:
+                    print(f"  Symbol {symbol} not found in database")
+                    failed += 1
+
+            except Exception as e:
+                print(f"  Error fetching {symbol}: {e}")
+                failed += 1
+
+        # Update metadata
+        from datetime import datetime
+        db.update_metadata('monthly_data_last_updated', datetime.now().isoformat())
+
+    print(f"\nSummary: {successful} successful, {failed} failed out of {total_symbols} symbols")

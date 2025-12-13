@@ -20,5 +20,7 @@ frozendict
 multitasking
 platformdirs
 matplotlib
-ta_lib-0.6.0-cp313-cp313-win_amd64.whl
+# TA-Lib - install manually: download wheel from https://github.com/cgohlke/talib-build/releases
+ta_lib-0.6.8-cp312-cp312-win_amd64.whl
 mplfinance
+yfinance

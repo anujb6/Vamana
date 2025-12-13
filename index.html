@@ -6,16 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Charts Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Lightweight Charts from TradingView -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         :root {
-            --primary-color: #2d3748;
-            --secondary-color: #4a5568;
-            --accent-color: #38b2acfb;
-            --text-color: #e2e8f0;
-            --background-color: #1a202c;
-            --card-background: #2d3748;
-            --border-color: #4a5568;
-            --hover-color: #4fd1c5;
+            /* TradingView-inspired color scheme */
+            --bg-primary: #131722;
+            --bg-secondary: #1e222d;
+            --bg-tertiary: #2a2e39;
+            --accent-blue: #2962ff;
+            --accent-teal: #00bcd4;
+            --text-primary: #d1d4dc;
+            --text-secondary: #787b86;
+            --border-color: #363a45;
+            --green: #26a69a;
+            --red: #ef5350;
+
+            /* Legacy mappings for compatibility */
+            --primary-color: #1e222d;
+            --secondary-color: #2a2e39;
+            --accent-color: #2962ff;
+            --text-color: #d1d4dc;
+            --background-color: #131722;
+            --card-background: #1e222d;
+            --hover-color: #00bcd4;
         }
 
         * {
@@ -106,45 +120,66 @@
         }
 
         .chart-card {
-            background-color: var(--card-background);
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            background: linear-gradient(145deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            border: 1px solid var(--border-color);
         }
 
         .chart-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent-blue);
         }
 
         .chart-card h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: var(--accent-color);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
         }
 
         .chart-card p {
-            font-size: 14px;
-            color: #a0aec0;
-            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
         }
 
         .chart-card .companies {
             font-size: 12px;
-            color: #cbd5e0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chart-card .companies i {
+            color: var(--accent-teal);
         }
 
         .chart-card .icon {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 24px;
-            color: var(--accent-color);
-            opacity: 0.8;
+            top: 16px;
+            right: 16px;
+            font-size: 20px;
+            color: var(--accent-blue);
+            opacity: 0.6;
+        }
+
+        .chart-card .rsi-indicator {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'SF Mono', 'Consolas', monospace;
         }
 
         .search-filter {
@@ -180,19 +215,27 @@
         }
 
         .tab {
-            padding: 10px 20px;
+            padding: 12px 24px;
             background-color: transparent;
             border: none;
-            color: var(--text-color);
+            color: var(--text-secondary);
             cursor: pointer;
             font-weight: 500;
-            transition: background-color 0.3s;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
         }
 
         .tab.active {
-            background-color: #131314;
-            color: #1a202c;
-            border-radius: 5px 5px 0 0;
+            background-color: transparent;
+            color: var(--accent-blue);
+            border-bottom: 2px solid var(--accent-blue);
+            border-radius: 0;
         }
 
         .tab-content {
@@ -210,14 +253,145 @@
             border: none;
             border-radius: 8px;
             background-color: var(--card-background);
+            display: none; /* Hide iframe, use Lightweight Charts instead */
+        }
+
+        .chart-wrapper {
+            width: 100%;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chart-header h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .chart-header .subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        #candlestick-chart {
+            width: 100%;
+            height: 450px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #rsi-chart {
+            width: 100%;
+            height: 180px;
+            margin-top: 16px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 24px;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .chart-legend .symbol-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 15px;
+            min-width: 120px;
+        }
+
+        .chart-legend .price-info {
+            display: flex;
+            gap: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .legend-item .label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .legend-item .value {
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+            color: var(--text-primary);
+        }
+
+        .chart-legend .price-up {
+            color: var(--green) !important;
+        }
+
+        .chart-legend .price-down {
+            color: var(--red) !important;
+        }
+
+        .rsi-legend {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 8px 16px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .rsi-legend .label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .rsi-legend .value {
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'SF Mono', 'Consolas', monospace;
         }
 
         .companies-table {
-            margin-top: 20px;
-            background-color: var(--card-background);
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        .companies-table h3 {
+            padding: 16px 20px;
+            margin: 0;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .companies-table table {
@@ -227,35 +401,154 @@
 
         .companies-table th,
         .companies-table td {
-            padding: 12px;
+            padding: 14px 20px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
 
         .companies-table th {
-            background-color: var(--primary-color);
-            color: var(--accent-color);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .companies-table td {
+            color: var(--text-primary);
+            font-size: 14px;
         }
 
         .companies-table tr:hover {
-            background-color: var(--secondary-color);
+            background: var(--bg-tertiary);
+        }
+
+        .companies-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* RSI Badge Styles */
+        .rsi-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+        }
+
+        .rsi-oversold {
+            background: rgba(38, 166, 154, 0.15);
+            color: var(--green);
+        }
+
+        .rsi-neutral {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffc107;
+        }
+
+        .rsi-overbought {
+            background: rgba(239, 83, 80, 0.15);
+            color: var(--red);
+        }
+
+        /* Price styling in tables */
+        .price-value {
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-weight: 500;
+        }
+
+        /* Summary Stats Component */
+        .summary-stats {
+            margin-top: 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-stats h3 {
+            padding: 16px 20px;
+            margin: 0;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+        }
+
+        .stat-item {
+            background: var(--bg-secondary);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'SF Mono', 'Consolas', monospace;
+        }
+
+        .stat-value.positive {
+            color: var(--green);
+        }
+
+        .stat-value.negative {
+            color: var(--red);
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .back-button {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: var(--accent-color);
-            color: #1a202c;
-            border: none;
-            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             font-weight: 500;
+            font-size: 14px;
             cursor: pointer;
             text-decoration: none;
             margin-bottom: 20px;
+            transition: all 0.2s ease;
         }
 
         .back-button:hover {
-            background-color: var(--hover-color);
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
+
+        .back-button i {
+            font-size: 12px;
         }
 
         .stats {
@@ -369,7 +662,41 @@
                 <a href="#" class="back-button" id="back-button">
                     <i class="fas fa-arrow-left"></i> Back
                 </a>
-                <h2 id="chart-title"></h2>
+                <div class="chart-wrapper">
+                    <div class="chart-header">
+                        <div>
+                            <h2 id="chart-title"></h2>
+                            <div class="subtitle" id="chart-subtitle">Monthly Price Data</div>
+                        </div>
+                    </div>
+                    <div class="chart-legend">
+                        <span class="symbol-name" id="chart-symbol"></span>
+                        <div class="price-info">
+                            <div class="legend-item">
+                                <span class="label">Open</span>
+                                <span class="value" id="legend-open">-</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="label">High</span>
+                                <span class="value" id="legend-high">-</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="label">Low</span>
+                                <span class="value" id="legend-low">-</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="label">Close</span>
+                                <span class="value" id="legend-close">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="candlestick-chart"></div>
+                    <div class="rsi-legend">
+                        <span class="label">RSI (14)</span>
+                        <span class="value" id="legend-rsi">-</span>
+                    </div>
+                    <div id="rsi-chart"></div>
+                </div>
                 <iframe id="chart-frame" class="chart-frame"></iframe>
                 <div id="companies-table" class="companies-table"></div>
             </div>
@@ -471,13 +798,331 @@
         </div>
     </div>
 
+    <!-- Load sql.js for SQLite database access -->
+    <script src="https://sql.js.org/dist/sql-wasm.js"></script>
+    <script type="module">
+        import { VamanaDB } from './js/db-client.js';
+
+        // Make VamanaDB available globally
+        window.VamanaDB = VamanaDB;
+        window.db = new VamanaDB();
+        window.dbReady = false;
+
+        // Initialize database and load data
+        window.initApp = async function() {
+            try {
+                await window.db.init('data/vamana.db');
+                window.dbReady = true;
+                console.log('Database ready');
+                await loadSymbolData();
+            } catch (error) {
+                console.error('Failed to initialize database:', error);
+                // Fallback to CSV loading
+                await loadSymbolDataFromCSV();
+            }
+        };
+
+        // Start the app
+        window.initApp();
+    </script>
+
     <script>
         let symbolData = [];
         let uniqueSectors = [];
         let uniqueIndustries = [];
         let uniqueBasicIndustries = [];
 
+        // RSI data cache
+        let sectorRsiData = {};
+        let industryRsiData = {};
+        let basicIndustryRsiData = {};
+
+        // Lightweight Charts instances
+        let candlestickChart = null;
+        let rsiChart = null;
+        let candlestickSeries = null;
+        let rsiSeries = null;
+
+        // Chart rendering functions
+        function createCharts() {
+            // Clear existing charts
+            const candlestickContainer = document.getElementById('candlestick-chart');
+            const rsiContainer = document.getElementById('rsi-chart');
+            candlestickContainer.innerHTML = '';
+            rsiContainer.innerHTML = '';
+
+            // TradingView-style dark theme
+            const chartOptions = {
+                layout: {
+                    background: { type: 'solid', color: '#131722' },
+                    textColor: '#d1d4dc',
+                },
+                grid: {
+                    vertLines: { color: '#363a45', style: 1 },
+                    horzLines: { color: '#363a45', style: 1 },
+                },
+                crosshair: {
+                    mode: LightweightCharts.CrosshairMode.Normal,
+                    vertLine: {
+                        color: '#758696',
+                        width: 1,
+                        style: LightweightCharts.LineStyle.Dashed,
+                        labelBackgroundColor: '#2962ff',
+                    },
+                    horzLine: {
+                        color: '#758696',
+                        width: 1,
+                        style: LightweightCharts.LineStyle.Dashed,
+                        labelBackgroundColor: '#2962ff',
+                    },
+                },
+                timeScale: {
+                    borderColor: '#363a45',
+                    timeVisible: true,
+                    secondsVisible: false,
+                    rightOffset: 5,
+                    barSpacing: 8,
+                    minBarSpacing: 4,
+                },
+                rightPriceScale: {
+                    borderColor: '#363a45',
+                    scaleMargins: {
+                        top: 0.1,
+                        bottom: 0.1,
+                    },
+                },
+                handleScale: {
+                    axisPressedMouseMove: true,
+                },
+                handleScroll: {
+                    vertTouchDrag: false,
+                },
+            };
+
+            // Create candlestick chart
+            candlestickChart = LightweightCharts.createChart(candlestickContainer, {
+                ...chartOptions,
+                height: 450,
+            });
+
+            candlestickSeries = candlestickChart.addCandlestickSeries({
+                upColor: '#26a69a',
+                downColor: '#ef5350',
+                borderDownColor: '#26a69a',
+                borderUpColor: '#26a69a',
+                wickDownColor: '#ef5350',
+                wickUpColor: '#26a69a',
+                borderVisible: false,
+            });
+
+            // Create RSI chart
+            rsiChart = LightweightCharts.createChart(rsiContainer, {
+                ...chartOptions,
+                height: 180,
+                rightPriceScale: {
+                    borderColor: '#363a45',
+                    scaleMargins: {
+                        top: 0.1,
+                        bottom: 0.1,
+                    },
+                },
+            });
+
+            rsiSeries = rsiChart.addLineSeries({
+                color: '#2962ff',
+                lineWidth: 2,
+                priceLineVisible: false,
+            });
+
+            // Add RSI reference lines (40 and 65)
+            const rsi30Line = rsiChart.addLineSeries({
+                color: 'rgba(38, 166, 154, 0.5)',
+                lineWidth: 1,
+                lineStyle: LightweightCharts.LineStyle.Dashed,
+                priceLineVisible: false,
+                lastValueVisible: false,
+                crosshairMarkerVisible: false,
+            });
+
+            const rsi70Line = rsiChart.addLineSeries({
+                color: 'rgba(239, 83, 80, 0.5)',
+                lineWidth: 1,
+                lineStyle: LightweightCharts.LineStyle.Dashed,
+                priceLineVisible: false,
+                lastValueVisible: false,
+                crosshairMarkerVisible: false,
+            });
+
+            // Store reference lines for later use
+            rsiChart.rsi30Line = rsi30Line;
+            rsiChart.rsi70Line = rsi70Line;
+
+            // Sync crosshair between charts
+            candlestickChart.subscribeCrosshairMove((param) => {
+                if (param.time) {
+                    rsiChart.setCrosshairPosition(0, param.time, rsiSeries);
+                    updateLegend(param);
+                }
+            });
+
+            rsiChart.subscribeCrosshairMove((param) => {
+                if (param.time) {
+                    candlestickChart.setCrosshairPosition(0, param.time, candlestickSeries);
+                    updateRsiLegend(param);
+                }
+            });
+
+            // Sync time scale between charts
+            candlestickChart.timeScale().subscribeVisibleTimeRangeChange(() => {
+                const range = candlestickChart.timeScale().getVisibleRange();
+                if (range) {
+                    try {
+                        rsiChart.timeScale().setVisibleRange(range);
+                    } catch (e) {
+                        // Ignore errors during initial chart setup
+                    }
+                }
+            });
+
+            rsiChart.timeScale().subscribeVisibleTimeRangeChange(() => {
+                const range = rsiChart.timeScale().getVisibleRange();
+                if (range) {
+                    try {
+                        candlestickChart.timeScale().setVisibleRange(range);
+                    } catch (e) {
+                        // Ignore errors during initial chart setup
+                    }
+                }
+            });
+
+            return { candlestickChart, rsiChart, candlestickSeries, rsiSeries };
+        }
+
+        function updateLegend(param) {
+            if (!param.seriesData || !param.seriesData.size) return;
+
+            const data = param.seriesData.get(candlestickSeries);
+            if (data) {
+                document.getElementById('legend-open').textContent = data.open?.toFixed(2) || '-';
+                document.getElementById('legend-high').textContent = data.high?.toFixed(2) || '-';
+                document.getElementById('legend-low').textContent = data.low?.toFixed(2) || '-';
+                document.getElementById('legend-close').textContent = data.close?.toFixed(2) || '-';
+
+                const closeEl = document.getElementById('legend-close');
+                if (data.close >= data.open) {
+                    closeEl.className = 'price-up';
+                } else {
+                    closeEl.className = 'price-down';
+                }
+            }
+        }
+
+        function updateRsiLegend(param) {
+            if (!param.seriesData || !param.seriesData.size) return;
+
+            const data = param.seriesData.get(rsiSeries);
+            if (data && data.value !== undefined) {
+                const rsiEl = document.getElementById('legend-rsi');
+                rsiEl.textContent = data.value.toFixed(2);
+
+                if (data.value >= 70) {
+                    rsiEl.style.color = '#ef5350';
+                } else if (data.value <= 30) {
+                    rsiEl.style.color = '#26a69a';
+                } else {
+                    rsiEl.style.color = '#ff9800';
+                }
+            }
+        }
+
+        function setChartData(priceData) {
+            if (!candlestickSeries || !rsiSeries) {
+                createCharts();
+            }
+
+            // Format data for Lightweight Charts
+            const candlestickData = priceData.map(d => ({
+                time: d.date.split(' ')[0], // Get date part only (YYYY-MM-DD)
+                open: parseFloat(d.open),
+                high: parseFloat(d.high),
+                low: parseFloat(d.low),
+                close: parseFloat(d.close),
+            })).filter(d => !isNaN(d.open) && !isNaN(d.close));
+
+            const rsiData = priceData
+                .filter(d => d.rsi !== null && d.rsi !== undefined && !isNaN(parseFloat(d.rsi)))
+                .map(d => ({
+                    time: d.date.split(' ')[0],
+                    value: parseFloat(d.rsi),
+                }));
+
+            // Set data
+            candlestickSeries.setData(candlestickData);
+            rsiSeries.setData(rsiData);
+
+            // Set RSI reference lines (30 and 70)
+            if (rsiData.length > 0) {
+                const times = rsiData.map(d => d.time);
+                const rsi30Data = times.map(time => ({ time, value: 40 }));
+                const rsi70Data = times.map(time => ({ time, value: 65 }));
+
+                rsiChart.rsi30Line.setData(rsi30Data);
+                rsiChart.rsi70Line.setData(rsi70Data);
+            }
+
+            // Fit content
+            candlestickChart.timeScale().fitContent();
+            rsiChart.timeScale().fitContent();
+
+            // Update legend with latest data
+            if (candlestickData.length > 0) {
+                const latest = candlestickData[candlestickData.length - 1];
+                document.getElementById('legend-open').textContent = latest.open.toFixed(2);
+                document.getElementById('legend-high').textContent = latest.high.toFixed(2);
+                document.getElementById('legend-low').textContent = latest.low.toFixed(2);
+                document.getElementById('legend-close').textContent = latest.close.toFixed(2);
+            }
+
+            if (rsiData.length > 0) {
+                const latestRsi = rsiData[rsiData.length - 1];
+                document.getElementById('legend-rsi').textContent = latestRsi.value.toFixed(2);
+            }
+        }
+
         async function loadSymbolData() {
+            try {
+                // Load symbols from SQLite database
+                const symbols = await window.db.getSymbols();
+                symbolData = symbols.map(s => ({
+                    symbol: s.symbol,
+                    "name of company": s.name_of_company,
+                    "macro sector": s.macro_sector,
+                    sector: s.sector,
+                    industry: s.industry,
+                    "basic industry": s.basic_industry,
+                    "market cap": s.market_cap
+                }));
+
+                // Load RSI data for sectors, industries, basic industries
+                const [sectorsRsi, industriesRsi, basicIndustriesRsi] = await Promise.all([
+                    window.db.getSectorsWithLatestRsi(),
+                    window.db.getIndustriesWithLatestRsi(),
+                    window.db.getBasicIndustriesWithLatestRsi()
+                ]);
+
+                // Cache RSI data
+                sectorsRsi.forEach(s => sectorRsiData[s.sector] = s.rsi);
+                industriesRsi.forEach(i => industryRsiData[i.industry] = i.rsi);
+                basicIndustriesRsi.forEach(bi => basicIndustryRsiData[bi.basic_industry] = bi.rsi);
+
+                updateDashboard();
+            } catch (error) {
+                console.error('Error loading data from database:', error);
+                await loadSymbolDataFromCSV();
+            }
+        }
+
+        async function loadSymbolDataFromCSV() {
             try {
                 const response = await fetch('data/symbols/symbol_data.csv');
                 if (!response.ok) {
@@ -489,7 +1134,7 @@
 
                 updateDashboard();
             } catch (error) {
-                console.error('Error loading data:', error);
+                console.error('Error loading CSV data:', error);
                 loadSampleData();
                 updateDashboard();
             }
@@ -622,57 +1267,68 @@
             document.getElementById('basic-industries-companies').textContent = symbolData.length;
         }
 
-        async function updateRsiFilterTab_below_40() {
+        function updateRsiFilterTab_below_40() {
             const rsiContainer = document.getElementById('rsi-container-below-40');
             rsiContainer.innerHTML = '';
-            
-            const allCategories = [
-                { type: 'Sectors', list: uniqueSectors },
-                { type: 'Industries', list: uniqueIndustries },
-                { type: 'Basic Industries', list: uniqueBasicIndustries }
-            ];
-            
-            let rsiFiltered = [];
-            
-            await Promise.all(
-                allCategories.map(async ({ type, list }) => {
-                    await Promise.all(
-                        list.map(async category => {
-                            let category_1 = category.replaceAll(' ', '_').replace('/', '-').toLowerCase();
-                            const response = await fetch(`data/${type.toLowerCase().replaceAll(' ', '_')}/${category_1}/${category_1}_price.csv`);
-                            const csvText = await response.text();
-                            const data = parseCSV(csvText);
-                            if (data[data.length - 1].rsi < 40) {
-                                let totalCompanies = 0;
-                                if (type === 'Sectors') {
-                                    const companies = symbolData.filter(item => item.sector === category);
-                                    totalCompanies = companies.length;
-                                } else if (type === 'Industries') {
-                                    const companies = symbolData.filter(item => item.industry === category);
-                                    totalCompanies = companies.length;
-                                } else if (type === 'Basic Industries') {
-                                    const companies = symbolData.filter(item => item["basic industry"] === category);
-                                    totalCompanies = companies.length;
-                                }
 
-                                rsiFiltered.push({
-                                    type: type,
-                                    category: category,
-                                    rsi: data[data.length - 1].rsi,
-                                    totalCompanies: totalCompanies,
-                                });
-                            }
-                        })
-                    );
-                })
-            )
+            let rsiFiltered = [];
+
+            // Check if RSI data is loaded
+            if (Object.keys(sectorRsiData).length === 0) {
+                document.getElementById('rsi-companies-count-below-40').textContent = '0';
+                rsiContainer.innerHTML = '<p style="color: #a0aec0; padding: 20px;">Loading RSI data...</p>';
+                return;
+            }
+
+            // Use cached data from SQLite database
+            uniqueSectors.forEach(sector => {
+                if (!sector) return;
+                const rsi = sectorRsiData[sector];
+                if (rsi && rsi < 40) {
+                    const companies = symbolData.filter(item => item.sector === sector);
+                    rsiFiltered.push({
+                        type: 'Sectors',
+                        category: sector,
+                        rsi: rsi,
+                        totalCompanies: companies.length
+                    });
+                }
+            });
+
+            uniqueIndustries.forEach(industry => {
+                if (!industry) return;
+                const rsi = industryRsiData[industry];
+                if (rsi && rsi < 40) {
+                    const companies = symbolData.filter(item => item.industry === industry);
+                    rsiFiltered.push({
+                        type: 'Industries',
+                        category: industry,
+                        rsi: rsi,
+                        totalCompanies: companies.length
+                    });
+                }
+            });
+
+            uniqueBasicIndustries.forEach(basicIndustry => {
+                if (!basicIndustry) return;
+                const rsi = basicIndustryRsiData[basicIndustry];
+                if (rsi && rsi < 40) {
+                    const companies = symbolData.filter(item => item["basic industry"] === basicIndustry);
+                    rsiFiltered.push({
+                        type: 'Basic Industries',
+                        category: basicIndustry,
+                        rsi: rsi,
+                        totalCompanies: companies.length
+                    });
+                }
+            });
 
             // Update count
             document.getElementById('rsi-companies-count-below-40').textContent = rsiFiltered.length;
-            
+
             rsiFiltered.forEach(item => {
                 let companiesInCategory = [];
-                
+
                 if (item.type === 'Sectors') {
                     companiesInCategory = symbolData.filter(i => i.sector == item.category);
                 } else if (item.type === 'Industries') {
@@ -680,8 +1336,6 @@
                 } else if (item.type === 'Basic Industries') {
                     companiesInCategory = symbolData.filter(i => i["basic industry"] == item.category);
                 }
-
-                const totalCompanies = companiesInCategory.length;
 
                 const cardElement = document.createElement('div');
                 cardElement.className = 'chart-card';
@@ -700,57 +1354,68 @@
             });
         }
 
-        async function updateRsiFilterTab_55_65() {
+        function updateRsiFilterTab_55_65() {
             const rsiContainer = document.getElementById('rsi-container-55-65');
             rsiContainer.innerHTML = '';
-            
-            const allCategories = [
-                { type: 'Sectors', list: uniqueSectors },
-                { type: 'Industries', list: uniqueIndustries },
-                { type: 'Basic Industries', list: uniqueBasicIndustries }
-            ];
-            
-            let rsiFiltered = [];
-            
-            await Promise.all(
-                allCategories.map(async ({ type, list }) => {
-                    await Promise.all(
-                        list.map(async category => {
-                            let category_1 = category.replaceAll(' ', '_').replace('/', '-').toLowerCase();
-                            const response = await fetch(`data/${type.toLowerCase().replaceAll(' ', '_')}/${category_1}/${category_1}_price.csv`);
-                            const csvText = await response.text();
-                            const data = parseCSV(csvText);
-                            if (data[data.length - 1].rsi >= 55 && data[data.length - 1].rsi <= 65) {
-                                let totalCompanies = 0;
-                                if (type === 'Sectors') {
-                                    const companies = symbolData.filter(item => item.sector === category);
-                                    totalCompanies = companies.length;
-                                } else if (type === 'Industries') {
-                                    const companies = symbolData.filter(item => item.industry === category);
-                                    totalCompanies = companies.length;
-                                } else if (type === 'Basic Industries') {
-                                    const companies = symbolData.filter(item => item["basic industry"] === category);
-                                    totalCompanies = companies.length;
-                                }
 
-                                rsiFiltered.push({
-                                    type: type,
-                                    category: category,
-                                    rsi: data[data.length - 1].rsi,
-                                    totalCompanies: totalCompanies,
-                                });
-                            }
-                        })
-                    );
-                })
-            )
+            let rsiFiltered = [];
+
+            // Check if RSI data is loaded
+            if (Object.keys(sectorRsiData).length === 0) {
+                document.getElementById('rsi-companies-count-55-65').textContent = '0';
+                rsiContainer.innerHTML = '<p style="color: #a0aec0; padding: 20px;">Loading RSI data...</p>';
+                return;
+            }
+
+            // Use cached data from SQLite database
+            uniqueSectors.forEach(sector => {
+                if (!sector) return;
+                const rsi = sectorRsiData[sector];
+                if (rsi && rsi >= 55 && rsi <= 65) {
+                    const companies = symbolData.filter(item => item.sector === sector);
+                    rsiFiltered.push({
+                        type: 'Sectors',
+                        category: sector,
+                        rsi: rsi,
+                        totalCompanies: companies.length
+                    });
+                }
+            });
+
+            uniqueIndustries.forEach(industry => {
+                if (!industry) return;
+                const rsi = industryRsiData[industry];
+                if (rsi && rsi >= 55 && rsi <= 65) {
+                    const companies = symbolData.filter(item => item.industry === industry);
+                    rsiFiltered.push({
+                        type: 'Industries',
+                        category: industry,
+                        rsi: rsi,
+                        totalCompanies: companies.length
+                    });
+                }
+            });
+
+            uniqueBasicIndustries.forEach(basicIndustry => {
+                if (!basicIndustry) return;
+                const rsi = basicIndustryRsiData[basicIndustry];
+                if (rsi && rsi >= 55 && rsi <= 65) {
+                    const companies = symbolData.filter(item => item["basic industry"] === basicIndustry);
+                    rsiFiltered.push({
+                        type: 'Basic Industries',
+                        category: basicIndustry,
+                        rsi: rsi,
+                        totalCompanies: companies.length
+                    });
+                }
+            });
 
             // Update count
             document.getElementById('rsi-companies-count-55-65').textContent = rsiFiltered.length;
-            
+
             rsiFiltered.forEach(item => {
                 let companiesInCategory = [];
-                
+
                 if (item.type === 'Sectors') {
                     companiesInCategory = symbolData.filter(i => i.sector == item.category);
                 } else if (item.type === 'Industries') {
@@ -758,8 +1423,6 @@
                 } else if (item.type === 'Basic Industries') {
                     companiesInCategory = symbolData.filter(i => i["basic industry"] == item.category);
                 }
-
-                const totalCompanies = companiesInCategory.length;
 
                 const cardElement = document.createElement('div');
                 cardElement.className = 'chart-card';
@@ -778,57 +1441,68 @@
             });
         }
 
-        async function updateRsiFilterTab_above_65() {
+        function updateRsiFilterTab_above_65() {
             const rsiContainer = document.getElementById('rsi-container-above-65');
             rsiContainer.innerHTML = '';
-            
-            const allCategories = [
-                { type: 'Sectors', list: uniqueSectors },
-                { type: 'Industries', list: uniqueIndustries },
-                { type: 'Basic Industries', list: uniqueBasicIndustries }
-            ];
-            
-            let rsiFiltered = [];
-            
-            await Promise.all(
-                allCategories.map(async ({ type, list }) => {
-                    await Promise.all(
-                        list.map(async category => {
-                            let category_1 = category.replaceAll(' ', '_').replace('/', '-').toLowerCase();
-                            const response = await fetch(`data/${type.toLowerCase().replaceAll(' ', '_')}/${category_1}/${category_1}_price.csv`);
-                            const csvText = await response.text();
-                            const data = parseCSV(csvText);
-                            if (data[data.length - 1].rsi >= 65) {
-                                let totalCompanies = 0;
-                                if (type === 'Sectors') {
-                                    const companies = symbolData.filter(item => item.sector === category);
-                                    totalCompanies = companies.length;
-                                } else if (type === 'Industries') {
-                                    const companies = symbolData.filter(item => item.industry === category);
-                                    totalCompanies = companies.length;
-                                } else if (type === 'Basic Industries') {
-                                    const companies = symbolData.filter(item => item["basic industry"] === category);
-                                    totalCompanies = companies.length;
-                                }
 
-                                rsiFiltered.push({
-                                    type: type,
-                                    category: category,
-                                    rsi: data[data.length - 1].rsi,
-                                    totalCompanies: totalCompanies,
-                                });
-                            }
-                        })
-                    );
-                })
-            )
+            let rsiFiltered = [];
+
+            // Check if RSI data is loaded
+            if (Object.keys(sectorRsiData).length === 0) {
+                document.getElementById('rsi-companies-count-above-65').textContent = '0';
+                rsiContainer.innerHTML = '<p style="color: #a0aec0; padding: 20px;">Loading RSI data...</p>';
+                return;
+            }
+
+            // Use cached data from SQLite database
+            uniqueSectors.forEach(sector => {
+                if (!sector) return;
+                const rsi = sectorRsiData[sector];
+                if (rsi && rsi >= 65) {
+                    const companies = symbolData.filter(item => item.sector === sector);
+                    rsiFiltered.push({
+                        type: 'Sectors',
+                        category: sector,
+                        rsi: rsi,
+                        totalCompanies: companies.length
+                    });
+                }
+            });
+
+            uniqueIndustries.forEach(industry => {
+                if (!industry) return;
+                const rsi = industryRsiData[industry];
+                if (rsi && rsi >= 65) {
+                    const companies = symbolData.filter(item => item.industry === industry);
+                    rsiFiltered.push({
+                        type: 'Industries',
+                        category: industry,
+                        rsi: rsi,
+                        totalCompanies: companies.length
+                    });
+                }
+            });
+
+            uniqueBasicIndustries.forEach(basicIndustry => {
+                if (!basicIndustry) return;
+                const rsi = basicIndustryRsiData[basicIndustry];
+                if (rsi && rsi >= 65) {
+                    const companies = symbolData.filter(item => item["basic industry"] === basicIndustry);
+                    rsiFiltered.push({
+                        type: 'Basic Industries',
+                        category: basicIndustry,
+                        rsi: rsi,
+                        totalCompanies: companies.length
+                    });
+                }
+            });
 
             // Update count
             document.getElementById('rsi-companies-count-above-65').textContent = rsiFiltered.length;
-            
+
             rsiFiltered.forEach(item => {
                 let companiesInCategory = [];
-                
+
                 if (item.type === 'Sectors') {
                     companiesInCategory = symbolData.filter(i => i.sector == item.category);
                 } else if (item.type === 'Industries') {
@@ -836,8 +1510,6 @@
                 } else if (item.type === 'Basic Industries') {
                     companiesInCategory = symbolData.filter(i => i["basic industry"] == item.category);
                 }
-
-                const totalCompanies = companiesInCategory.length;
 
                 const cardElement = document.createElement('div');
                 cardElement.className = 'chart-card';
@@ -856,7 +1528,7 @@
             });
         }
 
-        function showRsiFilteredChart(hierarchy_pos, companies, type) {
+        async function showRsiFilteredChart(hierarchy_pos, companies, type) {
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
@@ -867,62 +1539,113 @@
             document.getElementById('current-location').textContent = `RSI: ${hierarchy_pos}`;
 
             document.getElementById('chart-title').textContent = `${hierarchy_pos} Companies`;
+            document.getElementById('chart-symbol').textContent = hierarchy_pos;
 
-            // For RSI filtered view, we might not have a specific chart to show
-            // Instead, display the first company's chart if available or a sector chart
-            const formattedpos = hierarchy_pos.replace(/\s+/g, '_').replace(/\//g, '-').toLowerCase();
-            let chartPath = ""
-            if (type === 'Sectors') {
-                chartPath = `data/sectors/${formattedpos}/${formattedpos}_chart.html`;
-            } else if (type === 'Industries') {
-                chartPath = `data/industries/${formattedpos}/${formattedpos}_chart.html`;
-            } else if (type === 'Basic Industries') {
-                chartPath = `data/basic_industries/${formattedpos}/${formattedpos}_chart.html`;
-            }
-            document.getElementById('chart-frame').src = chartPath;
+            // Create charts and load data from database
+            createCharts();
 
-            // Create the company table
+            // Clear previous stats container
             const tableContainer = document.getElementById('companies-table');
             tableContainer.innerHTML = '';
 
-            if (companies.length > 0) {
-                const tableHTML = `
-                    <h3 style="margin-bottom: 15px; color: var(--accent-color);">Companies with particular RSI (${companies.length})</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Company Name</th>
-                                <th>Sector</th>
-                                <th>Industry</th>
-                                <th>Basic Industry</th>
-                                <th>Price</th>
-                                <th>RSI</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${companies.map(company => {
-                                const rsiValue = parseFloat(company.rsi).toFixed(2);
-                                return `
-                                    <tr>
-                                        <td>${company["name of company"]}</td>
-                                        <td>${company.sector || 'N/A'}</td>
-                                        <td>${company.industry || 'N/A'}</td>
-                                        <td>${company["basic industry"] || 'N/A'}</td>
-                                        <td>${company.price || 'N/A'}</td>
-                                        <td><span class="rsi-value rsi-neutral">${rsiValue}</span></td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                `;
-                tableContainer.innerHTML = tableHTML;
+            // Check if database is ready
+            if (!window.dbReady || !window.db) {
+                console.warn('Database not ready yet, waiting...');
+                document.getElementById('candlestick-chart').innerHTML = '<p style="color: #e2e8f0; padding: 20px;">Loading database...</p>';
             } else {
-                tableContainer.innerHTML = '<p>No companies found</p>';
+                try {
+                    let priceData;
+                    if (type === 'Sectors') {
+                        priceData = await window.db.getSectorPriceHistory(hierarchy_pos);
+                    } else if (type === 'Industries') {
+                        priceData = await window.db.getIndustryPriceHistory(hierarchy_pos);
+                    } else if (type === 'Basic Industries') {
+                        priceData = await window.db.getBasicIndustryPriceHistory(hierarchy_pos);
+                    }
+
+                    if (priceData && priceData.length > 0) {
+                        setChartData(priceData);
+
+                        // Calculate summary statistics from price data
+                        const firstData = priceData[0];
+                        const lastData = priceData[priceData.length - 1];
+                        const firstClose = parseFloat(firstData.close);
+                        const lastClose = parseFloat(lastData.close);
+                        const performance = ((lastClose - firstClose) / firstClose * 100).toFixed(2);
+                        const latestRsi = lastData.rsi ? parseFloat(lastData.rsi).toFixed(2) : 'N/A';
+                        const startDate = firstData.date.split(' ')[0];
+                        const endDate = lastData.date.split(' ')[0];
+
+                        // Determine RSI color class
+                        let rsiClass = '';
+                        if (latestRsi !== 'N/A') {
+                            const rsiVal = parseFloat(latestRsi);
+                            if (rsiVal >= 65) rsiClass = 'negative';
+                            else if (rsiVal <= 40) rsiClass = 'positive';
+                        }
+
+                        // Determine performance color class
+                        const perfClass = parseFloat(performance) >= 0 ? 'positive' : 'negative';
+                        const perfSign = parseFloat(performance) >= 0 ? '+' : '';
+
+                        // Create summary stats HTML
+                        const statsHTML = `
+                            <div class="summary-stats">
+                                <h3>${type} Summary - ${hierarchy_pos}</h3>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total Companies</span>
+                                        <span class="stat-value">${companies.length}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Latest RSI</span>
+                                        <span class="stat-value ${rsiClass}">${latestRsi}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Data Range</span>
+                                        <span class="stat-value" style="font-size: 14px;">${startDate} to ${endDate}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Index Performance</span>
+                                        <span class="stat-value ${perfClass}">${perfSign}${performance}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        tableContainer.innerHTML = statsHTML;
+                    } else {
+                        tableContainer.innerHTML = `
+                            <div class="summary-stats">
+                                <h3>${type} Summary - ${hierarchy_pos}</h3>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total Companies</span>
+                                        <span class="stat-value">${companies.length}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Latest RSI</span>
+                                        <span class="stat-value">N/A</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Data Range</span>
+                                        <span class="stat-value">No data</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Index Performance</span>
+                                        <span class="stat-value">N/A</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('Error loading chart data:', error);
+                    tableContainer.innerHTML = `<p style="color: var(--red); padding: 20px;">Error loading data: ${error.message}</p>`;
+                }
             }
         }
 
-        function showChart(type, name) {
+        async function showChart(type, name) {
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
@@ -933,27 +1656,18 @@
             document.getElementById('current-location').textContent = name;
 
             document.getElementById('chart-title').textContent = `${name} ${type.charAt(0).toUpperCase() + type.slice(1)} Chart`;
+            document.getElementById('chart-symbol').textContent = name;
 
-            const formattedName = name.replace(/\s+/g, '_').replace(/\//g, '-').toLowerCase();
-            let chartPath;
+            // Create charts and load data from database
+            createCharts();
 
-            switch (type) {
-                case 'sector':
-                    chartPath = `data/sectors/${formattedName}/${formattedName}_chart.html`;
-                    break;
-                case 'industry':
-                    chartPath = `data/industries/${formattedName}/${formattedName}_chart.html`;
-                    break;
-                case 'basic_industry':
-                    chartPath = `data/basic_industries/${formattedName}/${formattedName}_chart.html`;
-                    break;
+            // Check if database is ready
+            if (!window.dbReady || !window.db) {
+                console.warn('Database not ready yet, waiting...');
+                // Show loading message in chart area
+                document.getElementById('candlestick-chart').innerHTML = '<p style="color: #e2e8f0; padding: 20px;">Loading database...</p>';
+                return;
             }
-
-            document.getElementById('chart-frame').src = chartPath;
-
-            // Clear previous table
-            const tableContainer = document.getElementById('companies-table');
-            tableContainer.innerHTML = '';
 
             // Filter companies based on the selected category
             const companies = symbolData.filter(item => {
@@ -965,36 +1679,102 @@
                 }
             });
 
-            // Create table HTML
-            if (companies.length > 0) {
-                const tableHTML = `
-                    <h3 style="margin-bottom: 15px; color: var(--accent-color);">Companies (${companies.length})</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Company Name</th>
-                                <th>Price</th>
-                                <th>RSI</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${companies.map(company => {
-                                const rsi = company.rsi ? Number(company.rsi).toFixed(2) : 'N/A';
-                                const rsiClass = company.rsi && Number(company.rsi) >= 50 && Number(company.rsi) < 70 ? ' class="rsi-value rsi-neutral"' : '';
-                                return `
-                                    <tr>
-                                        <td>${company["name of company"]}</td>
-                                        <td>${company.price || 'N/A'}</td>
-                                        <td><span${rsiClass}>${rsi}</span></td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                `;
-                tableContainer.innerHTML = tableHTML;
-            } else {
-                tableContainer.innerHTML = '<p>No companies found</p>';
+            // Clear previous stats container
+            const tableContainer = document.getElementById('companies-table');
+            tableContainer.innerHTML = '';
+
+            try {
+                let priceData;
+                switch (type) {
+                    case 'sector':
+                        priceData = await window.db.getSectorPriceHistory(name);
+                        break;
+                    case 'industry':
+                        priceData = await window.db.getIndustryPriceHistory(name);
+                        break;
+                    case 'basic_industry':
+                        priceData = await window.db.getBasicIndustryPriceHistory(name);
+                        break;
+                }
+
+                if (priceData && priceData.length > 0) {
+                    setChartData(priceData);
+
+                    // Calculate summary statistics from price data
+                    const firstData = priceData[0];
+                    const lastData = priceData[priceData.length - 1];
+                    const firstClose = parseFloat(firstData.close);
+                    const lastClose = parseFloat(lastData.close);
+                    const performance = ((lastClose - firstClose) / firstClose * 100).toFixed(2);
+                    const latestRsi = lastData.rsi ? parseFloat(lastData.rsi).toFixed(2) : 'N/A';
+                    const startDate = firstData.date.split(' ')[0];
+                    const endDate = lastData.date.split(' ')[0];
+
+                    // Determine RSI color class
+                    let rsiClass = '';
+                    if (latestRsi !== 'N/A') {
+                        const rsiVal = parseFloat(latestRsi);
+                        if (rsiVal >= 65) rsiClass = 'negative';
+                        else if (rsiVal <= 40) rsiClass = 'positive';
+                    }
+
+                    // Determine performance color class
+                    const perfClass = parseFloat(performance) >= 0 ? 'positive' : 'negative';
+                    const perfSign = parseFloat(performance) >= 0 ? '+' : '';
+
+                    // Create summary stats HTML
+                    const statsHTML = `
+                        <div class="summary-stats">
+                            <h3>Index Summary</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Companies</span>
+                                    <span class="stat-value">${companies.length}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Latest RSI</span>
+                                    <span class="stat-value ${rsiClass}">${latestRsi}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Data Range</span>
+                                    <span class="stat-value" style="font-size: 14px;">${startDate} to ${endDate}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Index Performance</span>
+                                    <span class="stat-value ${perfClass}">${perfSign}${performance}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    tableContainer.innerHTML = statsHTML;
+                } else {
+                    tableContainer.innerHTML = `
+                        <div class="summary-stats">
+                            <h3>Index Summary</h3>
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Total Companies</span>
+                                    <span class="stat-value">${companies.length}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Latest RSI</span>
+                                    <span class="stat-value">N/A</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Data Range</span>
+                                    <span class="stat-value">No data</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Index Performance</span>
+                                    <span class="stat-value">N/A</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading chart data:', error);
+                tableContainer.innerHTML = `<p style="color: var(--red); padding: 20px;">Error loading data: ${error.message}</p>`;
             }
 
         }
@@ -1170,9 +1950,8 @@
             document.getElementById(activeTabId).classList.add('active');
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            loadSymbolData();
-        });
+        // Note: App initialization is handled by the module script above
+        // which calls window.initApp() after DOMContentLoaded
     </script>
 </body>
 
