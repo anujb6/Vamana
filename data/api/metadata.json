@@ -1,0 +1,13 @@
+{
+  "monthly_data_last_updated": "2026-01-06T04:22:38.213977",
+  "rsi_last_updated": "2026-01-06T04:22:59.253988",
+  "sector_rsi_last_updated": "2026-01-06T04:23:08.467484",
+  "industry_rsi_last_updated": "2026-01-06T04:23:21.286559",
+  "basic_industry_rsi_last_updated": "2026-01-06T04:23:36.508470",
+  "last_updated": "2026-01-06T04:23:36.514379",
+  "version": "2.0",
+  "total_companies": 2065,
+  "total_sectors": 23,
+  "total_industries": 59,
+  "total_basic_industries": 184
+}

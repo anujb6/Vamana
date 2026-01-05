@@ -1,69 +1,71 @@
 /**
- * Vamana Database Client
- * Uses sql.js to query SQLite database in browser
+ * Vamana Data Client - Static JSON API Version
+ * Loads data on-demand from pre-built JSON files
+ * Reduces initial load from 77MB to ~350KB
  */
 
-class VamanaDB {
+class VamanaDataClient {
     constructor() {
-        this.db = null;
+        this.cache = new Map();
         this.isReady = false;
+        this.data = {
+            symbols: null,
+            sectors: null,
+            industries: null,
+            basicIndustries: null,
+            metadata: null
+        };
     }
 
     /**
-     * Initialize the database connection
-     * @param {string} dbUrl - URL to the SQLite database file
+     * Initialize the client by loading metadata and indices
      */
-    async init(dbUrl = 'data/vamana.db') {
+    async init() {
         try {
-            // Initialize sql.js (loaded via script tag)
-            const SQL = await initSqlJs({
-                locateFile: file => `https://sql.js.org/dist/${file}`
-            });
+            // Load core data in parallel for faster startup
+            const [metadata, symbols, sectors, industries, basicIndustries] = await Promise.all([
+                this.fetchJSON('data/api/metadata.json'),
+                this.fetchJSON('data/api/symbols.json'),
+                this.fetchJSON('data/api/sectors/index.json'),
+                this.fetchJSON('data/api/industries/index.json'),
+                this.fetchJSON('data/api/basic-industries/index.json')
+            ]);
 
-            // Fetch the database file
-            const response = await fetch(dbUrl);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch database: ${response.status}`);
-            }
-            const arrayBuffer = await response.arrayBuffer();
-            const uint8Array = new Uint8Array(arrayBuffer);
+            this.data.metadata = metadata;
+            this.data.symbols = symbols;
+            this.data.sectors = sectors;
+            this.data.industries = industries;
+            this.data.basicIndustries = basicIndustries;
 
-            // Create the database from the file
-            this.db = new SQL.Database(uint8Array);
             this.isReady = true;
-            console.log('VamanaDB initialized successfully');
+            console.log('VamanaDataClient initialized successfully');
+
+            // Dispatch event for UI to know data is ready
+            window.dispatchEvent(new Event('vamanaDataReady'));
+
             return true;
         } catch (error) {
-            console.error('Failed to initialize VamanaDB:', error);
+            console.error('Failed to initialize VamanaDataClient:', error);
             throw error;
         }
     }
 
     /**
-     * Execute a SQL query
-     * @param {string} sql - SQL query string
-     * @param {Array} params - Query parameters
-     * @returns {Promise<Array>} Query results as array of objects
+     * Fetch JSON with caching
      */
-    async query(sql, params = []) {
-        if (!this.isReady) {
-            throw new Error('Database not initialized. Call init() first.');
+    async fetchJSON(url) {
+        if (this.cache.has(url)) {
+            return this.cache.get(url);
         }
 
-        // Use prepared statement for parameter binding
-        const stmt = this.db.prepare(sql);
-        if (params.length > 0) {
-            stmt.bind(params);
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${url}: ${response.status}`);
         }
 
-        const results = [];
-        while (stmt.step()) {
-            const row = stmt.getAsObject();
-            results.push(row);
-        }
-        stmt.free();
-
-        return results;
+        const data = await response.json();
+        this.cache.set(url, data);
+        return data;
     }
 
     // ==================== Symbol Queries ====================
@@ -72,48 +74,32 @@ class VamanaDB {
      * Get all symbols with their metadata
      */
     async getSymbols() {
-        return await this.query(`
-            SELECT symbol, name_of_company, macro_sector, sector,
-                   industry, basic_industry, market_cap
-            FROM symbols
-            ORDER BY name_of_company
-        `);
+        if (!this.isReady) await this.init();
+        return this.data.symbols;
     }
 
     /**
      * Get symbols by sector
      */
     async getSymbolsBySector(sector) {
-        return await this.query(`
-            SELECT symbol, name_of_company, market_cap
-            FROM symbols
-            WHERE sector = ?
-            ORDER BY name_of_company
-        `, [sector]);
+        if (!this.isReady) await this.init();
+        return this.data.symbols.filter(s => s.sector === sector);
     }
 
     /**
      * Get symbols by industry
      */
     async getSymbolsByIndustry(industry) {
-        return await this.query(`
-            SELECT symbol, name_of_company, market_cap
-            FROM symbols
-            WHERE industry = ?
-            ORDER BY name_of_company
-        `, [industry]);
+        if (!this.isReady) await this.init();
+        return this.data.symbols.filter(s => s.industry === industry);
     }
 
     /**
      * Get symbols by basic industry
      */
     async getSymbolsByBasicIndustry(basicIndustry) {
-        return await this.query(`
-            SELECT symbol, name_of_company, market_cap
-            FROM symbols
-            WHERE basic_industry = ?
-            ORDER BY name_of_company
-        `, [basicIndustry]);
+        if (!this.isReady) await this.init();
+        return this.data.symbols.filter(s => s.basic_industry === basicIndustry);
     }
 
     // ==================== Sector Queries ====================
@@ -122,88 +108,60 @@ class VamanaDB {
      * Get all unique sectors with company counts
      */
     async getSectors() {
-        return await this.query(`
-            SELECT sector, COUNT(*) as company_count
-            FROM symbols
-            WHERE sector IS NOT NULL AND sector != ''
-            GROUP BY sector
-            ORDER BY sector
-        `);
+        if (!this.isReady) await this.init();
+        return this.data.sectors.map(s => ({
+            sector: s.name,
+            company_count: s.company_count
+        }));
     }
 
     /**
      * Get latest RSI for all sectors
      */
     async getSectorsWithLatestRsi() {
-        return await this.query(`
-            SELECT sp.sector, sp.rsi, sp.date, sp.close,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.sector = sp.sector) as company_count
-            FROM sector_prices sp
-            WHERE sp.date = (
-                SELECT MAX(date) FROM sector_prices WHERE sector = sp.sector
-            )
-            ORDER BY sp.sector
-        `);
+        if (!this.isReady) await this.init();
+        return this.data.sectors.map(s => ({
+            sector: s.name,
+            rsi: s.rsi,
+            date: s.date,
+            close: s.close,
+            company_count: s.company_count
+        }));
     }
 
     /**
      * Get sectors with RSI below threshold
      */
     async getSectorsByRsiBelow(threshold) {
-        return await this.query(`
-            SELECT sp.sector, sp.rsi, sp.date,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.sector = sp.sector) as company_count
-            FROM sector_prices sp
-            WHERE sp.date = (
-                SELECT MAX(date) FROM sector_prices WHERE sector = sp.sector
-            )
-            AND sp.rsi < ?
-            ORDER BY sp.rsi
-        `, [threshold]);
+        const sectors = await this.getSectorsWithLatestRsi();
+        return sectors.filter(s => s.rsi !== null && s.rsi < threshold);
     }
 
     /**
      * Get sectors with RSI in range
      */
     async getSectorsByRsiRange(minRsi, maxRsi) {
-        return await this.query(`
-            SELECT sp.sector, sp.rsi, sp.date,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.sector = sp.sector) as company_count
-            FROM sector_prices sp
-            WHERE sp.date = (
-                SELECT MAX(date) FROM sector_prices WHERE sector = sp.sector
-            )
-            AND sp.rsi >= ? AND sp.rsi <= ?
-            ORDER BY sp.rsi
-        `, [minRsi, maxRsi]);
+        const sectors = await this.getSectorsWithLatestRsi();
+        return sectors.filter(s => s.rsi !== null && s.rsi >= minRsi && s.rsi <= maxRsi);
     }
 
     /**
      * Get sectors with RSI above threshold
      */
     async getSectorsByRsiAbove(threshold) {
-        return await this.query(`
-            SELECT sp.sector, sp.rsi, sp.date,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.sector = sp.sector) as company_count
-            FROM sector_prices sp
-            WHERE sp.date = (
-                SELECT MAX(date) FROM sector_prices WHERE sector = sp.sector
-            )
-            AND sp.rsi >= ?
-            ORDER BY sp.rsi DESC
-        `, [threshold]);
+        const sectors = await this.getSectorsWithLatestRsi();
+        return sectors.filter(s => s.rsi !== null && s.rsi >= threshold);
     }
 
     /**
-     * Get price history for a sector
+     * Get price history for a sector (on-demand loading)
      */
     async getSectorPriceHistory(sector) {
-        return await this.query(`
-            SELECT date, open, high, low, close, rsi
-            FROM sector_prices
-            WHERE sector = ?
-            ORDER BY date
-        `, [sector]);
+        const sectorData = this.data.sectors.find(s => s.name === sector);
+        if (!sectorData) return [];
+
+        const url = `data/api/sectors/${sectorData.slug}.json`;
+        return await this.fetchJSON(url);
     }
 
     // ==================== Industry Queries ====================
@@ -212,88 +170,60 @@ class VamanaDB {
      * Get all unique industries with company counts
      */
     async getIndustries() {
-        return await this.query(`
-            SELECT industry, COUNT(*) as company_count
-            FROM symbols
-            WHERE industry IS NOT NULL AND industry != ''
-            GROUP BY industry
-            ORDER BY industry
-        `);
+        if (!this.isReady) await this.init();
+        return this.data.industries.map(i => ({
+            industry: i.name,
+            company_count: i.company_count
+        }));
     }
 
     /**
      * Get latest RSI for all industries
      */
     async getIndustriesWithLatestRsi() {
-        return await this.query(`
-            SELECT ip.industry, ip.rsi, ip.date, ip.close,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.industry = ip.industry) as company_count
-            FROM industry_prices ip
-            WHERE ip.date = (
-                SELECT MAX(date) FROM industry_prices WHERE industry = ip.industry
-            )
-            ORDER BY ip.industry
-        `);
+        if (!this.isReady) await this.init();
+        return this.data.industries.map(i => ({
+            industry: i.name,
+            rsi: i.rsi,
+            date: i.date,
+            close: i.close,
+            company_count: i.company_count
+        }));
     }
 
     /**
      * Get industries with RSI below threshold
      */
     async getIndustriesByRsiBelow(threshold) {
-        return await this.query(`
-            SELECT ip.industry, ip.rsi, ip.date,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.industry = ip.industry) as company_count
-            FROM industry_prices ip
-            WHERE ip.date = (
-                SELECT MAX(date) FROM industry_prices WHERE industry = ip.industry
-            )
-            AND ip.rsi < ?
-            ORDER BY ip.rsi
-        `, [threshold]);
+        const industries = await this.getIndustriesWithLatestRsi();
+        return industries.filter(i => i.rsi !== null && i.rsi < threshold);
     }
 
     /**
      * Get industries with RSI in range
      */
     async getIndustriesByRsiRange(minRsi, maxRsi) {
-        return await this.query(`
-            SELECT ip.industry, ip.rsi, ip.date,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.industry = ip.industry) as company_count
-            FROM industry_prices ip
-            WHERE ip.date = (
-                SELECT MAX(date) FROM industry_prices WHERE industry = ip.industry
-            )
-            AND ip.rsi >= ? AND ip.rsi <= ?
-            ORDER BY ip.rsi
-        `, [minRsi, maxRsi]);
+        const industries = await this.getIndustriesWithLatestRsi();
+        return industries.filter(i => i.rsi !== null && i.rsi >= minRsi && i.rsi <= maxRsi);
     }
 
     /**
      * Get industries with RSI above threshold
      */
     async getIndustriesByRsiAbove(threshold) {
-        return await this.query(`
-            SELECT ip.industry, ip.rsi, ip.date,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.industry = ip.industry) as company_count
-            FROM industry_prices ip
-            WHERE ip.date = (
-                SELECT MAX(date) FROM industry_prices WHERE industry = ip.industry
-            )
-            AND ip.rsi >= ?
-            ORDER BY ip.rsi DESC
-        `, [threshold]);
+        const industries = await this.getIndustriesWithLatestRsi();
+        return industries.filter(i => i.rsi !== null && i.rsi >= threshold);
     }
 
     /**
-     * Get price history for an industry
+     * Get price history for an industry (on-demand loading)
      */
     async getIndustryPriceHistory(industry) {
-        return await this.query(`
-            SELECT date, open, high, low, close, rsi
-            FROM industry_prices
-            WHERE industry = ?
-            ORDER BY date
-        `, [industry]);
+        const industryData = this.data.industries.find(i => i.name === industry);
+        if (!industryData) return [];
+
+        const url = `data/api/industries/${industryData.slug}.json`;
+        return await this.fetchJSON(url);
     }
 
     // ==================== Basic Industry Queries ====================
@@ -302,88 +232,60 @@ class VamanaDB {
      * Get all unique basic industries with company counts
      */
     async getBasicIndustries() {
-        return await this.query(`
-            SELECT basic_industry, COUNT(*) as company_count
-            FROM symbols
-            WHERE basic_industry IS NOT NULL AND basic_industry != ''
-            GROUP BY basic_industry
-            ORDER BY basic_industry
-        `);
+        if (!this.isReady) await this.init();
+        return this.data.basicIndustries.map(bi => ({
+            basic_industry: bi.name,
+            company_count: bi.company_count
+        }));
     }
 
     /**
      * Get latest RSI for all basic industries
      */
     async getBasicIndustriesWithLatestRsi() {
-        return await this.query(`
-            SELECT bip.basic_industry, bip.rsi, bip.date, bip.close,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.basic_industry = bip.basic_industry) as company_count
-            FROM basic_industry_prices bip
-            WHERE bip.date = (
-                SELECT MAX(date) FROM basic_industry_prices WHERE basic_industry = bip.basic_industry
-            )
-            ORDER BY bip.basic_industry
-        `);
+        if (!this.isReady) await this.init();
+        return this.data.basicIndustries.map(bi => ({
+            basic_industry: bi.name,
+            rsi: bi.rsi,
+            date: bi.date,
+            close: bi.close,
+            company_count: bi.company_count
+        }));
     }
 
     /**
      * Get basic industries with RSI below threshold
      */
     async getBasicIndustriesByRsiBelow(threshold) {
-        return await this.query(`
-            SELECT bip.basic_industry, bip.rsi, bip.date,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.basic_industry = bip.basic_industry) as company_count
-            FROM basic_industry_prices bip
-            WHERE bip.date = (
-                SELECT MAX(date) FROM basic_industry_prices WHERE basic_industry = bip.basic_industry
-            )
-            AND bip.rsi < ?
-            ORDER BY bip.rsi
-        `, [threshold]);
+        const basicIndustries = await this.getBasicIndustriesWithLatestRsi();
+        return basicIndustries.filter(bi => bi.rsi !== null && bi.rsi < threshold);
     }
 
     /**
      * Get basic industries with RSI in range
      */
     async getBasicIndustriesByRsiRange(minRsi, maxRsi) {
-        return await this.query(`
-            SELECT bip.basic_industry, bip.rsi, bip.date,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.basic_industry = bip.basic_industry) as company_count
-            FROM basic_industry_prices bip
-            WHERE bip.date = (
-                SELECT MAX(date) FROM basic_industry_prices WHERE basic_industry = bip.basic_industry
-            )
-            AND bip.rsi >= ? AND bip.rsi <= ?
-            ORDER BY bip.rsi
-        `, [minRsi, maxRsi]);
+        const basicIndustries = await this.getBasicIndustriesWithLatestRsi();
+        return basicIndustries.filter(bi => bi.rsi !== null && bi.rsi >= minRsi && bi.rsi <= maxRsi);
     }
 
     /**
      * Get basic industries with RSI above threshold
      */
     async getBasicIndustriesByRsiAbove(threshold) {
-        return await this.query(`
-            SELECT bip.basic_industry, bip.rsi, bip.date,
-                   (SELECT COUNT(*) FROM symbols s WHERE s.basic_industry = bip.basic_industry) as company_count
-            FROM basic_industry_prices bip
-            WHERE bip.date = (
-                SELECT MAX(date) FROM basic_industry_prices WHERE basic_industry = bip.basic_industry
-            )
-            AND bip.rsi >= ?
-            ORDER BY bip.rsi DESC
-        `, [threshold]);
+        const basicIndustries = await this.getBasicIndustriesWithLatestRsi();
+        return basicIndustries.filter(bi => bi.rsi !== null && bi.rsi >= threshold);
     }
 
     /**
-     * Get price history for a basic industry
+     * Get price history for a basic industry (on-demand loading)
      */
     async getBasicIndustryPriceHistory(basicIndustry) {
-        return await this.query(`
-            SELECT date, open, high, low, close, rsi
-            FROM basic_industry_prices
-            WHERE basic_industry = ?
-            ORDER BY date
-        `, [basicIndustry]);
+        const biData = this.data.basicIndustries.find(bi => bi.name === basicIndustry);
+        if (!biData) return [];
+
+        const url = `data/api/basic-industries/${biData.slug}.json`;
+        return await this.fetchJSON(url);
     }
 
     // ==================== Combined RSI Queries ====================
@@ -392,10 +294,13 @@ class VamanaDB {
      * Get all categories (sectors, industries, basic industries) with RSI below threshold
      */
     async getAllCategoriesByRsiBelow(threshold) {
-        const results = [];
+        const [sectors, industries, basicIndustries] = await Promise.all([
+            this.getSectorsByRsiBelow(threshold),
+            this.getIndustriesByRsiBelow(threshold),
+            this.getBasicIndustriesByRsiBelow(threshold)
+        ]);
 
-        // Sectors
-        const sectors = await this.getSectorsByRsiBelow(threshold);
+        const results = [];
         sectors.forEach(s => results.push({
             type: 'Sectors',
             category: s.sector,
@@ -403,9 +308,6 @@ class VamanaDB {
             date: s.date,
             company_count: s.company_count
         }));
-
-        // Industries
-        const industries = await this.getIndustriesByRsiBelow(threshold);
         industries.forEach(i => results.push({
             type: 'Industries',
             category: i.industry,
@@ -413,9 +315,6 @@ class VamanaDB {
             date: i.date,
             company_count: i.company_count
         }));
-
-        // Basic Industries
-        const basicIndustries = await this.getBasicIndustriesByRsiBelow(threshold);
         basicIndustries.forEach(bi => results.push({
             type: 'Basic Industries',
             category: bi.basic_industry,
@@ -431,9 +330,13 @@ class VamanaDB {
      * Get all categories with RSI in range
      */
     async getAllCategoriesByRsiRange(minRsi, maxRsi) {
-        const results = [];
+        const [sectors, industries, basicIndustries] = await Promise.all([
+            this.getSectorsByRsiRange(minRsi, maxRsi),
+            this.getIndustriesByRsiRange(minRsi, maxRsi),
+            this.getBasicIndustriesByRsiRange(minRsi, maxRsi)
+        ]);
 
-        const sectors = await this.getSectorsByRsiRange(minRsi, maxRsi);
+        const results = [];
         sectors.forEach(s => results.push({
             type: 'Sectors',
             category: s.sector,
@@ -441,8 +344,6 @@ class VamanaDB {
             date: s.date,
             company_count: s.company_count
         }));
-
-        const industries = await this.getIndustriesByRsiRange(minRsi, maxRsi);
         industries.forEach(i => results.push({
             type: 'Industries',
             category: i.industry,
@@ -450,8 +351,6 @@ class VamanaDB {
             date: i.date,
             company_count: i.company_count
         }));
-
-        const basicIndustries = await this.getBasicIndustriesByRsiRange(minRsi, maxRsi);
         basicIndustries.forEach(bi => results.push({
             type: 'Basic Industries',
             category: bi.basic_industry,
@@ -467,9 +366,13 @@ class VamanaDB {
      * Get all categories with RSI above threshold
      */
     async getAllCategoriesByRsiAbove(threshold) {
-        const results = [];
+        const [sectors, industries, basicIndustries] = await Promise.all([
+            this.getSectorsByRsiAbove(threshold),
+            this.getIndustriesByRsiAbove(threshold),
+            this.getBasicIndustriesByRsiAbove(threshold)
+        ]);
 
-        const sectors = await this.getSectorsByRsiAbove(threshold);
+        const results = [];
         sectors.forEach(s => results.push({
             type: 'Sectors',
             category: s.sector,
@@ -477,8 +380,6 @@ class VamanaDB {
             date: s.date,
             company_count: s.company_count
         }));
-
-        const industries = await this.getIndustriesByRsiAbove(threshold);
         industries.forEach(i => results.push({
             type: 'Industries',
             category: i.industry,
@@ -486,8 +387,6 @@ class VamanaDB {
             date: i.date,
             company_count: i.company_count
         }));
-
-        const basicIndustries = await this.getBasicIndustriesByRsiAbove(threshold);
         basicIndustries.forEach(bi => results.push({
             type: 'Basic Industries',
             category: bi.basic_industry,
@@ -505,36 +404,29 @@ class VamanaDB {
      * Get database metadata
      */
     async getMetadata() {
-        const results = await this.query('SELECT key, value FROM metadata');
-        const metadata = {};
-        results.forEach(row => {
-            metadata[row.key] = row.value;
-        });
-        return metadata;
+        if (!this.isReady) await this.init();
+        return this.data.metadata;
     }
 
     /**
      * Get statistics
      */
     async getStats() {
-        const [symbols] = await this.query('SELECT COUNT(*) as count FROM symbols');
-        const [sectors] = await this.query('SELECT COUNT(DISTINCT sector) as count FROM symbols WHERE sector IS NOT NULL');
-        const [industries] = await this.query('SELECT COUNT(DISTINCT industry) as count FROM symbols WHERE industry IS NOT NULL');
-        const [basicIndustries] = await this.query('SELECT COUNT(DISTINCT basic_industry) as count FROM symbols WHERE basic_industry IS NOT NULL');
-
+        if (!this.isReady) await this.init();
         return {
-            totalCompanies: symbols.count,
-            totalSectors: sectors.count,
-            totalIndustries: industries.count,
-            totalBasicIndustries: basicIndustries.count
+            totalCompanies: this.data.metadata.total_companies,
+            totalSectors: this.data.metadata.total_sectors,
+            totalIndustries: this.data.metadata.total_industries,
+            totalBasicIndustries: this.data.metadata.total_basic_industries
         };
     }
 }
 
-// Export for use in browser
+// Export for use in browser with backward compatible name
 if (typeof window !== 'undefined') {
-    window.VamanaDB = VamanaDB;
+    window.VamanaDataClient = VamanaDataClient;
+    window.VamanaDB = VamanaDataClient;  // Backward compatibility
 }
 
 // Export for ES modules
-export { VamanaDB };
+export { VamanaDataClient };

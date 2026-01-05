@@ -613,6 +613,31 @@
                 margin: 10px 0;
             }
         }
+
+        /* Loading spinner animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .chart-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+
+        .loading-spinner {
+            border: 3px solid #1e293b;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
     </style>
 </head>
 
@@ -798,29 +823,71 @@
         </div>
     </div>
 
-    <!-- Load sql.js for SQLite database access -->
-    <script src="https://sql.js.org/dist/sql-wasm.js"></script>
+    <!-- Vamana Data Client - Loads data on-demand from JSON API -->
     <script type="module">
-        import { VamanaDB } from './js/db-client.js';
+        import { VamanaDataClient } from './js/db-client.js';
 
-        // Make VamanaDB available globally
-        window.VamanaDB = VamanaDB;
-        window.db = new VamanaDB();
+        // Make VamanaDB available globally (backward compatible name)
+        window.VamanaDB = VamanaDataClient;
+        window.VamanaDataClient = VamanaDataClient;
+        window.db = new VamanaDataClient();
         window.dbReady = false;
+
+        // Loading indicator functions
+        function showLoadingIndicator() {
+            const loadingHTML = `
+                <div id="vamana-loading" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(15, 23, 42, 0.95); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+                    <div style="text-align: center; color: #e2e8f0;">
+                        <div style="font-size: 28px; margin-bottom: 16px; font-weight: 600;">Vamana Stock Analysis</div>
+                        <div id="loading-progress" style="font-size: 16px; color: #94a3b8;">Initializing data...</div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', loadingHTML);
+        }
+
+        function hideLoadingIndicator() {
+            const loadingEl = document.getElementById('vamana-loading');
+            if (loadingEl) {
+                loadingEl.remove();
+            }
+        }
+
+        function updateLoadingProgress(message) {
+            const progressEl = document.getElementById('loading-progress');
+            if (progressEl) {
+                progressEl.textContent = message;
+            }
+        }
 
         // Initialize database and load data
         window.initApp = async function() {
+            showLoadingIndicator();
+
             try {
-                await window.db.init('data/vamana.db');
+                updateLoadingProgress('Loading market data...');
+                await window.db.init();
+
                 window.dbReady = true;
                 console.log('Database ready');
+
+                updateLoadingProgress('Loading symbol data...');
                 await loadSymbolData();
+
+                hideLoadingIndicator();
             } catch (error) {
                 console.error('Failed to initialize database:', error);
+                hideLoadingIndicator();
                 // Fallback to CSV loading
                 await loadSymbolDataFromCSV();
             }
         };
+
+        // Listen for data ready event
+        window.addEventListener('vamanaDataReady', () => {
+            console.log('Vamana data loaded and ready');
+        });
 
         // Start the app
         window.initApp();
@@ -1548,22 +1615,34 @@
             const tableContainer = document.getElementById('companies-table');
             tableContainer.innerHTML = '';
 
+            // Show loading indicator in chart container
+            const candlestickContainer = document.getElementById('candlestick-chart');
+            const loadingHTML = `
+                <div class="chart-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #94a3b8;">
+                    <div class="loading-spinner" style="border: 3px solid #1e293b; border-top: 3px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 16px;"></div>
+                    <p style="margin: 0;">Loading ${type} data for ${hierarchy_pos}...</p>
+                </div>
+            `;
+            candlestickContainer.innerHTML = loadingHTML;
+
             // Check if database is ready
             if (!window.dbReady || !window.db) {
                 console.warn('Database not ready yet, waiting...');
-                document.getElementById('candlestick-chart').innerHTML = '<p style="color: #e2e8f0; padding: 20px;">Loading database...</p>';
-            } else {
-                try {
-                    let priceData;
-                    if (type === 'Sectors') {
-                        priceData = await window.db.getSectorPriceHistory(hierarchy_pos);
-                    } else if (type === 'Industries') {
-                        priceData = await window.db.getIndustryPriceHistory(hierarchy_pos);
-                    } else if (type === 'Basic Industries') {
-                        priceData = await window.db.getBasicIndustryPriceHistory(hierarchy_pos);
-                    }
+                candlestickContainer.innerHTML = '<p style="color: #e2e8f0; padding: 20px;">Loading database...</p>';
+                return;
+            }
 
-                    if (priceData && priceData.length > 0) {
+            try {
+                let priceData;
+                if (type === 'Sectors') {
+                    priceData = await window.db.getSectorPriceHistory(hierarchy_pos);
+                } else if (type === 'Industries') {
+                    priceData = await window.db.getIndustryPriceHistory(hierarchy_pos);
+                } else if (type === 'Basic Industries') {
+                    priceData = await window.db.getBasicIndustryPriceHistory(hierarchy_pos);
+                }
+
+                if (priceData && priceData.length > 0) {
                         setChartData(priceData);
 
                         // Calculate summary statistics from price data
@@ -1614,6 +1693,12 @@
                         `;
                         tableContainer.innerHTML = statsHTML;
                     } else {
+                        // No price data available - clear spinner and show message
+                        candlestickContainer.innerHTML = `
+                            <div class="chart-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #ef4444;">
+                                <p style="margin: 0;">No price data available for ${hierarchy_pos}</p>
+                            </div>
+                        `;
                         tableContainer.innerHTML = `
                             <div class="summary-stats">
                                 <h3>${type} Summary - ${hierarchy_pos}</h3>
@@ -1640,9 +1725,13 @@
                     }
                 } catch (error) {
                     console.error('Error loading chart data:', error);
+                    candlestickContainer.innerHTML = `
+                        <div class="chart-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #ef4444;">
+                            <p style="margin: 0;">Error loading data: ${error.message}</p>
+                        </div>
+                    `;
                     tableContainer.innerHTML = `<p style="color: var(--red); padding: 20px;">Error loading data: ${error.message}</p>`;
                 }
-            }
         }
 
         async function showChart(type, name) {
@@ -1658,9 +1747,6 @@
             document.getElementById('chart-title').textContent = `${name} ${type.charAt(0).toUpperCase() + type.slice(1)} Chart`;
             document.getElementById('chart-symbol').textContent = name;
 
-            // Create charts and load data from database
-            createCharts();
-
             // Check if database is ready
             if (!window.dbReady || !window.db) {
                 console.warn('Database not ready yet, waiting...');
@@ -1668,6 +1754,16 @@
                 document.getElementById('candlestick-chart').innerHTML = '<p style="color: #e2e8f0; padding: 20px;">Loading database...</p>';
                 return;
             }
+
+            // Show loading indicator in chart container
+            const candlestickContainer = document.getElementById('candlestick-chart');
+            const loadingHTML = `
+                <div class="chart-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #94a3b8;">
+                    <div class="loading-spinner" style="border: 3px solid #1e293b; border-top: 3px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 16px;"></div>
+                    <p style="margin: 0;">Loading ${type === 'basic_industry' ? 'Basic Industry' : type.charAt(0).toUpperCase() + type.slice(1)} data for ${name}...</p>
+                </div>
+            `;
+            candlestickContainer.innerHTML = loadingHTML;
 
             // Filter companies based on the selected category
             const companies = symbolData.filter(item => {
