@@ -90,7 +90,6 @@
             color: var(--accent-color) !important;
             font-weight: 700;
         }
-
         .breadcrumb {
             margin-bottom: 20px;
             padding: 10px;
@@ -955,17 +954,35 @@
             rsiChart.rsi30Line = rsi30Line;
             rsiChart.rsi70Line = rsi70Line;
 
+            // Store series globally for null checks
+            window.candlestickSeries = candlestickSeries;
+            window.rsiSeries = rsiSeries;
+            window.candlestickChart = candlestickChart;
+            window.rsiChart = rsiChart;
+
             // Sync crosshair between charts
             candlestickChart.subscribeCrosshairMove((param) => {
                 if (param.time) {
-                    rsiChart.setCrosshairPosition(0, param.time, rsiSeries);
+                    if (rsiSeries && rsiChart) {
+                        try {
+                            rsiChart.setCrosshairPosition(0, param.time, rsiSeries);
+                        } catch (error) {
+                            console.warn('Failed to set RSI crosshair position:', error);
+                        }
+                    }
                     updateLegend(param);
                 }
             });
 
             rsiChart.subscribeCrosshairMove((param) => {
                 if (param.time) {
-                    candlestickChart.setCrosshairPosition(0, param.time, candlestickSeries);
+                    if (candlestickSeries && candlestickChart) {
+                        try {
+                            candlestickChart.setCrosshairPosition(0, param.time, candlestickSeries);
+                        } catch (error) {
+                            console.warn('Failed to set candlestick crosshair position:', error);
+                        }
+                    }
                     updateRsiLegend(param);
                 }
             });
@@ -1018,24 +1035,51 @@
         function updateRsiLegend(param) {
             if (!param.seriesData || !param.seriesData.size) return;
 
+            if (!rsiSeries) {
+                const rsiEl = document.getElementById('legend-rsi');
+                if (rsiEl) {
+                    rsiEl.textContent = 'N/A';
+                    rsiEl.style.color = '#787b86';
+                }
+                return;
+            }
+
             const data = param.seriesData.get(rsiSeries);
             if (data && data.value !== undefined) {
                 const rsiEl = document.getElementById('legend-rsi');
-                rsiEl.textContent = data.value.toFixed(2);
+                if (rsiEl) {
+                    rsiEl.textContent = data.value.toFixed(2);
 
-                if (data.value >= 70) {
-                    rsiEl.style.color = '#ef5350';
-                } else if (data.value <= 30) {
-                    rsiEl.style.color = '#26a69a';
-                } else {
-                    rsiEl.style.color = '#ff9800';
+                    if (data.value >= 70) {
+                        rsiEl.style.color = '#ef5350';
+                    } else if (data.value <= 30) {
+                        rsiEl.style.color = '#26a69a';
+                    } else {
+                        rsiEl.style.color = '#ff9800';
+                    }
+                }
+            } else {
+                const rsiEl = document.getElementById('legend-rsi');
+                if (rsiEl) {
+                    rsiEl.textContent = 'N/A';
+                    rsiEl.style.color = '#787b86';
                 }
             }
         }
 
         function setChartData(priceData) {
-            if (!candlestickSeries || !rsiSeries) {
+            if (!priceData || !Array.isArray(priceData) || priceData.length === 0) {
+                console.error('Invalid price data provided to setChartData');
+                return;
+            }
+
+            if (!candlestickSeries || !rsiSeries || !candlestickChart || !rsiChart) {
                 createCharts();
+            }
+
+            if (!candlestickSeries || !rsiSeries) {
+                console.error('Failed to create chart series');
+                return;
             }
 
             // Format data for Lightweight Charts
@@ -1054,36 +1098,72 @@
                     value: parseFloat(d.rsi),
                 }));
 
-            // Set data
-            candlestickSeries.setData(candlestickData);
-            rsiSeries.setData(rsiData);
-
-            // Set RSI reference lines (30 and 70)
-            if (rsiData.length > 0) {
-                const times = rsiData.map(d => d.time);
-                const rsi30Data = times.map(time => ({ time, value: 40 }));
-                const rsi70Data = times.map(time => ({ time, value: 65 }));
-
-                rsiChart.rsi30Line.setData(rsi30Data);
-                rsiChart.rsi70Line.setData(rsi70Data);
+            if (candlestickData.length === 0) {
+                console.error('No valid candlestick data after filtering');
+                return;
             }
 
-            // Fit content
-            candlestickChart.timeScale().fitContent();
-            rsiChart.timeScale().fitContent();
-
-            // Update legend with latest data
-            if (candlestickData.length > 0) {
-                const latest = candlestickData[candlestickData.length - 1];
-                document.getElementById('legend-open').textContent = latest.open.toFixed(2);
-                document.getElementById('legend-high').textContent = latest.high.toFixed(2);
-                document.getElementById('legend-low').textContent = latest.low.toFixed(2);
-                document.getElementById('legend-close').textContent = latest.close.toFixed(2);
+            try {
+                candlestickSeries.setData(candlestickData);
+            } catch (error) {
+                console.error('Error setting candlestick data:', error);
+                return;
             }
 
-            if (rsiData.length > 0) {
-                const latestRsi = rsiData[rsiData.length - 1];
-                document.getElementById('legend-rsi').textContent = latestRsi.value.toFixed(2);
+            if (rsiData.length === 0) {
+                console.warn('No valid RSI data available for this symbol');
+                try {
+                    rsiSeries.setData([]);
+                    const rsiEl = document.getElementById('legend-rsi');
+                    if (rsiEl) {
+                        rsiEl.textContent = 'N/A';
+                        rsiEl.style.color = '#787b86';
+                    }
+                    if (rsiChart.rsi30Line) rsiChart.rsi30Line.setData([]);
+                    if (rsiChart.rsi70Line) rsiChart.rsi70Line.setData([]);
+                } catch (error) {
+                    console.error('Error clearing RSI series:', error);
+                }
+            } else {
+                try {
+                    rsiSeries.setData(rsiData);
+                    const times = rsiData.map(d => d.time);
+                    const rsi30Data = times.map(time => ({ time, value: 40 }));
+                    const rsi70Data = times.map(time => ({ time, value: 65 }));
+
+                    if (rsiChart.rsi30Line) rsiChart.rsi30Line.setData(rsi30Data);
+                    if (rsiChart.rsi70Line) rsiChart.rsi70Line.setData(rsi70Data);
+                } catch (error) {
+                    console.error('Error setting RSI data:', error);
+                }
+            }
+
+            try {
+                candlestickChart.timeScale().fitContent();
+                if (rsiData.length > 0) {
+                    rsiChart.timeScale().fitContent();
+                }
+            } catch (error) {
+                console.warn('Error fitting content:', error);
+            }
+
+            try {
+                if (candlestickData.length > 0) {
+                    const latest = candlestickData[candlestickData.length - 1];
+                    document.getElementById('legend-open').textContent = latest.open.toFixed(2);
+                    document.getElementById('legend-high').textContent = latest.high.toFixed(2);
+                    document.getElementById('legend-low').textContent = latest.low.toFixed(2);
+                    document.getElementById('legend-close').textContent = latest.close.toFixed(2);
+                }
+
+                if (rsiData.length > 0) {
+                    const latestRsi = rsiData[rsiData.length - 1];
+                    document.getElementById('legend-rsi').textContent = latestRsi.value.toFixed(2);
+                } else {
+                    document.getElementById('legend-rsi').textContent = 'N/A';
+                }
+            } catch (error) {
+                console.error('Error updating legend:', error);
             }
         }
 
