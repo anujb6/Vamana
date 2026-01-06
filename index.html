@@ -798,27 +798,25 @@
         </div>
     </div>
 
-    <!-- Load sql.js for SQLite database access -->
-    <script src="https://sql.js.org/dist/sql-wasm.js"></script>
+    <!-- Vamana Data Client - Loads data on-demand from JSON API -->
     <script type="module">
-        import { VamanaDB } from './js/db-client.js';
+        import { VamanaDataClient } from './js/db-client.js';
 
-        // Make VamanaDB available globally
-        window.VamanaDB = VamanaDB;
-        window.db = new VamanaDB();
+        // Make VamanaDataClient available globally
+        window.VamanaDataClient = VamanaDataClient;
+        window.VamanaDB = VamanaDataClient; // Backward compatibility
+        window.db = new VamanaDataClient();
         window.dbReady = false;
 
-        // Initialize database and load data
+        // Initialize data client and load data
         window.initApp = async function() {
             try {
-                await window.db.init('data/vamana.db');
+                await window.db.init();
                 window.dbReady = true;
-                console.log('Database ready');
+                console.log('Data client ready');
                 await loadSymbolData();
             } catch (error) {
-                console.error('Failed to initialize database:', error);
-                // Fallback to CSV loading
-                await loadSymbolDataFromCSV();
+                console.error('Failed to initialize data client:', error);
             }
         };
 
