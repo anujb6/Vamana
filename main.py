@@ -6,19 +6,14 @@ This script orchestrates the data pipeline:
 2. Fetch monthly price data from Yahoo Finance → SQLite
 3. Calculate RSI for individual stocks → SQLite
 4. Compute sector/industry/basic industry indices → SQLite
-5. Export SQLite to JSON API for GitHub Pages
 
-All data is stored in SQLite database (data/vamana.db)
-Static JSON API is exported to data/api/ for frontend
+All data is stored directly in SQLite database (data/vamana.db)
 """
 
 from data_loaders import monthly_data, rsi, symbol_data
 from strategies import industrial_rsi, sectorial_rsi, basic_indsutrial_rsi
 from database import SQLiteExporter
 from datetime import datetime
-import subprocess
-import sys
-import os
 
 # Configuration
 DB_PATH = 'data/vamana.db'
@@ -26,50 +21,6 @@ SYMBOL_DATA_PATH = 'data/symbols/symbol_data.csv'
 START_DATE = '2010-01-01'
 END_DATE = datetime.today().strftime('%Y-%m-%d')
 INTERVAL = '1mo'
-
-
-def export_static_api():
-    """Export SQLite database to static JSON API files for GitHub Pages"""
-    print("\n" + "=" * 60)
-    print("Exporting to Static JSON API")
-    print("=" * 60)
-
-    # Build the static API from SQLite
-    print("\n[Step 1] Building JSON API from SQLite...")
-    result = subprocess.run(
-        [sys.executable, 'scripts/build_static_api.py'],
-        capture_output=True,
-        text=True
-    )
-
-    if result.returncode != 0:
-        print(f"ERROR: API export failed!")
-        print(result.stderr)
-        return False
-
-    print(result.stdout)
-
-    # Compress the API files for faster loading
-    print("\n[Step 2] Compressing API files...")
-    result = subprocess.run(
-        [sys.executable, 'scripts/compress_api.py'],
-        capture_output=True,
-        text=True
-    )
-
-    if result.returncode != 0:
-        print(f"WARNING: Compression failed (non-critical)")
-        print(result.stderr)
-    else:
-        print(result.stdout)
-
-    print("\n" + "=" * 60)
-    print("Static API ready!")
-    print("Location: data/api/")
-    print("Commit these files to deploy to GitHub Pages")
-    print("=" * 60)
-
-    return True
 
 
 def init_database():
@@ -128,13 +79,9 @@ def run_full_pipeline():
         db.update_metadata('last_updated', datetime.now().isoformat())
         db.update_metadata('version', '2.0')
 
-    # Export to static JSON API for GitHub Pages
-    export_static_api()
-
     print("\n" + "=" * 60)
     print("Pipeline complete!")
     print(f"Database saved to: {DB_PATH}")
-    print(f"Static API exported to: data/api/")
     print("=" * 60)
 
 
@@ -158,12 +105,8 @@ def run_aggregation_only():
     with DatabaseWriter(DB_PATH) as db:
         db.update_metadata('last_updated', datetime.now().isoformat())
 
-    # Export to static JSON API for GitHub Pages
-    export_static_api()
-
     print("\n" + "=" * 60)
     print("Aggregation complete!")
-    print(f"Static API exported to: data/api/")
     print("=" * 60)
 
 
