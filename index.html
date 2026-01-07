@@ -1189,9 +1189,9 @@
                 ]);
 
                 // Cache RSI data
-                sectorsRsi.forEach(s => sectorRsiData[s.sector] = s.rsi);
-                industriesRsi.forEach(i => industryRsiData[i.industry] = i.rsi);
-                basicIndustriesRsi.forEach(bi => basicIndustryRsiData[bi.basic_industry] = bi.rsi);
+                sectorsRsi.forEach(s => sectorRsiData[s.name] = s.rsi);
+                industriesRsi.forEach(i => industryRsiData[i.name] = i.rsi);
+                basicIndustriesRsi.forEach(bi => basicIndustryRsiData[bi.name] = bi.rsi);
 
                 updateDashboard();
             } catch (error) {
