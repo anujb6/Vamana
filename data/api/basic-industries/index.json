@@ -2,289 +2,289 @@
   {
     "name": "2/3 Wheelers",
     "slug": "2_3_wheelers",
-    "rsi": 86.74127512177523,
+    "rsi": 85.80659334966795,
     "date": "2026-01-31 00:00:00",
-    "close": 5968.3486397797615,
+    "close": 5861.589221666106,
     "company_count": 5
   },
   {
     "name": "Abrasives & Bearings",
     "slug": "abrasives_and_bearings",
-    "rsi": 32.62320344797028,
+    "rsi": 30.215888977210128,
     "date": "2026-01-31 00:00:00",
-    "close": 1626.4721045311187,
+    "close": 1593.5879077726522,
     "company_count": 6
   },
   {
     "name": "Advertising & Media Agencies",
     "slug": "advertising_and_media_agencies",
-    "rsi": 25.422768974961315,
+    "rsi": 24.05369721116321,
     "date": "2026-01-31 00:00:00",
-    "close": 138.93305480211345,
+    "close": 134.2980338759638,
     "company_count": 4
   },
   {
     "name": "Aerospace & Defense",
     "slug": "aerospace_and_defense",
-    "rsi": 57.40899576737028,
+    "rsi": 53.994401269494716,
     "date": "2026-01-31 00:00:00",
-    "close": 929.0844872927595,
+    "close": 900.2013779188079,
     "company_count": 16
   },
   {
     "name": "Airline",
     "slug": "airline",
-    "rsi": 42.65898882934122,
+    "rsi": 36.73681429352838,
     "date": "2026-01-31 00:00:00",
-    "close": 472.81348856554985,
+    "close": 442.97308789969577,
     "company_count": 2
   },
   {
     "name": "Airport & Airport services",
     "slug": "airport_and_airport_services",
-    "rsi": 50.57755213935089,
+    "rsi": 43.92677569303179,
     "date": "2026-01-31 00:00:00",
-    "close": 115.48041803943096,
+    "close": 108.56907877144779,
     "company_count": 2
   },
   {
     "name": "Aluminium",
     "slug": "aluminium",
-    "rsi": 66.74800201524718,
+    "rsi": 63.67373289862631,
     "date": "2026-01-31 00:00:00",
-    "close": 1621.1126842129831,
+    "close": 1575.80981871855,
     "company_count": 5
   },
   {
     "name": "Aluminium Copper & Zinc Products",
     "slug": "aluminium_copper_and_zinc_products",
-    "rsi": 70.05104495262125,
+    "rsi": 60.24153030930498,
     "date": "2026-01-31 00:00:00",
-    "close": 2098.728364448154,
+    "close": 1896.8040674816452,
     "company_count": 5
   },
   {
     "name": "Amusement Parks/ Other Recreation",
     "slug": "amusement_parks__other_recreation",
-    "rsi": 15.397569487156389,
+    "rsi": 16.096987801567465,
     "date": "2026-01-31 00:00:00",
-    "close": 164.0066878527078,
+    "close": 164.47582781280022,
     "company_count": 3
   },
   {
     "name": "Animal Feed",
     "slug": "animal_feed",
-    "rsi": 68.74136593339026,
+    "rsi": 63.22924421612194,
     "date": "2026-01-31 00:00:00",
-    "close": 12192.23895676723,
+    "close": 11571.49128671848,
     "company_count": 5
   },
   {
     "name": "Asset Management Company",
     "slug": "asset_management_company",
-    "rsi": 67.60531518001417,
+    "rsi": 60.31098946962278,
     "date": "2026-01-31 00:00:00",
-    "close": 246.27594937236967,
+    "close": 237.00512868536427,
     "company_count": 5
   },
   {
     "name": "Auto Components & Equipments",
     "slug": "auto_components_and_equipments",
-    "rsi": 70.91835205982709,
+    "rsi": 59.35555608418011,
     "date": "2026-01-31 00:00:00",
-    "close": 2103.3627433494125,
+    "close": 1974.0220657842017,
     "company_count": 84
   },
   {
     "name": "Auto Dealer",
     "slug": "auto_dealer",
-    "rsi": 39.00931236090516,
+    "rsi": 36.94807654621538,
     "date": "2026-01-31 00:00:00",
-    "close": 75.40605790533637,
+    "close": 73.39511705862614,
     "company_count": 2
   },
   {
     "name": "Biotechnology",
     "slug": "biotechnology",
-    "rsi": 41.775342666666944,
+    "rsi": 37.744495780972095,
     "date": "2026-01-31 00:00:00",
-    "close": 118.49725934667259,
+    "close": 113.37918725000797,
     "company_count": 1
   },
   {
     "name": "Breweries & Distilleries",
     "slug": "breweries_and_distilleries",
-    "rsi": 71.10314044800982,
+    "rsi": 59.199640635124574,
     "date": "2026-01-31 00:00:00",
-    "close": 1115.4924050098225,
+    "close": 1014.5059152242843,
     "company_count": 13
   },
   {
     "name": "Business Process Outsourcing (BPO)/ Knowledge Process Outsourcing (KPO)",
     "slug": "business_process_outsourcing_bpo__knowledge_process_outsourcing_kpo",
-    "rsi": 68.9716689013877,
+    "rsi": 62.248225251849554,
     "date": "2026-01-31 00:00:00",
-    "close": 1052.6494212615205,
+    "close": 1016.3034257180344,
     "company_count": 6
   },
   {
     "name": "Cables - Electricals",
     "slug": "cables_-_electricals",
-    "rsi": 67.46299027615304,
+    "rsi": 58.26434961152186,
     "date": "2026-01-31 00:00:00",
-    "close": 1994.709603393074,
+    "close": 1890.1981153628626,
     "company_count": 11
   },
   {
     "name": "Carbon Black",
     "slug": "carbon_black",
-    "rsi": 36.509596158494894,
+    "rsi": 33.72997506241691,
     "date": "2026-01-31 00:00:00",
-    "close": 2448.514486070432,
+    "close": 2307.601705897407,
     "company_count": 1
   },
   {
     "name": "Castings & Forgings",
     "slug": "castings_and_forgings",
-    "rsi": 48.5101509603191,
+    "rsi": 40.13167219821034,
     "date": "2026-01-31 00:00:00",
-    "close": 564.892551887855,
+    "close": 529.4753382316145,
     "company_count": 10
   },
   {
     "name": "Cement & Cement Products",
     "slug": "cement_and_cement_products",
-    "rsi": 47.0807137245163,
+    "rsi": 42.38673576784052,
     "date": "2026-01-31 00:00:00",
-    "close": 671.5754843008096,
+    "close": 656.768983797712,
     "company_count": 33
   },
   {
     "name": "Ceramics",
     "slug": "ceramics",
-    "rsi": 38.140901938873924,
+    "rsi": 37.63052841268379,
     "date": "2026-01-31 00:00:00",
-    "close": 887.5601145471851,
+    "close": 884.0176318322492,
     "company_count": 9
   },
   {
     "name": "Cigarettes & Tobacco Products",
     "slug": "cigarettes_and_tobacco_products",
-    "rsi": 38.850251566974585,
+    "rsi": 37.50661097011224,
     "date": "2026-01-31 00:00:00",
-    "close": 1583.3765132003512,
+    "close": 1545.900319317334,
     "company_count": 2
   },
   {
     "name": "Civil Construction",
     "slug": "civil_construction",
-    "rsi": 41.14714317412967,
+    "rsi": 33.815980631710204,
     "date": "2026-01-31 00:00:00",
-    "close": 300.42966577321135,
+    "close": 277.6060940263518,
     "company_count": 76
   },
   {
     "name": "Coal",
     "slug": "coal",
-    "rsi": 78.36397694834011,
+    "rsi": 74.84899504838646,
     "date": "2026-01-31 00:00:00",
-    "close": 355.99405243604974,
+    "close": 337.58918329843914,
     "company_count": 2
   },
   {
     "name": "Commercial Vehicles",
     "slug": "commercial_vehicles",
-    "rsi": 75.74155141593434,
+    "rsi": 82.96319846402612,
     "date": "2026-01-31 00:00:00",
-    "close": 1282.0673093553244,
+    "close": 1282.5161378311927,
     "company_count": 3
   },
   {
     "name": "Commodity Chemicals",
     "slug": "commodity_chemicals",
-    "rsi": 40.00328799790622,
+    "rsi": 35.92692838245635,
     "date": "2026-01-31 00:00:00",
-    "close": 718.4766449333314,
+    "close": 687.5024685111571,
     "company_count": 24
   },
   {
     "name": "Compressors Pumps & Diesel Engines",
     "slug": "compressors_pumps_and_diesel_engines",
-    "rsi": 47.01957493227873,
+    "rsi": 42.24860513396391,
     "date": "2026-01-31 00:00:00",
-    "close": 1924.6701524365897,
+    "close": 1848.768289449772,
     "company_count": 13
   },
   {
     "name": "Computers - Software & Consulting",
     "slug": "computers_-_software_and_consulting",
-    "rsi": 44.89266082516962,
+    "rsi": 45.400559702481594,
     "date": "2026-01-31 00:00:00",
-    "close": 1319.5329724449098,
+    "close": 1322.9567353409916,
     "company_count": 46
   },
   {
     "name": "Computers Hardware & Equipments",
     "slug": "computers_hardware_and_equipments",
-    "rsi": 44.47200318076057,
+    "rsi": 41.99517535157816,
     "date": "2026-01-31 00:00:00",
-    "close": 741.6305042885404,
+    "close": 719.066681207797,
     "company_count": 9
   },
   {
     "name": "Construction Vehicles",
     "slug": "construction_vehicles",
-    "rsi": 38.36129260574012,
+    "rsi": 33.50409533327678,
     "date": "2026-01-31 00:00:00",
-    "close": 969.7490765973079,
+    "close": 900.7548060685087,
     "company_count": 4
   },
   {
     "name": "Consulting Services",
     "slug": "consulting_services",
-    "rsi": 43.16058796054952,
+    "rsi": 51.36822026010116,
     "date": "2026-01-31 00:00:00",
-    "close": 177.60896872767012,
+    "close": 197.1220715844431,
     "company_count": 3
   },
   {
     "name": "Consumer Electronics",
     "slug": "consumer_electronics",
-    "rsi": 38.889547367701816,
+    "rsi": 32.96165951424511,
     "date": "2026-01-31 00:00:00",
-    "close": 993.1286139534711,
+    "close": 950.3722800420949,
     "company_count": 10
   },
   {
     "name": "Copper",
     "slug": "copper",
-    "rsi": 85.75209978316084,
+    "rsi": 85.06535326380029,
     "date": "2026-01-31 00:00:00",
-    "close": 406.3193590183172,
+    "close": 396.5216675319448,
     "company_count": 2
   },
   {
     "name": "Cycles",
     "slug": "cycles",
-    "rsi": 50.7769096069464,
+    "rsi": 51.968092643017805,
     "date": "2026-01-31 00:00:00",
-    "close": 103.84197537881185,
+    "close": 106.41297374071486,
     "company_count": 1
   },
   {
     "name": "Dairy Products",
     "slug": "dairy_products",
-    "rsi": 51.03778294286194,
+    "rsi": 44.67555721981306,
     "date": "2026-01-31 00:00:00",
-    "close": 1077.9875464653721,
+    "close": 1023.9527069508104,
     "company_count": 7
   },
   {
     "name": "Data Processing Services",
     "slug": "data_processing_services",
-    "rsi": 23.899633191778364,
+    "rsi": 22.100233413173896,
     "date": "2026-01-31 00:00:00",
-    "close": 56.21696427140822,
+    "close": 53.92211353960712,
     "company_count": 1
   },
   {
@@ -298,1177 +298,1177 @@
   {
     "name": "Depositories Clearing Houses and Other Intermediaries",
     "slug": "depositories_clearing_houses_and_other_intermediaries",
-    "rsi": 51.7153549542732,
+    "rsi": 48.16364576963783,
     "date": "2026-01-31 00:00:00",
-    "close": 417.08641286889826,
+    "close": 401.09897104069466,
     "company_count": 3
   },
   {
     "name": "Digital Entertainment",
     "slug": "digital_entertainment",
-    "rsi": 39.466954470676235,
+    "rsi": 35.21392744089238,
     "date": "2026-01-31 00:00:00",
-    "close": 349.479281391146,
+    "close": 331.5744282967277,
     "company_count": 2
   },
   {
     "name": "Diversified",
     "slug": "diversified",
-    "rsi": 56.90660831175068,
+    "rsi": 47.40139003531843,
     "date": "2026-01-31 00:00:00",
-    "close": 889.3114232898458,
+    "close": 849.5357909148378,
     "company_count": 9
   },
   {
     "name": "Diversified Commercial Services",
     "slug": "diversified_commercial_services",
-    "rsi": 55.56560156746581,
+    "rsi": 45.714060721027494,
     "date": "2026-01-31 00:00:00",
-    "close": 254.38706813114163,
+    "close": 232.8529460495446,
     "company_count": 27
   },
   {
     "name": "Diversified FMCG",
     "slug": "diversified_fmcg",
-    "rsi": 37.31129727724986,
+    "rsi": 35.81876066403011,
     "date": "2026-01-31 00:00:00",
-    "close": 444.1667211898655,
+    "close": 439.58369235679146,
     "company_count": 5
   },
   {
     "name": "Diversified Metals",
     "slug": "diversified_metals",
-    "rsi": 76.70679860982105,
+    "rsi": 70.97545342062911,
     "date": "2026-01-31 00:00:00",
-    "close": 4671.2029482180205,
+    "close": 4420.083183274321,
     "company_count": 2
   },
   {
     "name": "Diversified Retail",
     "slug": "diversified_retail",
-    "rsi": 34.435591195921376,
+    "rsi": 27.376820738626236,
     "date": "2026-01-31 00:00:00",
-    "close": 271.66311285219643,
+    "close": 246.3857987640635,
     "company_count": 11
   },
   {
     "name": "Dredging",
     "slug": "dredging",
-    "rsi": 77.74571053947115,
+    "rsi": 82.28378437305003,
     "date": "2026-01-31 00:00:00",
-    "close": 162.4978644214002,
+    "close": 172.78252754068052,
     "company_count": 2
   },
   {
     "name": "Dyes And Pigments",
     "slug": "dyes_and_pigments",
-    "rsi": 39.32329390587909,
+    "rsi": 35.09227937729311,
     "date": "2026-01-31 00:00:00",
-    "close": 627.4971261229051,
+    "close": 591.0520951586685,
     "company_count": 10
   },
   {
     "name": "E-Learning",
     "slug": "e-learning",
-    "rsi": 41.028737377519064,
+    "rsi": 39.19941964446399,
     "date": "2026-01-31 00:00:00",
-    "close": 1546.7368732258858,
+    "close": 1505.8235250078728,
     "company_count": 4
   },
   {
     "name": "E-Retail/ E-Commerce",
     "slug": "e-retail__e-commerce",
-    "rsi": 38.80280120381098,
+    "rsi": 35.46578495963054,
     "date": "2026-01-31 00:00:00",
-    "close": 209.1627458795552,
+    "close": 196.2833814385479,
     "company_count": 8
   },
   {
     "name": "Edible Oil",
     "slug": "edible_oil",
-    "rsi": 54.89564537047919,
+    "rsi": 49.68239260865387,
     "date": "2026-01-31 00:00:00",
-    "close": 589.8281110033076,
+    "close": 564.9353765058312,
     "company_count": 12
   },
   {
     "name": "Education",
     "slug": "education",
-    "rsi": 45.91805640028366,
+    "rsi": 43.16074184774422,
     "date": "2026-01-31 00:00:00",
-    "close": 269.17577443612436,
+    "close": 262.28060081562467,
     "company_count": 11
   },
   {
     "name": "Electrodes & Refractories",
     "slug": "electrodes_and_refractories",
-    "rsi": 48.322737584913405,
+    "rsi": 38.5017102688514,
     "date": "2026-01-31 00:00:00",
-    "close": 1284.1659924989947,
+    "close": 1180.875240266672,
     "company_count": 8
   },
   {
     "name": "Electronic Media",
     "slug": "electronic_media",
-    "rsi": 61.096019625698204,
+    "rsi": 56.85338449755047,
     "date": "2026-01-31 00:00:00",
-    "close": 112.0849329542404,
+    "close": 107.54955862041581,
     "company_count": 4
   },
   {
     "name": "Exchange and Data Platform",
     "slug": "exchange_and_data_platform",
-    "rsi": 67.95036472352018,
+    "rsi": 70.88870800486696,
     "date": "2026-01-31 00:00:00",
-    "close": 1505.1720382650171,
+    "close": 1587.6087336927721,
     "company_count": 3
   },
   {
     "name": "Explosives",
     "slug": "explosives",
-    "rsi": 50.57405224006261,
+    "rsi": 50.04648910308555,
     "date": "2026-01-31 00:00:00",
-    "close": 6026.141173939325,
+    "close": 5987.802709794733,
     "company_count": 3
   },
   {
     "name": "Ferro & Silica Manganese",
     "slug": "ferro_and_silica_manganese",
-    "rsi": 54.51874103547914,
+    "rsi": 54.53025632955667,
     "date": "2026-01-31 00:00:00",
-    "close": 633.8336447852582,
+    "close": 633.8954474822141,
     "company_count": 4
   },
   {
     "name": "Fertilizers",
     "slug": "fertilizers",
-    "rsi": 64.90804741906668,
+    "rsi": 55.679944388452924,
     "date": "2026-01-31 00:00:00",
-    "close": 951.9764371135691,
+    "close": 898.847822806836,
     "company_count": 20
   },
   {
     "name": "Film Production Distribution & Exhibition",
     "slug": "film_production_distribution_and_exhibition",
-    "rsi": 37.296792937594276,
+    "rsi": 31.607392177486716,
     "date": "2026-01-31 00:00:00",
-    "close": 86.1497072066617,
+    "close": 82.29283352583259,
     "company_count": 6
   },
   {
     "name": "Financial Institution",
     "slug": "financial_institution",
-    "rsi": 57.61277848382949,
+    "rsi": 52.28664477917096,
     "date": "2026-01-31 00:00:00",
-    "close": 764.6124038198964,
+    "close": 733.5078830103347,
     "company_count": 7
   },
   {
     "name": "Financial Products Distributor",
     "slug": "financial_products_distributor",
-    "rsi": 73.2846812732791,
+    "rsi": 71.37240365242529,
     "date": "2026-01-31 00:00:00",
-    "close": 783.1117618269542,
+    "close": 768.9529683895712,
     "company_count": 2
   },
   {
     "name": "Financial Technology (Fintech)",
     "slug": "financial_technology_fintech",
-    "rsi": 41.32422164123611,
+    "rsi": 36.240133282506264,
     "date": "2026-01-31 00:00:00",
-    "close": 70.97348419408327,
+    "close": 66.8655517479715,
     "company_count": 6
   },
   {
     "name": "Footwear",
     "slug": "footwear",
-    "rsi": 19.625425118001672,
+    "rsi": 16.529127598336174,
     "date": "2026-01-31 00:00:00",
-    "close": 605.06849899514,
+    "close": 580.7359972435884,
     "company_count": 8
   },
   {
     "name": "Furniture Home Furnishing",
     "slug": "furniture_home_furnishing",
-    "rsi": 28.042345265362442,
+    "rsi": 27.074366242760334,
     "date": "2026-01-31 00:00:00",
-    "close": 147.34910427185125,
+    "close": 144.41501459304908,
     "company_count": 7
   },
   {
     "name": "Garments & Apparels",
     "slug": "garments_and_apparels",
-    "rsi": 47.219061359895505,
+    "rsi": 41.42826113228079,
     "date": "2026-01-31 00:00:00",
-    "close": 769.3337041971952,
+    "close": 733.5064793825852,
     "company_count": 30
   },
   {
     "name": "Gas Transmission/Marketing",
     "slug": "gas_transmission_marketing",
-    "rsi": 50.57777690914724,
+    "rsi": 42.11780626314782,
     "date": "2026-01-31 00:00:00",
-    "close": 399.70465330842734,
+    "close": 375.7164725947897,
     "company_count": 2
   },
   {
     "name": "Gems Jewellery And Watches",
     "slug": "gems_jewellery_and_watches",
-    "rsi": 75.43324817198166,
+    "rsi": 76.68556266243914,
     "date": "2026-01-31 00:00:00",
-    "close": 1817.3501140450676,
+    "close": 1842.7476025783844,
     "company_count": 26
   },
   {
     "name": "General Insurance",
     "slug": "general_insurance",
-    "rsi": 51.188310279138264,
+    "rsi": 44.61479849224874,
     "date": "2026-01-31 00:00:00",
-    "close": 122.87161286006565,
+    "close": 119.50425116698818,
     "company_count": 6
   },
   {
     "name": "Glass - Consumer",
     "slug": "glass_-_consumer",
-    "rsi": 30.89924662261832,
+    "rsi": 29.55814852430659,
     "date": "2026-01-31 00:00:00",
-    "close": 3090.957319570236,
+    "close": 3044.401923247598,
     "company_count": 2
   },
   {
     "name": "Glass - Industrial",
     "slug": "glass_-_industrial",
-    "rsi": 47.38257161430069,
+    "rsi": 41.132779941476144,
     "date": "2026-01-31 00:00:00",
-    "close": 356.72362567395203,
+    "close": 326.85903596924254,
     "company_count": 3
   },
   {
     "name": "Granites & Marbles",
     "slug": "granites_and_marbles",
-    "rsi": 39.23422270408879,
+    "rsi": 34.670824110109095,
     "date": "2026-01-31 00:00:00",
-    "close": 188.49117080723093,
+    "close": 175.5905734249933,
     "company_count": 5
   },
   {
     "name": "Healthcare Research Analytics & Technology",
     "slug": "healthcare_research_analytics_and_technology",
-    "rsi": 45.08760387490786,
+    "rsi": 42.206318652065384,
     "date": "2026-01-31 00:00:00",
-    "close": 26786.4151005292,
+    "close": 25278.993441184306,
     "company_count": 5
   },
   {
     "name": "Healthcare Service Provider",
     "slug": "healthcare_service_provider",
-    "rsi": 61.649492906775244,
+    "rsi": 58.76816055452945,
     "date": "2026-01-31 00:00:00",
-    "close": 234.77943042873795,
+    "close": 229.91462857784663,
     "company_count": 7
   },
   {
     "name": "Heavy Electrical Equipment",
     "slug": "heavy_electrical_equipment",
-    "rsi": 41.28640279483482,
+    "rsi": 31.928541394518447,
     "date": "2026-01-31 00:00:00",
-    "close": 943.3209468656798,
+    "close": 845.7975914027705,
     "company_count": 28
   },
   {
     "name": "Holding Company",
     "slug": "holding_company",
-    "rsi": 54.00398034630313,
+    "rsi": 45.420470743223554,
     "date": "2026-01-31 00:00:00",
-    "close": 1401.4143986280037,
+    "close": 1343.350996514516,
     "company_count": 13
   },
   {
     "name": "Hospital",
     "slug": "hospital",
-    "rsi": 55.54045218445976,
+    "rsi": 51.391528120658656,
     "date": "2026-01-31 00:00:00",
-    "close": 600.9499631353741,
+    "close": 585.5670864864994,
     "company_count": 16
   },
   {
     "name": "Hotels & Resorts",
     "slug": "hotels_and_resorts",
-    "rsi": 42.09355432914776,
+    "rsi": 34.90088804077902,
     "date": "2026-01-31 00:00:00",
-    "close": 270.7861507765159,
+    "close": 260.90216511532066,
     "company_count": 29
   },
   {
     "name": "Household Appliances",
     "slug": "household_appliances",
-    "rsi": 41.85630689442608,
+    "rsi": 33.80220462396073,
     "date": "2026-01-31 00:00:00",
-    "close": 1063.7585527891893,
+    "close": 1002.7084107809139,
     "company_count": 19
   },
   {
     "name": "Household Products",
     "slug": "household_products",
-    "rsi": 50.1885223548733,
+    "rsi": 47.18213606439231,
     "date": "2026-01-31 00:00:00",
-    "close": 653.1343885928378,
+    "close": 639.7897158130064,
     "company_count": 6
   },
   {
     "name": "Houseware",
     "slug": "houseware",
-    "rsi": 36.48973110622732,
+    "rsi": 32.06353314907807,
     "date": "2026-01-31 00:00:00",
-    "close": 67.92837957672832,
+    "close": 62.8437344424316,
     "company_count": 1
   },
   {
     "name": "Housing Finance Company",
     "slug": "housing_finance_company",
-    "rsi": 68.2909698028775,
+    "rsi": 60.52654776894843,
     "date": "2026-01-31 00:00:00",
-    "close": 690.0734477057974,
+    "close": 657.0575817629357,
     "company_count": 14
   },
   {
     "name": "IT Enabled Services",
     "slug": "it_enabled_services",
-    "rsi": 49.85156381088884,
+    "rsi": 45.12181068887706,
     "date": "2026-01-31 00:00:00",
-    "close": 1234.4270449783135,
+    "close": 1196.6869825038589,
     "company_count": 45
   },
   {
     "name": "Industrial Gases",
     "slug": "industrial_gases",
-    "rsi": 43.91980374507597,
+    "rsi": 45.907341308178935,
     "date": "2026-01-31 00:00:00",
-    "close": 1807.0645541374454,
+    "close": 1831.236511586439,
     "company_count": 2
   },
   {
     "name": "Industrial Minerals",
     "slug": "industrial_minerals",
-    "rsi": 63.78031694334169,
+    "rsi": 51.34992255914819,
     "date": "2026-01-31 00:00:00",
-    "close": 934.6790589903699,
+    "close": 855.1926399158572,
     "company_count": 8
   },
   {
     "name": "Industrial Products",
     "slug": "industrial_products",
-    "rsi": 38.378605115505266,
+    "rsi": 32.553006134073655,
     "date": "2026-01-31 00:00:00",
-    "close": 686.2854383219013,
+    "close": 646.2952829327128,
     "company_count": 58
   },
   {
     "name": "Insurance Distributors",
     "slug": "insurance_distributors",
-    "rsi": 38.322596934596305,
+    "rsi": 36.03150064792043,
     "date": "2026-01-31 00:00:00",
-    "close": 100.53345974933919,
+    "close": 97.39727461333956,
     "company_count": 1
   },
   {
     "name": "Integrated Power Utilities",
     "slug": "integrated_power_utilities",
-    "rsi": 53.56011394855367,
+    "rsi": 46.811136719461174,
     "date": "2026-01-31 00:00:00",
-    "close": 425.1785563002934,
+    "close": 403.6901637228018,
     "company_count": 7
   },
   {
     "name": "Internet & Catalogue Retail",
     "slug": "internet_and_catalogue_retail",
-    "rsi": 44.65816353822528,
+    "rsi": 43.00984210732946,
     "date": "2026-01-31 00:00:00",
-    "close": 974.2656048836523,
+    "close": 965.8175985150529,
     "company_count": 4
   },
   {
     "name": "Investment Company",
     "slug": "investment_company",
-    "rsi": 62.88109459585447,
+    "rsi": 54.9386584764848,
     "date": "2026-01-31 00:00:00",
-    "close": 1741.3245743301745,
+    "close": 1655.993066367561,
     "company_count": 39
   },
   {
     "name": "Iron & Steel",
     "slug": "iron_and_steel",
-    "rsi": 65.50658232427193,
+    "rsi": 54.722122573796405,
     "date": "2026-01-31 00:00:00",
-    "close": 697.8477069649895,
+    "close": 658.6642673469884,
     "company_count": 12
   },
   {
     "name": "Iron & Steel Products",
     "slug": "iron_and_steel_products",
-    "rsi": 51.459198119269544,
+    "rsi": 43.215174223034495,
     "date": "2026-01-31 00:00:00",
-    "close": 1080.6273427401045,
+    "close": 1026.1350292196735,
     "company_count": 50
   },
   {
     "name": "Jute & Jute Products",
     "slug": "jute_and_jute_products",
-    "rsi": 44.11194573330082,
+    "rsi": 38.35839316575283,
     "date": "2026-01-31 00:00:00",
-    "close": 87.2020722986815,
+    "close": 82.75765198326606,
     "company_count": 2
   },
   {
     "name": "LPG/CNG/PNG/LNG Supplier",
     "slug": "lpg_cng_png_lng_supplier",
-    "rsi": 38.48190694587076,
+    "rsi": 33.23099215402203,
     "date": "2026-01-31 00:00:00",
-    "close": 557.5428915402239,
+    "close": 536.5294037771835,
     "company_count": 7
   },
   {
     "name": "Leather And Leather Products",
     "slug": "leather_and_leather_products",
-    "rsi": 44.644914847074745,
+    "rsi": 40.532416777851985,
     "date": "2026-01-31 00:00:00",
-    "close": 387.43754727301564,
+    "close": 367.6177252027594,
     "company_count": 6
   },
   {
     "name": "Leisure Products",
     "slug": "leisure_products",
-    "rsi": 40.14772498473468,
+    "rsi": 37.15445416826666,
     "date": "2026-01-31 00:00:00",
-    "close": 103.22071737989505,
+    "close": 97.2254453863899,
     "company_count": 1
   },
   {
     "name": "Life Insurance",
     "slug": "life_insurance",
-    "rsi": 73.03849064911914,
+    "rsi": 70.24785992171337,
     "date": "2026-01-31 00:00:00",
-    "close": 351.42207018130745,
+    "close": 344.4859589515694,
     "company_count": 5
   },
   {
     "name": "Logistics Solution Provider",
     "slug": "logistics_solution_provider",
-    "rsi": 43.203232196309024,
+    "rsi": 37.62477179191237,
     "date": "2026-01-31 00:00:00",
-    "close": 298.21016097156485,
+    "close": 286.9993280111684,
     "company_count": 29
   },
   {
     "name": "Lubricants",
     "slug": "lubricants",
-    "rsi": 38.40187782953302,
+    "rsi": 31.74179079443732,
     "date": "2026-01-31 00:00:00",
-    "close": 718.2469771607293,
+    "close": 696.7952819701757,
     "company_count": 7
   },
   {
     "name": "Meat Products including Poultry",
     "slug": "meat_products_including_poultry",
-    "rsi": 57.902935833977224,
+    "rsi": 53.29304726579364,
     "date": "2026-01-31 00:00:00",
-    "close": 1061.6354405332452,
+    "close": 1006.9595883067391,
     "company_count": 3
   },
   {
     "name": "Media & Entertainment",
     "slug": "media_and_entertainment",
-    "rsi": 37.31634620538713,
+    "rsi": 31.315236835085685,
     "date": "2026-01-31 00:00:00",
-    "close": 1903.080407998295,
+    "close": 1794.6376179601157,
     "company_count": 13
   },
   {
     "name": "Medical Equipment & Supplies",
     "slug": "medical_equipment_and_supplies",
-    "rsi": 35.21530347161108,
+    "rsi": 34.80496054315965,
     "date": "2026-01-31 00:00:00",
-    "close": 1751.4958587526166,
+    "close": 1738.4976821341588,
     "company_count": 4
   },
   {
     "name": "Microfinance Institutions",
     "slug": "microfinance_institutions",
-    "rsi": 49.74176950254699,
+    "rsi": 47.260074101531906,
     "date": "2026-01-31 00:00:00",
-    "close": 130.24558869678583,
+    "close": 127.97695700144743,
     "company_count": 5
   },
   {
     "name": "Non Banking Financial Company (NBFC)",
     "slug": "non_banking_financial_company_nbfc",
-    "rsi": 71.40901083665142,
+    "rsi": 63.27248427436495,
     "date": "2026-01-31 00:00:00",
-    "close": 1786.800428450451,
+    "close": 1724.151432033887,
     "company_count": 43
   },
   {
     "name": "Offshore Support Solution Drilling",
     "slug": "offshore_support_solution_drilling",
-    "rsi": 43.320523622037705,
+    "rsi": 35.24220993384235,
     "date": "2026-01-31 00:00:00",
-    "close": 457.6411581345387,
+    "close": 408.2703321722331,
     "company_count": 6
   },
   {
     "name": "Oil Equipment & Services",
     "slug": "oil_equipment_and_services",
-    "rsi": 41.47230919435895,
+    "rsi": 36.33288392817079,
     "date": "2026-01-31 00:00:00",
-    "close": 137.20331013183412,
+    "close": 127.33783637414227,
     "company_count": 2
   },
   {
     "name": "Oil Exploration & Production",
     "slug": "oil_exploration_and_production",
-    "rsi": 50.559148590242714,
+    "rsi": 56.24740329167387,
     "date": "2026-01-31 00:00:00",
-    "close": 309.7304470004767,
+    "close": 324.5962785740756,
     "company_count": 4
   },
   {
     "name": "Oil Storage & Transportation",
     "slug": "oil_storage_and_transportation",
-    "rsi": 21.298448378647194,
+    "rsi": 19.722070632898806,
     "date": "2026-01-31 00:00:00",
-    "close": 94.05780417381683,
+    "close": 90.55491541162391,
     "company_count": 1
   },
   {
     "name": "Other Agricultural Products",
     "slug": "other_agricultural_products",
-    "rsi": 44.35763678124416,
+    "rsi": 38.920419977267656,
     "date": "2026-01-31 00:00:00",
-    "close": 737.4665461624021,
+    "close": 710.1997340007355,
     "company_count": 20
   },
   {
     "name": "Other Bank",
     "slug": "other_bank",
-    "rsi": 59.597904668769274,
+    "rsi": 56.10711341963628,
     "date": "2026-01-31 00:00:00",
-    "close": 112.1164614538131,
+    "close": 108.86540037612684,
     "company_count": 9
   },
   {
     "name": "Other Beverages",
     "slug": "other_beverages",
-    "rsi": 48.17019887254351,
+    "rsi": 50.94367309236938,
     "date": "2026-01-31 00:00:00",
-    "close": 1929.9009227416122,
+    "close": 1979.2640513106583,
     "company_count": 1
   },
   {
     "name": "Other Capital Market related Services",
     "slug": "other_capital_market_related_services",
-    "rsi": 40.90665761174865,
+    "rsi": 37.64342934471711,
     "date": "2026-01-31 00:00:00",
-    "close": 138.5776602136178,
+    "close": 126.87280702646682,
     "company_count": 1
   },
   {
     "name": "Other Construction Materials",
     "slug": "other_construction_materials",
-    "rsi": 44.88749768702931,
+    "rsi": 38.54912938689121,
     "date": "2026-01-31 00:00:00",
-    "close": 369.33042007759616,
+    "close": 344.60157725130716,
     "company_count": 3
   },
   {
     "name": "Other Consumer Services",
     "slug": "other_consumer_services",
-    "rsi": 45.26168261337305,
+    "rsi": 43.61351716860038,
     "date": "2026-01-31 00:00:00",
-    "close": 360.7920746296759,
+    "close": 352.67613905698414,
     "company_count": 1
   },
   {
     "name": "Other Electrical Equipment",
     "slug": "other_electrical_equipment",
-    "rsi": 39.181244013450986,
+    "rsi": 33.99325600865747,
     "date": "2026-01-31 00:00:00",
-    "close": 848.146890889656,
+    "close": 792.3128874695079,
     "company_count": 20
   },
   {
     "name": "Other Financial Services",
     "slug": "other_financial_services",
-    "rsi": 47.84110659052501,
+    "rsi": 44.697017640664455,
     "date": "2026-01-31 00:00:00",
-    "close": 676.3648890746545,
+    "close": 658.8761536558478,
     "company_count": 14
   },
   {
     "name": "Other Food Products",
     "slug": "other_food_products",
-    "rsi": 43.60354787399046,
+    "rsi": 41.723382210718405,
     "date": "2026-01-31 00:00:00",
-    "close": 235.88424471843274,
+    "close": 231.9348818645659,
     "company_count": 4
   },
   {
     "name": "Other Industrial Products",
     "slug": "other_industrial_products",
-    "rsi": 41.655203905359336,
+    "rsi": 36.69062790979917,
     "date": "2026-01-31 00:00:00",
-    "close": 588.4136793455226,
+    "close": 561.9625747681159,
     "company_count": 11
   },
   {
     "name": "Other Telecom Services",
     "slug": "other_telecom_services",
-    "rsi": 71.14057706708788,
+    "rsi": 64.83450727279158,
     "date": "2026-01-31 00:00:00",
-    "close": 281.5840815270245,
+    "close": 260.5969079860284,
     "company_count": 5
   },
   {
     "name": "Other Textile Products",
     "slug": "other_textile_products",
-    "rsi": 38.637979376464344,
+    "rsi": 33.39237513169144,
     "date": "2026-01-31 00:00:00",
-    "close": 1034.1776983983693,
+    "close": 972.3847716949663,
     "company_count": 84
   },
   {
     "name": "Other Utilities",
     "slug": "other_utilities",
-    "rsi": 55.85902822825358,
+    "rsi": 51.06915466647453,
     "date": "2026-01-31 00:00:00",
-    "close": 338.6501987284594,
+    "close": 307.934168434928,
     "company_count": 1
   },
   {
     "name": "Packaged Foods",
     "slug": "packaged_foods",
-    "rsi": 53.92186684040502,
+    "rsi": 49.137055789904174,
     "date": "2026-01-31 00:00:00",
-    "close": 858.4318042881062,
+    "close": 835.5443062558027,
     "company_count": 15
   },
   {
     "name": "Packaging",
     "slug": "packaging",
-    "rsi": 36.93166083691312,
+    "rsi": 32.008379374348664,
     "date": "2026-01-31 00:00:00",
-    "close": 860.1324170502756,
+    "close": 809.1137934654203,
     "company_count": 32
   },
   {
     "name": "Paints",
     "slug": "paints",
-    "rsi": 53.23048917374917,
+    "rsi": 50.53614743773997,
     "date": "2026-01-31 00:00:00",
-    "close": 1031.5280380964332,
+    "close": 1017.8489271373762,
     "company_count": 8
   },
   {
     "name": "Paper & Paper Products",
     "slug": "paper_and_paper_products",
-    "rsi": 31.191184184656038,
+    "rsi": 28.954256604894013,
     "date": "2026-01-31 00:00:00",
-    "close": 445.60440254109943,
+    "close": 433.8567222974274,
     "company_count": 23
   },
   {
     "name": "Passenger Cars & Utility Vehicles",
     "slug": "passenger_cars_and_utility_vehicles",
-    "rsi": 58.92999374459295,
+    "rsi": 49.811395942042644,
     "date": "2026-01-31 00:00:00",
-    "close": 1988.1605260151528,
+    "close": 1861.9485517649168,
     "company_count": 7
   },
   {
     "name": "Personal Care",
     "slug": "personal_care",
-    "rsi": 67.20851588190564,
+    "rsi": 73.33739097307631,
     "date": "2026-01-31 00:00:00",
-    "close": 999.1149221948042,
+    "close": 1037.5803661142293,
     "company_count": 10
   },
   {
     "name": "Pesticides & Agrochemicals",
     "slug": "pesticides_and_agrochemicals",
-    "rsi": 36.80808832576712,
+    "rsi": 35.27499451962454,
     "date": "2026-01-31 00:00:00",
-    "close": 1379.6523069272046,
+    "close": 1350.8197024102774,
     "company_count": 20
   },
   {
     "name": "Petrochemicals",
     "slug": "petrochemicals",
-    "rsi": 39.27967937257171,
+    "rsi": 32.89018913886645,
     "date": "2026-01-31 00:00:00",
-    "close": 1394.4159783680434,
+    "close": 1265.241620172285,
     "company_count": 8
   },
   {
     "name": "Pharmaceuticals",
     "slug": "pharmaceuticals",
-    "rsi": 56.913358390333535,
+    "rsi": 49.38445572829851,
     "date": "2026-01-31 00:00:00",
-    "close": 1439.992300885799,
+    "close": 1393.295541149687,
     "company_count": 107
   },
   {
     "name": "Pharmacy Retail",
     "slug": "pharmacy_retail",
-    "rsi": 48.79558819894852,
+    "rsi": 56.438073414508764,
     "date": "2026-01-31 00:00:00",
-    "close": 91.49535777597502,
+    "close": 97.15292016184517,
     "company_count": 2
   },
   {
     "name": "Plastic Products - Consumer",
     "slug": "plastic_products_-_consumer",
-    "rsi": 32.15901024448655,
+    "rsi": 30.71513486405928,
     "date": "2026-01-31 00:00:00",
-    "close": 616.3718815667239,
+    "close": 610.370703035204,
     "company_count": 8
   },
   {
     "name": "Plastic Products - Industrial",
     "slug": "plastic_products_-_industrial",
-    "rsi": 47.54823981064839,
+    "rsi": 41.459834170891966,
     "date": "2026-01-31 00:00:00",
-    "close": 2666.3450281858245,
+    "close": 2593.748334518338,
     "company_count": 18
   },
   {
     "name": "Plywood Boards/ Laminates",
     "slug": "plywood_boards__laminates",
-    "rsi": 36.33344632545029,
+    "rsi": 28.635814327626818,
     "date": "2026-01-31 00:00:00",
-    "close": 955.0376462815558,
+    "close": 891.8121357275472,
     "company_count": 10
   },
   {
     "name": "Port & Port services",
     "slug": "port_and_port_services",
-    "rsi": 63.9270380368664,
+    "rsi": 57.5611300578391,
     "date": "2026-01-31 00:00:00",
-    "close": 523.2256074641763,
+    "close": 505.44727192916037,
     "company_count": 4
   },
   {
     "name": "Power - Transmission",
     "slug": "power_-_transmission",
-    "rsi": 47.06759860001591,
+    "rsi": 40.087549295522386,
     "date": "2026-01-31 00:00:00",
-    "close": 756.9136055730522,
+    "close": 721.1089898958656,
     "company_count": 1
   },
   {
     "name": "Power Distribution",
     "slug": "power_distribution",
-    "rsi": 65.899957343988,
+    "rsi": 52.15407912194111,
     "date": "2026-01-31 00:00:00",
-    "close": 128.69019135473988,
+    "close": 114.84697160916242,
     "company_count": 1
   },
   {
     "name": "Power Generation",
     "slug": "power_generation",
-    "rsi": 48.61422662184981,
+    "rsi": 41.642091637242714,
     "date": "2026-01-31 00:00:00",
-    "close": 634.5599186040938,
+    "close": 587.6891398583347,
     "company_count": 19
   },
   {
     "name": "Power Trading",
     "slug": "power_trading",
-    "rsi": 52.29654803185512,
+    "rsi": 45.57497254481113,
     "date": "2026-01-31 00:00:00",
-    "close": 322.42126039535117,
+    "close": 306.344603281519,
     "company_count": 1
   },
   {
     "name": "Print Media",
     "slug": "print_media",
-    "rsi": 33.5024338535564,
+    "rsi": 29.371237095145702,
     "date": "2026-01-31 00:00:00",
-    "close": 184.49306753650237,
+    "close": 178.69614714977214,
     "company_count": 5
   },
   {
     "name": "Printing & Publication",
     "slug": "printing_and_publication",
-    "rsi": 45.42962882248416,
+    "rsi": 41.973389649683085,
     "date": "2026-01-31 00:00:00",
-    "close": 271.8089522323022,
+    "close": 261.87921585719744,
     "company_count": 4
   },
   {
     "name": "Printing Inks",
     "slug": "printing_inks",
-    "rsi": 30.10754836194549,
+    "rsi": 26.312643870932618,
     "date": "2026-01-31 00:00:00",
-    "close": 298.69555682709006,
+    "close": 283.5527570593272,
     "company_count": 1
   },
   {
     "name": "Private Sector Bank",
     "slug": "private_sector_bank",
-    "rsi": 77.70876363600838,
+    "rsi": 73.42371220187127,
     "date": "2026-01-31 00:00:00",
-    "close": 567.774006809989,
+    "close": 554.0810374105238,
     "company_count": 20
   },
   {
     "name": "Public Sector Bank",
     "slug": "public_sector_bank",
-    "rsi": 80.4869761851157,
+    "rsi": 79.40159009390202,
     "date": "2026-01-31 00:00:00",
-    "close": 209.59336910994853,
+    "close": 206.69229054529816,
     "company_count": 12
   },
   {
     "name": "Railway Wagons",
     "slug": "railway_wagons",
-    "rsi": 46.57836684683198,
+    "rsi": 39.94175714244425,
     "date": "2026-01-31 00:00:00",
-    "close": 768.7456272185716,
+    "close": 688.6063067166841,
     "company_count": 2
   },
   {
     "name": "Ratings",
     "slug": "ratings",
-    "rsi": 58.37566733525982,
+    "rsi": 50.25989938432245,
     "date": "2026-01-31 00:00:00",
-    "close": 608.6415519843097,
+    "close": 578.2825110670175,
     "company_count": 2
   },
   {
     "name": "Real Estate related services",
     "slug": "real_estate_related_services",
-    "rsi": 28.273888964065847,
+    "rsi": 24.349245568324307,
     "date": "2026-01-31 00:00:00",
-    "close": 182.5072859545337,
+    "close": 166.1273661987823,
     "company_count": 3
   },
   {
     "name": "Refineries & Marketing",
     "slug": "refineries_and_marketing",
-    "rsi": 69.17689559949368,
+    "rsi": 59.04269310868674,
     "date": "2026-01-31 00:00:00",
-    "close": 989.4648327363399,
+    "close": 927.1770867395135,
     "company_count": 6
   },
   {
     "name": "Residential Commercial Projects",
     "slug": "residential_commercial_projects",
-    "rsi": 51.098847195609494,
+    "rsi": 44.710795477315195,
     "date": "2026-01-31 00:00:00",
-    "close": 396.35292796138515,
+    "close": 381.0179040195247,
     "company_count": 59
   },
   {
     "name": "Restaurants",
     "slug": "restaurants",
-    "rsi": 31.398512282927456,
+    "rsi": 29.72755763082054,
     "date": "2026-01-31 00:00:00",
-    "close": 489.2592040533056,
+    "close": 477.40831339755596,
     "company_count": 7
   },
   {
     "name": "Road Assets - Toll Annuity Hybrid-Annuity",
     "slug": "road_assets_-_toll_annuity_hybrid-annuity",
-    "rsi": 51.037676147368295,
+    "rsi": 47.71783749694306,
     "date": "2026-01-31 00:00:00",
-    "close": 60.565738331287754,
+    "close": 58.33269014871594,
     "company_count": 4
   },
   {
     "name": "Road Transport",
     "slug": "road_transport",
-    "rsi": 32.831961509513675,
+    "rsi": 31.02285163091122,
     "date": "2026-01-31 00:00:00",
-    "close": 44.357156908742155,
+    "close": 41.83124549744322,
     "company_count": 1
   },
   {
     "name": "Rubber",
     "slug": "rubber",
-    "rsi": 38.67344566713277,
+    "rsi": 35.62732031877687,
     "date": "2026-01-31 00:00:00",
-    "close": 852.106565918406,
+    "close": 818.2505236376076,
     "company_count": 7
   },
   {
     "name": "Sanitary Ware",
     "slug": "sanitary_ware",
-    "rsi": 32.12148285585275,
+    "rsi": 30.808296882564775,
     "date": "2026-01-31 00:00:00",
-    "close": 2910.720790926514,
+    "close": 2840.7445797012956,
     "company_count": 2
   },
   {
     "name": "Seafood",
     "slug": "seafood",
-    "rsi": 63.45023908963928,
+    "rsi": 56.57225428774345,
     "date": "2026-01-31 00:00:00",
-    "close": 99.88249030499229,
+    "close": 92.434178586301,
     "company_count": 2
   },
   {
     "name": "Ship Building & Allied Services",
     "slug": "ship_building_and_allied_services",
-    "rsi": 81.56875910851686,
+    "rsi": 83.4809104511961,
     "date": "2026-01-31 00:00:00",
-    "close": 2493.4440883095585,
+    "close": 2627.031148428423,
     "company_count": 3
   },
   {
     "name": "Shipping",
     "slug": "shipping",
-    "rsi": 59.80862493703162,
+    "rsi": 52.180674032885356,
     "date": "2026-01-31 00:00:00",
-    "close": 307.5697287827363,
+    "close": 292.4910229211507,
     "company_count": 5
   },
   {
     "name": "Software Products",
     "slug": "software_products",
-    "rsi": 39.43773695167243,
+    "rsi": 35.78966208242164,
     "date": "2026-01-31 00:00:00",
-    "close": 351.6551852513424,
+    "close": 337.7526506873221,
     "company_count": 12
   },
   {
     "name": "Speciality Retail",
     "slug": "speciality_retail",
-    "rsi": 47.431284477481576,
+    "rsi": 37.09841170642143,
     "date": "2026-01-31 00:00:00",
-    "close": 944.4770316180949,
+    "close": 843.5648591586939,
     "company_count": 13
   },
   {
     "name": "Specialty Chemicals",
     "slug": "specialty_chemicals",
-    "rsi": 41.1500907150991,
+    "rsi": 39.897287384060355,
     "date": "2026-01-31 00:00:00",
-    "close": 1736.3326141234754,
+    "close": 1717.8951305506296,
     "company_count": 57
   },
   {
     "name": "Sponge Iron",
     "slug": "sponge_iron",
-    "rsi": 57.07248796701728,
+    "rsi": 51.818319052950926,
     "date": "2026-01-31 00:00:00",
-    "close": 948.691358610162,
+    "close": 887.4526035240183,
     "company_count": 5
   },
   {
     "name": "Stationary",
     "slug": "stationary",
-    "rsi": 39.068559657389855,
+    "rsi": 31.630130882156053,
     "date": "2026-01-31 00:00:00",
-    "close": 187.5738615802713,
+    "close": 176.1782633819575,
     "company_count": 6
   },
   {
     "name": "Stockbroking & Allied",
     "slug": "stockbroking_and_allied",
-    "rsi": 52.49237851349528,
+    "rsi": 52.84809875567937,
     "date": "2026-01-31 00:00:00",
-    "close": 1333.9176341766613,
+    "close": 1344.525795696348,
     "company_count": 26
   },
   {
     "name": "Sugar",
     "slug": "sugar",
-    "rsi": 30.91584981902011,
+    "rsi": 27.38051175076974,
     "date": "2026-01-31 00:00:00",
-    "close": 196.3631600546108,
+    "close": 185.13087955543318,
     "company_count": 26
   },
   {
     "name": "TRADING",
     "slug": "trading",
-    "rsi": 45.00750914627249,
+    "rsi": 51.95486770616785,
     "date": "2026-01-31 00:00:00",
-    "close": 8.817680028371232,
+    "close": 11.00552487253273,
     "company_count": 1
   },
   {
     "name": "TV Broadcasting & Software Production",
     "slug": "tv_broadcasting_and_software_production",
-    "rsi": 29.931383079017152,
+    "rsi": 27.821392684125485,
     "date": "2026-01-31 00:00:00",
-    "close": 87.81751572595128,
+    "close": 85.25549931755671,
     "company_count": 14
   },
   {
     "name": "Tea & Coffee",
     "slug": "tea_and_coffee",
-    "rsi": 71.68851585510073,
+    "rsi": 66.96528196212182,
     "date": "2026-01-31 00:00:00",
-    "close": 828.0743532852006,
+    "close": 812.2426024429907,
     "company_count": 12
   },
   {
     "name": "Telecom - Cellular & Fixed line services",
     "slug": "telecom_-_cellular_and_fixed_line_services",
-    "rsi": 59.31443700854561,
+    "rsi": 51.078170225605675,
     "date": "2026-01-31 00:00:00",
-    "close": 415.3805138054197,
+    "close": 397.8553321576922,
     "company_count": 6
   },
   {
     "name": "Telecom - Equipment & Accessories",
     "slug": "telecom_-_equipment_and_accessories",
-    "rsi": 37.16311112300706,
+    "rsi": 33.26284810557465,
     "date": "2026-01-31 00:00:00",
-    "close": 412.637296332111,
+    "close": 389.5799999707093,
     "company_count": 9
   },
   {
     "name": "Telecom - Infrastructure",
     "slug": "telecom_-_infrastructure",
-    "rsi": 38.095566044763565,
+    "rsi": 34.20061096251703,
     "date": "2026-01-31 00:00:00",
-    "close": 335.9775633229567,
+    "close": 318.1808864090407,
     "company_count": 5
   },
   {
     "name": "Tour Travel Related Services",
     "slug": "tour_travel_related_services",
-    "rsi": 38.13178790585169,
+    "rsi": 33.34374521998532,
     "date": "2026-01-31 00:00:00",
-    "close": 425.8004313292167,
+    "close": 402.6908469872496,
     "company_count": 7
   },
   {
     "name": "Tractors",
     "slug": "tractors",
-    "rsi": 70.67380437807401,
+    "rsi": 60.43860753437302,
     "date": "2026-01-31 00:00:00",
-    "close": 1767.095170789447,
+    "close": 1641.7017618456798,
     "company_count": 3
   },
   {
     "name": "Trading & Distributors",
     "slug": "trading_and_distributors",
-    "rsi": 39.022371299681645,
+    "rsi": 34.73488801842478,
     "date": "2026-01-31 00:00:00",
-    "close": 340.6088612955062,
+    "close": 324.7750728114152,
     "company_count": 20
   },
   {
     "name": "Trading - Auto Components",
     "slug": "trading_-_auto_components",
-    "rsi": 45.23789224554281,
+    "rsi": 41.50831220925069,
     "date": "2026-01-31 00:00:00",
-    "close": 661.5640151238492,
+    "close": 638.9219164366999,
     "company_count": 2
   },
   {
     "name": "Trading - Chemicals",
     "slug": "trading_-_chemicals",
-    "rsi": 32.30005647047584,
+    "rsi": 29.801988323233715,
     "date": "2026-01-31 00:00:00",
-    "close": 1967.7307105614584,
+    "close": 1879.874347709115,
     "company_count": 3
   },
   {
     "name": "Trading - Coal",
     "slug": "trading_-_coal",
-    "rsi": 30.63818570397777,
+    "rsi": 28.627883156715015,
     "date": "2026-01-31 00:00:00",
-    "close": 2483.873671864406,
+    "close": 2311.193696405851,
     "company_count": 2
   },
   {
     "name": "Trading - Gas",
     "slug": "trading_-_gas",
-    "rsi": 47.11166425036276,
+    "rsi": 45.625887899168575,
     "date": "2026-01-31 00:00:00",
-    "close": 104.91989233249559,
+    "close": 103.80197157150992,
     "company_count": 1
   },
   {
     "name": "Trading - Metals",
     "slug": "trading_-_metals",
-    "rsi": 44.41509416411061,
+    "rsi": 36.9841196012766,
     "date": "2026-01-31 00:00:00",
-    "close": 99.44291693303576,
+    "close": 91.6719544097785,
     "company_count": 3
   },
   {
     "name": "Trading - Minerals",
     "slug": "trading_-_minerals",
-    "rsi": 41.301487770886354,
+    "rsi": 36.79163051927178,
     "date": "2026-01-31 00:00:00",
-    "close": 2153.4894579154634,
+    "close": 2055.953322434503,
     "company_count": 2
   },
   {
     "name": "Trading - Textile Products",
     "slug": "trading_-_textile_products",
-    "rsi": 36.88282647328328,
+    "rsi": 34.30807677684547,
     "date": "2026-01-31 00:00:00",
-    "close": 346.7083869057299,
+    "close": 332.3291271025138,
     "company_count": 4
   },
   {
     "name": "Transport Related Services",
     "slug": "transport_related_services",
-    "rsi": 68.44281756820531,
+    "rsi": 57.02739377102516,
     "date": "2026-01-31 00:00:00",
-    "close": 512.0566005566953,
+    "close": 440.9859443133628,
     "company_count": 2
   },
   {
     "name": "Tyres & Rubber Products",
     "slug": "tyres_and_rubber_products",
-    "rsi": 65.42268709825767,
+    "rsi": 63.72659558301278,
     "date": "2026-01-31 00:00:00",
-    "close": 2285.3590284959655,
+    "close": 2255.0754948095528,
     "company_count": 8
   },
   {
     "name": "Waste Management",
     "slug": "waste_management",
-    "rsi": 26.579792795791448,
+    "rsi": 22.86709318568454,
     "date": "2026-01-31 00:00:00",
-    "close": 114.33785612014248,
+    "close": 104.75012140914531,
     "company_count": 4
   },
   {
     "name": "Water Supply & Management",
     "slug": "water_supply_and_management",
-    "rsi": 29.24519391115615,
+    "rsi": 27.811468993110722,
     "date": "2026-01-31 00:00:00",
-    "close": 325.3085903873395,
+    "close": 313.65376403641085,
     "company_count": 4
   },
   {
     "name": "Web based media and service",
     "slug": "web_based_media_and_service",
-    "rsi": 46.28090791277785,
+    "rsi": 44.27136633663159,
     "date": "2026-01-31 00:00:00",
-    "close": 39.90418498454326,
+    "close": 38.69373569023831,
     "company_count": 1
   },
   {
     "name": "Wellness",
     "slug": "wellness",
-    "rsi": 52.74067312492072,
+    "rsi": 50.97277844119358,
     "date": "2026-01-31 00:00:00",
-    "close": 33.06787804473127,
+    "close": 32.382916764719155,
     "company_count": 1
   },
   {
     "name": "Zinc",
     "slug": "zinc",
-    "rsi": 76.9845317199009,
+    "rsi": 77.08407699526109,
     "date": "2026-01-31 00:00:00",
-    "close": 1626.9912940450479,
+    "close": 1630.2264801997921,
     "company_count": 1
   }
 ]

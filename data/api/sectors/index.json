@@ -2,185 +2,185 @@
   {
     "name": "Automobile and Auto Components",
     "slug": "automobile_and_auto_components",
-    "rsi": 75.27572812392621,
+    "rsi": 65.01619634476192,
     "date": "2026-01-31 00:00:00",
-    "close": 2230.9144534389657,
+    "close": 2114.9301566050644,
     "company_count": 108
   },
   {
     "name": "Capital Goods",
     "slug": "capital_goods",
-    "rsi": 47.59219898425044,
+    "rsi": 38.9019330737059,
     "date": "2026-01-31 00:00:00",
-    "close": 1112.6772265582993,
+    "close": 1054.9848891632516,
     "company_count": 312
   },
   {
     "name": "Chemicals",
     "slug": "chemicals",
-    "rsi": 41.12568950204953,
+    "rsi": 38.2463084697782,
     "date": "2026-01-31 00:00:00",
-    "close": 1421.4270352044546,
+    "close": 1385.824452178803,
     "company_count": 149
   },
   {
     "name": "Construction",
     "slug": "construction",
-    "rsi": 41.14714317412967,
+    "rsi": 33.815980631710204,
     "date": "2026-01-31 00:00:00",
-    "close": 300.42966577321135,
+    "close": 277.6060940263518,
     "company_count": 76
   },
   {
     "name": "Construction Materials",
     "slug": "construction_materials",
-    "rsi": 46.683746272421295,
+    "rsi": 41.503118560370424,
     "date": "2026-01-31 00:00:00",
-    "close": 646.3883956155422,
+    "close": 630.7550332521781,
     "company_count": 36
   },
   {
     "name": "Consumer Durables",
     "slug": "consumer_durables",
-    "rsi": 46.231996976351475,
+    "rsi": 41.359915064732505,
     "date": "2026-01-31 00:00:00",
-    "close": 1060.5367992405081,
+    "close": 1040.9792606619549,
     "company_count": 123
   },
   {
     "name": "Consumer Services",
     "slug": "consumer_services",
-    "rsi": 38.38965273315432,
+    "rsi": 32.10971917815502,
     "date": "2026-01-31 00:00:00",
-    "close": 452.4921416152395,
+    "close": 427.3692051531601,
     "company_count": 101
   },
   {
     "name": "Diversified",
     "slug": "diversified",
-    "rsi": 56.90660831175068,
+    "rsi": 47.40139003531843,
     "date": "2026-01-31 00:00:00",
-    "close": 889.3114232898458,
+    "close": 849.5357909148378,
     "company_count": 9
   },
   {
     "name": "Fast Moving Consumer Goods",
     "slug": "fast_moving_consumer_goods",
-    "rsi": 69.84523584062063,
+    "rsi": 59.289467595616834,
     "date": "2026-01-31 00:00:00",
-    "close": 1073.2507992950077,
+    "close": 1029.765941659717,
     "company_count": 149
   },
   {
     "name": "Financial Services",
     "slug": "financial_services",
-    "rsi": 63.42497585662733,
+    "rsi": 57.65479412813059,
     "date": "2026-01-31 00:00:00",
-    "close": 1050.0896931270681,
+    "close": 1017.4621940885542,
     "company_count": 236
   },
   {
     "name": "Forest Materials",
     "slug": "forest_materials",
-    "rsi": 31.287353386564575,
+    "rsi": 28.99737361318708,
     "date": "2026-01-31 00:00:00",
-    "close": 416.9322161217061,
+    "close": 405.76879667229457,
     "company_count": 25
   },
   {
     "name": "Healthcare",
     "slug": "healthcare",
-    "rsi": 47.29139067583115,
+    "rsi": 43.19660324769118,
     "date": "2026-01-31 00:00:00",
-    "close": 2204.9227073890024,
+    "close": 2111.9967093803266,
     "company_count": 140
   },
   {
     "name": "Information Technology",
     "slug": "information_technology",
-    "rsi": 46.22353788366935,
+    "rsi": 43.615057798074055,
     "date": "2026-01-31 00:00:00",
-    "close": 1132.6210045516334,
+    "close": 1115.5628387239315,
     "company_count": 112
   },
   {
     "name": "Media Entertainment & Publication",
     "slug": "media_entertainment_and_publication",
-    "rsi": 34.894108130686334,
+    "rsi": 28.914919851802452,
     "date": "2026-01-31 00:00:00",
-    "close": 570.5476342034922,
+    "close": 540.1481808779085,
     "company_count": 53
   },
   {
     "name": "Metals & Mining",
     "slug": "metals_and_mining",
-    "rsi": 72.20041883158969,
+    "rsi": 62.479091405305,
     "date": "2026-01-31 00:00:00",
-    "close": 1082.347802816076,
+    "close": 1028.3582936032517,
     "company_count": 44
   },
   {
     "name": "Oil Gas & Consumable Fuels",
     "slug": "oil_gas_and_consumable_fuels",
-    "rsi": 39.92007443415629,
+    "rsi": 34.2177478491264,
     "date": "2026-01-31 00:00:00",
-    "close": 653.7150112595162,
+    "close": 618.4045490706102,
     "company_count": 40
   },
   {
     "name": "Power",
     "slug": "power",
-    "rsi": 49.4684778813696,
+    "rsi": 42.05814123541001,
     "date": "2026-01-31 00:00:00",
-    "close": 560.0314967207923,
+    "close": 521.8698402811904,
     "company_count": 29
   },
   {
     "name": "Realty",
     "slug": "realty",
-    "rsi": 49.89752441034265,
+    "rsi": 43.41365586251421,
     "date": "2026-01-31 00:00:00",
-    "close": 385.66064586104267,
+    "close": 370.2733771284874,
     "company_count": 62
   },
   {
     "name": "SERVICES",
     "slug": "services",
-    "rsi": 45.00750914627249,
+    "rsi": 51.95486770616785,
     "date": "2026-01-31 00:00:00",
-    "close": 8.817680028371232,
+    "close": 11.00552487253273,
     "company_count": 1
   },
   {
     "name": "Services",
     "slug": "services",
-    "rsi": 51.92375605965771,
+    "rsi": 44.26828321215574,
     "date": "2026-01-31 00:00:00",
-    "close": 331.3597531105432,
+    "close": 316.05659676043666,
     "company_count": 108
   },
   {
     "name": "Telecommunication",
     "slug": "telecommunication",
-    "rsi": 47.61513018390804,
+    "rsi": 41.22766438028977,
     "date": "2026-01-31 00:00:00",
-    "close": 368.19792962640014,
+    "close": 348.1774332485419,
     "company_count": 25
   },
   {
     "name": "Textiles",
     "slug": "textiles",
-    "rsi": 39.891403763685496,
+    "rsi": 34.46389594980457,
     "date": "2026-01-31 00:00:00",
-    "close": 941.9777236396986,
+    "close": 888.5350186971975,
     "company_count": 118
   },
   {
     "name": "Utilities",
     "slug": "utilities",
-    "rsi": 31.29843688683809,
+    "rsi": 28.615139887365075,
     "date": "2026-01-31 00:00:00",
-    "close": 233.02622052870967,
+    "close": 220.1721900241281,
     "company_count": 9
   }
 ]
