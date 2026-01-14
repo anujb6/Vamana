@@ -10,7 +10,7 @@
     <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         :root {
-            /* TradingView-inspired color scheme */
+            /* TradingView-inspired color scheme - Dark Theme */
             --bg-primary: #131722;
             --bg-secondary: #1e222d;
             --bg-tertiary: #2a2e39;
@@ -32,6 +32,23 @@
             --hover-color: #00bcd4;
         }
 
+        /* Light Theme */
+        [data-theme="light"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+
+            /* Legacy mappings */
+            --primary-color: #f8f9fa;
+            --secondary-color: #e9ecef;
+            --text-color: #1a1a1a;
+            --background-color: #ffffff;
+            --card-background: #f8f9fa;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -47,48 +64,54 @@
 
         .container {
             width: 100%;
-            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 16px 24px;
             background-color: var(--primary-color);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
+            margin-bottom: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .logo h1 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: var(--accent-color);
         }
 
-        nav ul {
+        /* Theme Toggle Button */
+        .theme-toggle {
             display: flex;
-            list-style: none;
-        }
-
-        nav ul li {
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
             margin-left: 20px;
         }
 
-        nav ul li a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
+        .theme-toggle:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
         }
 
-        nav ul li a:hover {
-            color: var(--hover-color);
-        }
-
-        .active {
-            color: var(--accent-color) !important;
-            font-weight: 700;
+        .theme-toggle i {
+            font-size: 16px;
         }
         .breadcrumb {
             margin-bottom: 20px;
@@ -136,72 +159,242 @@
             border-color: var(--accent-blue);
         }
 
-        .chart-card h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
+        .chart-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 120px;
         }
 
-        .chart-card p {
-            font-size: 13px;
-            color: var(--text-secondary);
+        .chart-card h3 {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .chart-card .rsi-value {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'SF Mono', 'Consolas', monospace;
             margin-bottom: 12px;
         }
 
-        .chart-card .companies {
-            font-size: 12px;
+        .chart-card .rsi-value.rsi-high {
+            color: var(--green);
+        }
+
+        .chart-card .rsi-value.rsi-low {
+            color: var(--red);
+        }
+
+        .chart-card .rsi-value.rsi-neutral {
             color: var(--text-secondary);
+        }
+
+        .chart-card .rsi-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-card .rsi-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        .chart-card .rsi-bar-fill.rsi-high {
+            background: linear-gradient(90deg, #4caf50, var(--green));
+        }
+
+        .chart-card .rsi-bar-fill.rsi-low {
+            background: linear-gradient(90deg, var(--red), #ff5252);
+        }
+
+        .chart-card .rsi-bar-fill.rsi-neutral {
+            background: linear-gradient(90deg, #ff9800, #ffc107);
+        }
+
+        /* Chart Details Section - Below Chart */
+        .chart-details-section {
+            padding: 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .chart-details-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Stock List Styles */
+        .stock-list {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .stock-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stock-list-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
-        .chart-card .companies i {
-            color: var(--accent-teal);
-        }
-
-        .chart-card .icon {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            font-size: 20px;
+        .stock-list-header h3 i {
             color: var(--accent-blue);
-            opacity: 0.6;
+            font-size: 12px;
         }
 
-        .chart-card .rsi-indicator {
-            position: absolute;
-            bottom: 16px;
-            right: 16px;
+        .stock-list-header .count {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: var(--bg-primary);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .stock-list-content {
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .stock-list-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .stock-list-content::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+
+        .stock-list-content::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .stock-list-content::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .stock-list-item {
+            display: grid;
+            grid-template-columns: 90px 1fr 70px;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.15s ease;
+        }
+
+        .stock-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .stock-list-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .stock-list-item .stock-symbol {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            background: rgba(41, 98, 255, 0.1);
+            padding: 5px 8px;
+            border-radius: 4px;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        .stock-list-item .stock-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stock-list-item .stock-rsi {
+            font-size: 13px;
+            font-weight: 700;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            text-align: right;
             padding: 4px 8px;
             border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            font-family: 'SF Mono', 'Consolas', monospace;
         }
 
-        .search-filter {
-            margin-bottom: 20px;
+        .stock-list-item .stock-rsi.rsi-high {
+            color: var(--green);
+            background: rgba(38, 166, 154, 0.1);
+        }
+
+        .stock-list-item .stock-rsi.rsi-low {
+            color: var(--red);
+            background: rgba(239, 83, 80, 0.1);
+        }
+
+        .stock-list-item .stock-rsi.rsi-neutral {
+            color: var(--text-secondary);
+            background: transparent;
+        }
+
+        .search-bar {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            max-width: 400px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0 16px;
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
         }
 
-        .search-filter input {
+        .search-bar:focus-within {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(41, 98, 255, 0.1);
+        }
+
+        .search-bar i {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .search-bar input {
             flex: 1;
-            padding: 10px 15px;
+            padding: 12px;
+            background: transparent;
             border: none;
-            border-radius: 5px;
-            background-color: var(--primary-color);
-            color: var(--text-color);
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
         }
 
-        .search-filter select {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            background-color: var(--primary-color);
-            color: var(--text-color);
+        .search-bar input::placeholder {
+            color: var(--text-secondary);
         }
 
         .tab-container {
@@ -352,6 +545,34 @@
             color: var(--red) !important;
         }
 
+        /* Scale Toggle Button */
+        .scale-toggle {
+            padding: 4px 10px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: auto;
+        }
+
+        .scale-toggle:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .scale-toggle.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
+
         .rsi-legend {
             background: var(--bg-tertiary);
             border-radius: 8px;
@@ -372,6 +593,61 @@
             font-size: 16px;
             font-weight: 700;
             font-family: 'SF Mono', 'Consolas', monospace;
+        }
+
+        /* RSI Section - Collapsible */
+        .rsi-section {
+            margin-top: 8px;
+        }
+
+        .rsi-legend {
+            justify-content: space-between;
+        }
+
+        .rsi-legend-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rsi-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .rsi-toggle:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+        }
+
+        .rsi-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .rsi-section.collapsed .rsi-toggle i {
+            transform: rotate(-90deg);
+        }
+
+        .rsi-chart-container {
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            max-height: 200px;
+            opacity: 1;
+        }
+
+        .rsi-section.collapsed .rsi-chart-container {
+            max-height: 0;
+            opacity: 0;
         }
 
         .companies-table {
@@ -443,8 +719,8 @@
         }
 
         .rsi-neutral {
-            background: rgba(255, 193, 7, 0.15);
-            color: #ffc107;
+            background: transparent;
+            color: var(--text-secondary);
         }
 
         .rsi-overbought {
@@ -460,11 +736,9 @@
 
         /* Summary Stats Component */
         .summary-stats {
-            margin-top: 24px;
             background: var(--bg-secondary);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-color);
         }
 
@@ -473,37 +747,44 @@
             margin: 0;
             background: var(--bg-tertiary);
             color: var(--text-primary);
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-stats h3 i {
+            color: var(--accent-blue);
+            font-size: 12px;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 1px;
             background: var(--border-color);
         }
 
         .stat-item {
             background: var(--bg-secondary);
-            padding: 20px;
+            padding: 16px 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            text-align: center;
+            gap: 6px;
         }
 
         .stat-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .stat-value {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--text-primary);
             font-family: 'SF Mono', 'Consolas', monospace;
@@ -517,10 +798,8 @@
             color: var(--red);
         }
 
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .stat-value.small {
+            font-size: 13px;
         }
 
         .back-button {
@@ -587,8 +866,8 @@
         }
         
         .rsi-neutral {
-            background-color: #4299e1;
-            color: white;
+            background-color: transparent;
+            color: var(--text-secondary);
         }
 
         @media (max-width: 768px) {
@@ -620,31 +899,15 @@
         <div class="logo">
             <h1>Financial Charts Dashboard</h1>
         </div>
-        <nav>
-            <ul>
-                <li><a href="#" class="active" data-tab="sectors">Sectors</a></li>
-                <li><a href="#" data-tab="industries">Industries</a></li>
-                <li><a href="#" data-tab="basic-industries">Basic Industries</a></li>
-                <li><a href="#" data-tab="rsi-filter-above-65">RSI above 65</a></li>
-                <li><a href="#" data-tab="rsi-filter-55-65">RSI 50-65</a></li>
-                <li><a href="#" data-tab="rsi-filter-below-40">RSI below 40</a></li>
-            </ul>
-        </nav>
+        <button class="theme-toggle" id="theme-toggle" title="Toggle theme">
+            <i class="fas fa-moon" id="theme-icon"></i>
+        </button>
     </header>
 
     <div class="container">
-        <div class="breadcrumb">
-            <a href="#" id="home-link">Home</a>
-            <span id="breadcrumb-separator" style="display: none;">></span>
-            <span id="current-location"></span>
-        </div>
-
-        <div class="search-filter">
-            <input type="text" id="search-input" placeholder="Search...">
-            <select id="sort-select">
-                <option value="name-asc">Name (A-Z)</option>
-                <option value="name-desc">Name (Z-A)</option>
-            </select>
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-input" placeholder="Search sectors, industries...">
         </div>
 
         <div class="tab-container">
@@ -658,7 +921,7 @@
             </div>
 
             <div id="chart-view" style="display: none;">
-                <a href="#" class="back-button" id="back-button">
+                <a href="#" class="back-button" id="back-button" onclick="goBackToDashboard(); return false;">
                     <i class="fas fa-arrow-left"></i> Back
                 </a>
                 <div class="chart-wrapper">
@@ -688,13 +951,23 @@
                                 <span class="value" id="legend-close">-</span>
                             </div>
                         </div>
+                        <button class="scale-toggle" id="scale-toggle" title="Toggle logarithmic scale">LIN</button>
                     </div>
                     <div id="candlestick-chart"></div>
-                    <div class="rsi-legend">
-                        <span class="label">RSI (14)</span>
-                        <span class="value" id="legend-rsi">-</span>
+                    <div class="rsi-section" id="rsi-section">
+                        <div class="rsi-legend">
+                            <div class="rsi-legend-left">
+                                <button class="rsi-toggle" id="rsi-toggle" title="Toggle RSI chart">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                                <span class="label">RSI (14)</span>
+                                <span class="value" id="legend-rsi">-</span>
+                            </div>
+                        </div>
+                        <div class="rsi-chart-container" id="rsi-chart-container">
+                            <div id="rsi-chart"></div>
+                        </div>
                     </div>
-                    <div id="rsi-chart"></div>
                 </div>
                 <iframe id="chart-frame" class="chart-frame"></iframe>
                 <div id="companies-table" class="companies-table"></div>
@@ -834,11 +1107,169 @@
         let industryRsiData = {};
         let basicIndustryRsiData = {};
 
+        // Back button handler - defined early so it's available for onclick
+        function goBackToDashboard() {
+            console.log('Back button clicked');
+            document.getElementById('chart-view').style.display = 'none';
+            document.querySelector('.tabs').style.display = 'flex';
+            document.querySelector('.search-bar').style.display = 'flex';
+
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab) {
+                const activeTabId = activeTab.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(activeTabId).classList.add('active');
+            }
+        }
+
         // Lightweight Charts instances
         let candlestickChart = null;
         let rsiChart = null;
         let candlestickSeries = null;
         let rsiSeries = null;
+
+        // Theme configuration for charts
+        const chartThemes = {
+            dark: {
+                layout: { background: { type: 'solid', color: '#131722' }, textColor: '#d1d4dc' },
+                grid: { vertLines: { color: '#363a45' }, horzLines: { color: '#363a45' } },
+                borderColor: '#363a45',
+                crosshairLabelBg: '#2962ff'
+            },
+            light: {
+                layout: { background: { type: 'solid', color: '#ffffff' }, textColor: '#191919' },
+                grid: { vertLines: { color: '#e1e1e1' }, horzLines: { color: '#e1e1e1' } },
+                borderColor: '#e1e1e1',
+                crosshairLabelBg: '#2962ff'
+            }
+        };
+
+        // Current theme
+        let currentTheme = localStorage.getItem('vamana-theme') || 'dark';
+
+        // Initialize theme on page load
+        function initTheme() {
+            const savedTheme = localStorage.getItem('vamana-theme') || 'dark';
+            currentTheme = savedTheme;
+            applyTheme(savedTheme);
+        }
+
+        // Apply theme to page and charts
+        function applyTheme(theme) {
+            currentTheme = theme;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('vamana-theme', theme);
+
+            // Update toggle button icon
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            }
+
+            // Update charts if they exist
+            applyChartTheme(theme);
+        }
+
+        // Apply theme to existing charts
+        function applyChartTheme(theme) {
+            const themeConfig = chartThemes[theme];
+            if (!themeConfig) return;
+
+            if (candlestickChart) {
+                candlestickChart.applyOptions({
+                    layout: themeConfig.layout,
+                    grid: themeConfig.grid,
+                });
+                candlestickChart.priceScale('right').applyOptions({ borderColor: themeConfig.borderColor });
+                candlestickChart.timeScale().applyOptions({ borderColor: themeConfig.borderColor });
+            }
+
+            if (rsiChart) {
+                rsiChart.applyOptions({
+                    layout: themeConfig.layout,
+                    grid: themeConfig.grid,
+                });
+                rsiChart.priceScale('right').applyOptions({ borderColor: themeConfig.borderColor });
+                rsiChart.timeScale().applyOptions({ borderColor: themeConfig.borderColor });
+            }
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+        }
+
+        // Scale mode (0 = linear, 1 = logarithmic)
+        let currentScaleMode = parseInt(localStorage.getItem('vamana-scale-mode')) || 0;
+
+        // Toggle scale mode
+        function toggleScaleMode() {
+            currentScaleMode = currentScaleMode === 0 ? 1 : 0;
+            localStorage.setItem('vamana-scale-mode', currentScaleMode);
+            applyScaleMode();
+        }
+
+        // Apply scale mode to chart
+        function applyScaleMode() {
+            const btn = document.getElementById('scale-toggle');
+            if (btn) {
+                btn.textContent = currentScaleMode === 0 ? 'LIN' : 'LOG';
+                btn.classList.toggle('active', currentScaleMode === 1);
+            }
+
+            if (candlestickChart) {
+                candlestickChart.priceScale('right').applyOptions({
+                    mode: currentScaleMode
+                });
+            }
+        }
+
+        // RSI collapsed state
+        let rsiCollapsed = localStorage.getItem('vamana-rsi-collapsed') === 'true';
+
+        // Toggle RSI chart visibility
+        function toggleRsiChart() {
+            rsiCollapsed = !rsiCollapsed;
+            localStorage.setItem('vamana-rsi-collapsed', rsiCollapsed);
+            applyRsiCollapsed();
+        }
+
+        // Apply RSI collapsed state
+        function applyRsiCollapsed() {
+            const rsiSection = document.getElementById('rsi-section');
+            const toggleBtn = document.getElementById('rsi-toggle');
+            if (rsiSection) {
+                if (rsiCollapsed) {
+                    rsiSection.classList.add('collapsed');
+                } else {
+                    rsiSection.classList.remove('collapsed');
+                }
+            }
+            // Update icon
+            if (toggleBtn) {
+                const icon = toggleBtn.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-chevron-down';
+                }
+            }
+        }
+
+        // Initialize theme on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            document.getElementById('scale-toggle').addEventListener('click', toggleScaleMode);
+
+            // RSI toggle
+            const rsiToggle = document.getElementById('rsi-toggle');
+            if (rsiToggle) {
+                rsiToggle.addEventListener('click', toggleRsiChart);
+            }
+            applyRsiCollapsed();
+        });
 
         // Chart rendering functions
         function createCharts() {
@@ -848,15 +1279,15 @@
             candlestickContainer.innerHTML = '';
             rsiContainer.innerHTML = '';
 
-            // TradingView-style dark theme
+            // Get current theme config
+            const themeConfig = chartThemes[currentTheme];
+
+            // Theme-aware chart options
             const chartOptions = {
-                layout: {
-                    background: { type: 'solid', color: '#131722' },
-                    textColor: '#d1d4dc',
-                },
+                layout: themeConfig.layout,
                 grid: {
-                    vertLines: { color: '#363a45', style: 1 },
-                    horzLines: { color: '#363a45', style: 1 },
+                    vertLines: { color: themeConfig.grid.vertLines.color, style: 1 },
+                    horzLines: { color: themeConfig.grid.horzLines.color, style: 1 },
                 },
                 crosshair: {
                     mode: LightweightCharts.CrosshairMode.Normal,
@@ -864,17 +1295,17 @@
                         color: '#758696',
                         width: 1,
                         style: LightweightCharts.LineStyle.Dashed,
-                        labelBackgroundColor: '#2962ff',
+                        labelBackgroundColor: themeConfig.crosshairLabelBg,
                     },
                     horzLine: {
                         color: '#758696',
                         width: 1,
                         style: LightweightCharts.LineStyle.Dashed,
-                        labelBackgroundColor: '#2962ff',
+                        labelBackgroundColor: themeConfig.crosshairLabelBg,
                     },
                 },
                 timeScale: {
-                    borderColor: '#363a45',
+                    borderColor: themeConfig.borderColor,
                     timeVisible: true,
                     secondsVisible: false,
                     rightOffset: 5,
@@ -882,7 +1313,7 @@
                     minBarSpacing: 4,
                 },
                 rightPriceScale: {
-                    borderColor: '#363a45',
+                    borderColor: themeConfig.borderColor,
                     scaleMargins: {
                         top: 0.1,
                         bottom: 0.1,
@@ -917,10 +1348,10 @@
                 ...chartOptions,
                 height: 180,
                 rightPriceScale: {
-                    borderColor: '#363a45',
+                    borderColor: themeConfig.borderColor,
                     scaleMargins: {
-                        top: 0.1,
-                        bottom: 0.1,
+                        top: 0.05,
+                        bottom: 0.05,
                     },
                 },
             });
@@ -931,34 +1362,37 @@
                 priceLineVisible: false,
             });
 
-            // Add RSI reference lines (40 and 65)
-            const rsi30Line = rsiChart.addLineSeries({
-                color: 'rgba(38, 166, 154, 0.5)',
+            // Add RSI reference lines (40 and 60) - Dotted yellow
+            const rsi40Line = rsiChart.addLineSeries({
+                color: '#ffc107',
                 lineWidth: 1,
-                lineStyle: LightweightCharts.LineStyle.Dashed,
+                lineStyle: LightweightCharts.LineStyle.Dotted,
                 priceLineVisible: false,
                 lastValueVisible: false,
                 crosshairMarkerVisible: false,
             });
 
-            const rsi70Line = rsiChart.addLineSeries({
-                color: 'rgba(239, 83, 80, 0.5)',
+            const rsi60Line = rsiChart.addLineSeries({
+                color: '#ffc107',
                 lineWidth: 1,
-                lineStyle: LightweightCharts.LineStyle.Dashed,
+                lineStyle: LightweightCharts.LineStyle.Dotted,
                 priceLineVisible: false,
                 lastValueVisible: false,
                 crosshairMarkerVisible: false,
             });
 
             // Store reference lines for later use
-            rsiChart.rsi30Line = rsi30Line;
-            rsiChart.rsi70Line = rsi70Line;
+            rsiChart.rsi40Line = rsi40Line;
+            rsiChart.rsi60Line = rsi60Line;
 
             // Store series globally for null checks
             window.candlestickSeries = candlestickSeries;
             window.rsiSeries = rsiSeries;
             window.candlestickChart = candlestickChart;
             window.rsiChart = rsiChart;
+
+            // Apply saved scale mode
+            applyScaleMode();
 
             // Sync crosshair between charts
             candlestickChart.subscribeCrosshairMove((param) => {
@@ -1050,12 +1484,12 @@
                 if (rsiEl) {
                     rsiEl.textContent = data.value.toFixed(2);
 
-                    if (data.value >= 70) {
-                        rsiEl.style.color = '#ef5350';
-                    } else if (data.value <= 30) {
-                        rsiEl.style.color = '#26a69a';
+                    if (data.value >= 60) {
+                        rsiEl.style.color = '#26a69a'; // Green for high RSI
+                    } else if (data.value <= 40) {
+                        rsiEl.style.color = '#ef5350'; // Red for low RSI
                     } else {
-                        rsiEl.style.color = '#ff9800';
+                        rsiEl.style.color = '#ff9800'; // Orange for neutral
                     }
                 }
             } else {
@@ -1119,8 +1553,8 @@
                         rsiEl.textContent = 'N/A';
                         rsiEl.style.color = '#787b86';
                     }
-                    if (rsiChart.rsi30Line) rsiChart.rsi30Line.setData([]);
-                    if (rsiChart.rsi70Line) rsiChart.rsi70Line.setData([]);
+                    if (rsiChart.rsi40Line) rsiChart.rsi40Line.setData([]);
+                    if (rsiChart.rsi60Line) rsiChart.rsi60Line.setData([]);
                 } catch (error) {
                     console.error('Error clearing RSI series:', error);
                 }
@@ -1128,11 +1562,13 @@
                 try {
                     rsiSeries.setData(rsiData);
                     const times = rsiData.map(d => d.time);
-                    const rsi30Data = times.map(time => ({ time, value: 40 }));
-                    const rsi70Data = times.map(time => ({ time, value: 65 }));
 
-                    if (rsiChart.rsi30Line) rsiChart.rsi30Line.setData(rsi30Data);
-                    if (rsiChart.rsi70Line) rsiChart.rsi70Line.setData(rsi70Data);
+                    // RSI reference lines at 40 and 60
+                    const rsi40Data = times.map(time => ({ time, value: 40 }));
+                    const rsi60Data = times.map(time => ({ time, value: 60 }));
+
+                    if (rsiChart.rsi40Line) rsiChart.rsi40Line.setData(rsi40Data);
+                    if (rsiChart.rsi60Line) rsiChart.rsi60Line.setData(rsi60Data);
                 } catch (error) {
                     console.error('Error setting RSI data:', error);
                 }
@@ -1169,16 +1605,19 @@
 
         async function loadSymbolData() {
             try {
-                // Load symbols from SQLite database
+                // Load symbols from database/API (includes RSI)
                 const symbols = await window.db.getSymbols();
                 symbolData = symbols.map(s => ({
                     symbol: s.symbol,
-                    "name of company": s.name_of_company,
+                    "name of company": s.name || s.name_of_company,
+                    name: s.name || s.name_of_company,
                     "macro sector": s.macro_sector,
                     sector: s.sector,
                     industry: s.industry,
                     "basic industry": s.basic_industry,
-                    "market cap": s.market_cap
+                    "market cap": s.market_cap,
+                    rsi: s.rsi,
+                    rsi_date: s.rsi_date
                 }));
 
                 // Load RSI data for sectors, industries, basic industries
@@ -1244,28 +1683,110 @@
             updateStats();
         }
 
+        // Helper function to get RSI class based on value
+        function getRsiClass(rsi) {
+            if (rsi >= 60) return 'rsi-high';
+            if (rsi <= 40) return 'rsi-low';
+            return 'rsi-neutral';
+        }
+
+        // Helper function to create card HTML
+        function createCardHTML(name, rsi) {
+            const rsiValue = rsi !== null && rsi !== undefined ? parseFloat(rsi).toFixed(1) : 'N/A';
+            const rsiClass = rsi !== null && rsi !== undefined ? getRsiClass(rsi) : 'rsi-neutral';
+            const barWidth = rsi !== null && rsi !== undefined ? Math.min(100, Math.max(0, rsi)) : 50;
+
+            return `
+                <h3>${name}</h3>
+                <div class="rsi-value ${rsiClass}">${rsiValue}</div>
+                <div class="rsi-bar">
+                    <div class="rsi-bar-fill ${rsiClass}" style="width: ${barWidth}%"></div>
+                </div>
+            `;
+        }
+
+        // Helper function to create stock list HTML
+        function createStockListHTML(stocks, categoryName) {
+            if (!stocks || stocks.length === 0) {
+                return '';
+            }
+
+            // Sort stocks by RSI (highest first) if RSI available, otherwise alphabetically
+            const sortedStocks = [...stocks].sort((a, b) => {
+                const rsiA = a.rsi;
+                const rsiB = b.rsi;
+                // If both have RSI, sort by RSI descending
+                if (rsiA != null && rsiB != null) {
+                    return rsiB - rsiA;
+                }
+                // RSI values come first
+                if (rsiA != null) return -1;
+                if (rsiB != null) return 1;
+                // Otherwise sort alphabetically
+                const nameA = a["name of company"] || a.name || '';
+                const nameB = b["name of company"] || b.name || '';
+                return nameA.localeCompare(nameB);
+            });
+
+            const stockItems = sortedStocks.map(stock => {
+                const name = stock["name of company"] || stock.name || stock.symbol;
+                const symbol = stock.symbol || '';
+                const rsi = stock.rsi;
+
+                // Determine RSI class and display
+                let rsiClass = 'rsi-neutral';
+                let rsiDisplay = '-';
+                if (rsi != null && !isNaN(rsi)) {
+                    rsiDisplay = parseFloat(rsi).toFixed(2);
+                    if (rsi >= 60) rsiClass = 'rsi-high';
+                    else if (rsi <= 40) rsiClass = 'rsi-low';
+                }
+
+                return `
+                    <div class="stock-list-item">
+                        <span class="stock-symbol">${symbol}</span>
+                        <span class="stock-name">${name}</span>
+                        <span class="stock-rsi ${rsiClass}">${rsiDisplay}</span>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="stock-list">
+                    <div class="stock-list-header">
+                        <h3><i class="fas fa-building"></i> Stocks in ${categoryName}</h3>
+                        <span class="count">${stocks.length}</span>
+                    </div>
+                    <div class="stock-list-content">
+                        ${stockItems}
+                    </div>
+                </div>
+            `;
+        }
+
         function updateSectorsTab() {
             const sectorsContainer = document.getElementById('sectors-container');
             sectorsContainer.innerHTML = '';
 
-            uniqueSectors = [...new Set(symbolData.map(item => item.sector))];
-            uniqueSectors.forEach(sector => {
-                if (!sector) return;
+            uniqueSectors = [...new Set(symbolData.map(item => item.sector))].filter(Boolean);
 
-                const companiesInSector = symbolData.filter(item => item.sector === sector);
-                const totalCompanies = companiesInSector.length;
+            // Create array with RSI data and sort by RSI descending
+            const sectorsWithRsi = uniqueSectors.map(sector => ({
+                name: sector,
+                rsi: sectorRsiData[sector] || null
+            })).sort((a, b) => {
+                if (a.rsi === null) return 1;
+                if (b.rsi === null) return -1;
+                return b.rsi - a.rsi;
+            });
 
+            sectorsWithRsi.forEach(({ name, rsi }) => {
                 const cardElement = document.createElement('div');
                 cardElement.className = 'chart-card';
-                cardElement.innerHTML = `
-                    <i class="fas fa-chart-line icon"></i>
-                    <h3>${sector}</h3>
-                    <p>${totalCompanies} Companies</p>
-                    <div class="companies">${companiesInSector.slice(0, 3).map(c => c["name of company"]).join(', ')}${totalCompanies > 3 ? '...' : ''}</div>
-                `;
+                cardElement.innerHTML = createCardHTML(name, rsi);
 
                 cardElement.addEventListener('click', () => {
-                    showChart('sector', sector);
+                    showChart('sector', name);
                 });
 
                 sectorsContainer.appendChild(cardElement);
@@ -1276,25 +1797,25 @@
             const industriesContainer = document.getElementById('industries-container');
             industriesContainer.innerHTML = '';
 
-            uniqueIndustries = [...new Set(symbolData.map(item => item.industry))];
+            uniqueIndustries = [...new Set(symbolData.map(item => item.industry))].filter(Boolean);
 
-            uniqueIndustries.forEach(industry => {
-                if (!industry) return;
+            // Create array with RSI data and sort by RSI descending
+            const industriesWithRsi = uniqueIndustries.map(industry => ({
+                name: industry,
+                rsi: industryRsiData[industry] || null
+            })).sort((a, b) => {
+                if (a.rsi === null) return 1;
+                if (b.rsi === null) return -1;
+                return b.rsi - a.rsi;
+            });
 
-                const companiesInIndustry = symbolData.filter(item => item.industry === industry);
-                const totalCompanies = companiesInIndustry.length;
-
+            industriesWithRsi.forEach(({ name, rsi }) => {
                 const cardElement = document.createElement('div');
                 cardElement.className = 'chart-card';
-                cardElement.innerHTML = `
-                    <i class="fas fa-industry icon"></i>
-                    <h3>${industry}</h3>
-                    <p>${totalCompanies} Companies</p>
-                    <div class="companies">${companiesInIndustry.slice(0, 3).map(c => c["name of company"]).join(', ')}${totalCompanies > 3 ? '...' : ''}</div>
-                `;
+                cardElement.innerHTML = createCardHTML(name, rsi);
 
                 cardElement.addEventListener('click', () => {
-                    showChart('industry', industry);
+                    showChart('industry', name);
                 });
 
                 industriesContainer.appendChild(cardElement);
@@ -1305,25 +1826,25 @@
             const basicIndustriesContainer = document.getElementById('basic-industries-container');
             basicIndustriesContainer.innerHTML = '';
 
-            uniqueBasicIndustries = [...new Set(symbolData.map(item => item["basic industry"]))];
+            uniqueBasicIndustries = [...new Set(symbolData.map(item => item["basic industry"]))].filter(Boolean);
 
-            uniqueBasicIndustries.forEach(basicIndustry => {
-                if (!basicIndustry) return;
+            // Create array with RSI data and sort by RSI descending
+            const basicIndustriesWithRsi = uniqueBasicIndustries.map(basicIndustry => ({
+                name: basicIndustry,
+                rsi: basicIndustryRsiData[basicIndustry] || null
+            })).sort((a, b) => {
+                if (a.rsi === null) return 1;
+                if (b.rsi === null) return -1;
+                return b.rsi - a.rsi;
+            });
 
-                const companiesInBasicIndustry = symbolData.filter(item => item["basic industry"] === basicIndustry);
-                const totalCompanies = companiesInBasicIndustry.length;
-
+            basicIndustriesWithRsi.forEach(({ name, rsi }) => {
                 const cardElement = document.createElement('div');
                 cardElement.className = 'chart-card';
-                cardElement.innerHTML = `
-                    <i class="fas fa-building icon"></i>
-                    <h3>${basicIndustry}</h3>
-                    <p>${totalCompanies} Companies</p>
-                    <div class="companies">${companiesInBasicIndustry.slice(0, 3).map(c => c["name of company"]).join(', ')}${totalCompanies > 3 ? '...' : ''}</div>
-                `;
+                cardElement.innerHTML = createCardHTML(name, rsi);
 
                 cardElement.addEventListener('click', () => {
-                    showChart('basic_industry', basicIndustry);
+                    showChart('basic_industry', name);
                 });
 
                 basicIndustriesContainer.appendChild(cardElement);
@@ -1401,6 +1922,9 @@
                 }
             });
 
+            // Sort by RSI descending
+            rsiFiltered.sort((a, b) => b.rsi - a.rsi);
+
             // Update count
             document.getElementById('rsi-companies-count-below-40').textContent = rsiFiltered.length;
 
@@ -1417,12 +1941,7 @@
 
                 const cardElement = document.createElement('div');
                 cardElement.className = 'chart-card';
-                cardElement.innerHTML = `
-                    <i class="fas fa-chart-line icon"></i>
-                    <h3>${item.category}</h3>
-                    <p>${item.totalCompanies} Companies</p>
-                    <div class="companies">${companiesInCategory.slice(0, 3).map(c => c["name of company"]).join(', ')}${item.totalCompanies > 3 ? '...' : ''}</div>
-                `;
+                cardElement.innerHTML = createCardHTML(item.category, item.rsi);
 
                 cardElement.addEventListener('click', () => {
                     showRsiFilteredChart(item.category, companiesInCategory, item.type);
@@ -1488,6 +2007,9 @@
                 }
             });
 
+            // Sort by RSI descending
+            rsiFiltered.sort((a, b) => b.rsi - a.rsi);
+
             // Update count
             document.getElementById('rsi-companies-count-55-65').textContent = rsiFiltered.length;
 
@@ -1504,12 +2026,7 @@
 
                 const cardElement = document.createElement('div');
                 cardElement.className = 'chart-card';
-                cardElement.innerHTML = `
-                    <i class="fas fa-chart-line icon"></i>
-                    <h3>${item.category}</h3>
-                    <p>${item.totalCompanies} Companies</p>
-                    <div class="companies">${companiesInCategory.slice(0, 3).map(c => c["name of company"]).join(', ')}${item.totalCompanies > 3 ? '...' : ''}</div>
-                `;
+                cardElement.innerHTML = createCardHTML(item.category, item.rsi);
 
                 cardElement.addEventListener('click', () => {
                     showRsiFilteredChart(item.category, companiesInCategory, item.type);
@@ -1575,6 +2092,9 @@
                 }
             });
 
+            // Sort by RSI descending
+            rsiFiltered.sort((a, b) => b.rsi - a.rsi);
+
             // Update count
             document.getElementById('rsi-companies-count-above-65').textContent = rsiFiltered.length;
 
@@ -1591,12 +2111,7 @@
 
                 const cardElement = document.createElement('div');
                 cardElement.className = 'chart-card';
-                cardElement.innerHTML = `
-                    <i class="fas fa-chart-line icon"></i>
-                    <h3>${item.category}</h3>
-                    <p>${item.totalCompanies} Companies</p>
-                    <div class="companies">${companiesInCategory.slice(0, 3).map(c => c["name of company"]).join(', ')}${item.totalCompanies > 3 ? '...' : ''}</div>
-                `;
+                cardElement.innerHTML = createCardHTML(item.category, item.rsi);
 
                 cardElement.addEventListener('click', () => {
                     showRsiFilteredChart(item.category, companiesInCategory, item.type);
@@ -1612,9 +2127,8 @@
             });
 
             document.getElementById('chart-view').style.display = 'block';
-
-            document.getElementById('breadcrumb-separator').style.display = 'inline';
-            document.getElementById('current-location').textContent = `RSI: ${hierarchy_pos}`;
+            document.querySelector('.tabs').style.display = 'none';
+            document.querySelector('.search-bar').style.display = 'none';
 
             document.getElementById('chart-title').textContent = `${hierarchy_pos} Companies`;
             document.getElementById('chart-symbol').textContent = hierarchy_pos;
@@ -1658,63 +2172,70 @@
                         let rsiClass = '';
                         if (latestRsi !== 'N/A') {
                             const rsiVal = parseFloat(latestRsi);
-                            if (rsiVal >= 65) rsiClass = 'negative';
-                            else if (rsiVal <= 40) rsiClass = 'positive';
+                            if (rsiVal >= 60) rsiClass = 'positive'; // Green for high RSI
+                            else if (rsiVal <= 40) rsiClass = 'negative'; // Red for low RSI
                         }
 
                         // Determine performance color class
                         const perfClass = parseFloat(performance) >= 0 ? 'positive' : 'negative';
                         const perfSign = parseFloat(performance) >= 0 ? '+' : '';
 
-                        // Create summary stats HTML
+                        // Create summary stats HTML + stock list in grid layout
                         const statsHTML = `
-                            <div class="summary-stats">
-                                <h3>${type} Summary - ${hierarchy_pos}</h3>
-                                <div class="stats-grid">
-                                    <div class="stat-item">
-                                        <span class="stat-label">Total Companies</span>
-                                        <span class="stat-value">${companies.length}</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Latest RSI</span>
-                                        <span class="stat-value ${rsiClass}">${latestRsi}</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Data Range</span>
-                                        <span class="stat-value" style="font-size: 14px;">${startDate} to ${endDate}</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Index Performance</span>
-                                        <span class="stat-value ${perfClass}">${perfSign}${performance}%</span>
+                            <div class="chart-details-section">
+                                <div class="summary-stats">
+                                    <h3><i class="fas fa-chart-pie"></i> ${type} Summary</h3>
+                                    <div class="stats-grid">
+                                        <div class="stat-item">
+                                            <span class="stat-label">Companies</span>
+                                            <span class="stat-value">${companies.length}</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Latest RSI</span>
+                                            <span class="stat-value ${rsiClass}">${latestRsi}</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Data Range</span>
+                                            <span class="stat-value small">${startDate} to ${endDate}</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Performance</span>
+                                            <span class="stat-value ${perfClass}">${perfSign}${performance}%</span>
+                                        </div>
                                     </div>
                                 </div>
+                                ${createStockListHTML(companies, hierarchy_pos)}
                             </div>
                         `;
                         tableContainer.innerHTML = statsHTML;
                     } else {
-                        tableContainer.innerHTML = `
-                            <div class="summary-stats">
-                                <h3>${type} Summary - ${hierarchy_pos}</h3>
-                                <div class="stats-grid">
-                                    <div class="stat-item">
-                                        <span class="stat-label">Total Companies</span>
-                                        <span class="stat-value">${companies.length}</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Latest RSI</span>
-                                        <span class="stat-value">N/A</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Data Range</span>
-                                        <span class="stat-value">No data</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Index Performance</span>
-                                        <span class="stat-value">N/A</span>
+                        const noDataHTML = `
+                            <div class="chart-details-section">
+                                <div class="summary-stats">
+                                    <h3><i class="fas fa-chart-pie"></i> ${type} Summary</h3>
+                                    <div class="stats-grid">
+                                        <div class="stat-item">
+                                            <span class="stat-label">Companies</span>
+                                            <span class="stat-value">${companies.length}</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Latest RSI</span>
+                                            <span class="stat-value">N/A</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Data Range</span>
+                                            <span class="stat-value small">No data</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Performance</span>
+                                            <span class="stat-value">N/A</span>
+                                        </div>
                                     </div>
                                 </div>
+                                ${createStockListHTML(companies, hierarchy_pos)}
                             </div>
                         `;
+                        tableContainer.innerHTML = noDataHTML;
                     }
                 } catch (error) {
                     console.error('Error loading chart data:', error);
@@ -1729,9 +2250,8 @@
             });
 
             document.getElementById('chart-view').style.display = 'block';
-
-            document.getElementById('breadcrumb-separator').style.display = 'inline';
-            document.getElementById('current-location').textContent = name;
+            document.querySelector('.tabs').style.display = 'none';
+            document.querySelector('.search-bar').style.display = 'none';
 
             document.getElementById('chart-title').textContent = `${name} ${type.charAt(0).toUpperCase() + type.slice(1)} Chart`;
             document.getElementById('chart-symbol').textContent = name;
@@ -1792,63 +2312,70 @@
                     let rsiClass = '';
                     if (latestRsi !== 'N/A') {
                         const rsiVal = parseFloat(latestRsi);
-                        if (rsiVal >= 65) rsiClass = 'negative';
-                        else if (rsiVal <= 40) rsiClass = 'positive';
+                        if (rsiVal >= 60) rsiClass = 'positive'; // Green for high RSI
+                        else if (rsiVal <= 40) rsiClass = 'negative'; // Red for low RSI
                     }
 
                     // Determine performance color class
                     const perfClass = parseFloat(performance) >= 0 ? 'positive' : 'negative';
                     const perfSign = parseFloat(performance) >= 0 ? '+' : '';
 
-                    // Create summary stats HTML
+                    // Create summary stats HTML + stock list in grid layout
                     const statsHTML = `
-                        <div class="summary-stats">
-                            <h3>Index Summary</h3>
-                            <div class="stats-grid">
-                                <div class="stat-item">
-                                    <span class="stat-label">Total Companies</span>
-                                    <span class="stat-value">${companies.length}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Latest RSI</span>
-                                    <span class="stat-value ${rsiClass}">${latestRsi}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Data Range</span>
-                                    <span class="stat-value" style="font-size: 14px;">${startDate} to ${endDate}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Index Performance</span>
-                                    <span class="stat-value ${perfClass}">${perfSign}${performance}%</span>
+                        <div class="chart-details-section">
+                            <div class="summary-stats">
+                                <h3><i class="fas fa-chart-pie"></i> Index Summary</h3>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Companies</span>
+                                        <span class="stat-value">${companies.length}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Latest RSI</span>
+                                        <span class="stat-value ${rsiClass}">${latestRsi}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Data Range</span>
+                                        <span class="stat-value small">${startDate} to ${endDate}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Performance</span>
+                                        <span class="stat-value ${perfClass}">${perfSign}${performance}%</span>
+                                    </div>
                                 </div>
                             </div>
+                            ${createStockListHTML(companies, name)}
                         </div>
                     `;
                     tableContainer.innerHTML = statsHTML;
                 } else {
-                    tableContainer.innerHTML = `
-                        <div class="summary-stats">
-                            <h3>Index Summary</h3>
-                            <div class="stats-grid">
-                                <div class="stat-item">
-                                    <span class="stat-label">Total Companies</span>
-                                    <span class="stat-value">${companies.length}</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Latest RSI</span>
-                                    <span class="stat-value">N/A</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Data Range</span>
-                                    <span class="stat-value">No data</span>
-                                </div>
-                                <div class="stat-item">
-                                    <span class="stat-label">Index Performance</span>
-                                    <span class="stat-value">N/A</span>
+                    const noDataHTML = `
+                        <div class="chart-details-section">
+                            <div class="summary-stats">
+                                <h3><i class="fas fa-chart-pie"></i> Index Summary</h3>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Companies</span>
+                                        <span class="stat-value">${companies.length}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Latest RSI</span>
+                                        <span class="stat-value">N/A</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Data Range</span>
+                                        <span class="stat-value small">No data</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Performance</span>
+                                        <span class="stat-value">N/A</span>
+                                    </div>
                                 </div>
                             </div>
+                            ${createStockListHTML(companies, name)}
                         </div>
                     `;
+                    tableContainer.innerHTML = noDataHTML;
                 }
             } catch (error) {
                 console.error('Error loading chart data:', error);
@@ -1860,8 +2387,8 @@
         document.querySelectorAll('.tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.getElementById('chart-view').style.display = 'none';
-                document.getElementById('breadcrumb-separator').style.display = 'none';
-                document.getElementById('current-location').textContent = '';
+                document.querySelector('.tabs').style.display = 'flex';
+                document.querySelector('.search-bar').style.display = 'flex';
 
                 document.querySelectorAll('.tab').forEach(t => {
                     t.classList.remove('active');
@@ -1873,34 +2400,6 @@
                     content.classList.remove('active');
                 });
                 document.getElementById(tabId).classList.add('active');
-            });
-        });
-
-        document.querySelectorAll('nav ul li a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-
-                document.getElementById('chart-view').style.display = 'none';
-                document.getElementById('breadcrumb-separator').style.display = 'none';
-                document.getElementById('current-location').textContent = '';
-
-                document.querySelectorAll('nav ul li a').forEach(l => {
-                    l.classList.remove('active');
-                });
-                link.classList.add('active');
-
-                const tabId = link.getAttribute('data-tab');
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.getElementById(tabId).classList.add('active');
-
-                document.querySelectorAll('.tab').forEach(t => {
-                    t.classList.remove('active');
-                    if (t.getAttribute('data-tab') === tabId) {
-                        t.classList.add('active');
-                    }
-                });
             });
         });
 
@@ -1948,21 +2447,23 @@
             }
         });
 
-        document.getElementById('sort-select').addEventListener('change', (e) => {
-            const sortBy = e.target.value;
+        const sortSelect = document.getElementById('sort-select');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+                const sortBy = e.target.value;
 
-            const activeTabId = document.querySelector('.tab-content.active').id;
-            let selector;
-            let container;
+                const activeTabId = document.querySelector('.tab-content.active').id;
+                let selector;
+                let container;
 
-            switch (activeTabId) {
-                case 'sectors':
-                    selector = '#sectors-container .chart-card';
-                    container = document.getElementById('sectors-container');
-                    break;
+                switch (activeTabId) {
+                    case 'sectors':
+                        selector = '#sectors-container .chart-card';
+                        container = document.getElementById('sectors-container');
+                        break;
                     case 'industries':
-                    selector = '#industries-container .chart-card';
-                    container = document.getElementById('industries-container');
+                        selector = '#industries-container .chart-card';
+                        container = document.getElementById('industries-container');
                     break;
                 case 'basic-industries':
                     selector = '#basic-industries-container .chart-card';
@@ -1982,51 +2483,24 @@
                     break;
             }
 
-            const items = [...document.querySelectorAll(selector)];
-            items.sort((a, b) => {
-                const nameA = a.querySelector('h3').textContent;
-                const nameB = b.querySelector('h3').textContent;
+                const items = [...document.querySelectorAll(selector)];
+                items.sort((a, b) => {
+                    const nameA = a.querySelector('h3').textContent;
+                    const nameB = b.querySelector('h3').textContent;
 
-                if (sortBy === 'name-asc') {
-                    return nameA.localeCompare(nameB);
-                } else {
-                    return nameB.localeCompare(nameA);
-                }
+                    if (sortBy === 'name-asc') {
+                        return nameA.localeCompare(nameB);
+                    } else {
+                        return nameB.localeCompare(nameA);
+                    }
+                });
+
+                container.innerHTML = '';
+                items.forEach(item => {
+                    container.appendChild(item);
+                });
             });
-
-            container.innerHTML = '';
-            items.forEach(item => {
-                container.appendChild(item);
-            });
-        });
-
-        document.getElementById('home-link').addEventListener('click', (e) => {
-            e.preventDefault();
-
-            document.getElementById('chart-view').style.display = 'none';
-            document.getElementById('breadcrumb-separator').style.display = 'none';
-            document.getElementById('current-location').textContent = '';
-
-            const activeTabId = document.querySelector('.tab.active').getAttribute('data-tab');
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(activeTabId).classList.add('active');
-        });
-
-        document.getElementById('back-button').addEventListener('click', (e) => {
-            e.preventDefault();
-
-            document.getElementById('chart-view').style.display = 'none';
-            document.getElementById('breadcrumb-separator').style.display = 'none';
-            document.getElementById('current-location').textContent = '';
-
-            const activeTabId = document.querySelector('.tab.active').getAttribute('data-tab');
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(activeTabId).classList.add('active');
-        });
+        }
 
         // Note: App initialization is handled by the module script above
         // which calls window.initApp() after DOMContentLoaded

@@ -55,15 +55,27 @@ def export_metadata(db_path, output_dir):
 
 
 def export_symbols(db_path, output_dir):
-    """Export all symbols to single JSON file"""
+    """Export all symbols to single JSON file with latest RSI"""
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
+    # Get symbols with their latest RSI from monthly_prices
     cursor.execute("""
-        SELECT symbol, name_of_company, macro_sector, sector,
-               industry, basic_industry, market_cap
-        FROM symbols
-        ORDER BY name_of_company
+        SELECT s.symbol, s.name_of_company, s.macro_sector, s.sector,
+               s.industry, s.basic_industry, s.market_cap,
+               latest_rsi.rsi, latest_rsi.date as rsi_date
+        FROM symbols s
+        LEFT JOIN (
+            SELECT mp.symbol_id, mp.rsi, mp.date
+            FROM monthly_prices mp
+            INNER JOIN (
+                SELECT symbol_id, MAX(date) as max_date
+                FROM monthly_prices
+                WHERE rsi IS NOT NULL
+                GROUP BY symbol_id
+            ) latest ON mp.symbol_id = latest.symbol_id AND mp.date = latest.max_date
+        ) latest_rsi ON s.id = latest_rsi.symbol_id
+        ORDER BY s.name_of_company
     """)
 
     symbols = []
@@ -75,7 +87,9 @@ def export_symbols(db_path, output_dir):
             'sector': row[3],
             'industry': row[4],
             'basic_industry': row[5],
-            'market_cap': row[6]
+            'market_cap': row[6],
+            'rsi': row[7],
+            'rsi_date': row[8]
         })
 
     conn.close()
@@ -84,8 +98,12 @@ def export_symbols(db_path, output_dir):
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(symbols, f, ensure_ascii=False, indent=2)
 
+    # Count symbols with RSI
+    symbols_with_rsi = sum(1 for s in symbols if s['rsi'] is not None)
+
     file_size_kb = output_path.stat().st_size / 1024
     print(f"Exported {len(symbols)} symbols to {output_path} ({file_size_kb:.1f} KB)")
+    print(f"  - {symbols_with_rsi} symbols have RSI data")
 
     return symbols
 
