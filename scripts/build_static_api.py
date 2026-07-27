@@ -328,7 +328,53 @@ def export_basic_industries(db_path, output_dir):
     return basic_industries
 
 
-def build_all(db_path='data/vamana.db', output_dir='data/api'):
+def cleanup_stale_exports(output_dir, expected, dry_run=False):
+    """Remove API files this run did not produce.
+
+    Categories get renamed or delisted between runs. Without this their JSON
+    lingers on disk: missing from index.json so the dashboard never links to
+    it, but still served and still committed to the repo.
+
+    `expected` maps a subdirectory name to the set of slugs just written.
+    Returns the list of removed paths.
+    """
+    api_dir = Path(output_dir)
+    stale = []
+
+    for subdir, slugs in expected.items():
+        target = api_dir / subdir
+        if not target.is_dir():
+            continue
+
+        # A category that exported nothing means the query failed or the table
+        # is empty. Deleting on that basis would wipe the whole directory, so
+        # skip it and say so rather than treating "no results" as "delete all".
+        if not slugs:
+            print(f"  ! Skipping {subdir}/ - export produced no entries")
+            continue
+
+        keep = {f'{slug}.json' for slug in slugs} | {'index.json'}
+        stale.extend(p for p in sorted(target.glob('*.json')) if p.name not in keep)
+
+    # Leftovers from compress_api.py. Nothing reads them, and GitHub Pages
+    # negotiates compression itself rather than serving .gz variants directly.
+    stale.extend(sorted(api_dir.rglob('*.gz')))
+
+    if not stale:
+        print("No stale files found.")
+        return []
+
+    for path in stale:
+        print(f"  {'Would remove' if dry_run else 'Removing'} {path.relative_to(api_dir)}")
+        if not dry_run:
+            path.unlink()
+
+    verb = 'Would remove' if dry_run else 'Removed'
+    print(f"{verb} {len(stale)} stale file(s).")
+    return stale
+
+
+def build_all(db_path='data/vamana.db', output_dir='data/api', dry_run_cleanup=False):
     """Build entire static API from SQLite database"""
     print("=" * 60)
     print("Building static API from SQLite database...")
@@ -349,13 +395,23 @@ def build_all(db_path='data/vamana.db', output_dir='data/api'):
     export_symbols(db_path, output_dir)
     print()
 
-    export_sectors(db_path, output_dir)
+    sectors = export_sectors(db_path, output_dir)
     print()
 
-    export_industries(db_path, output_dir)
+    industries = export_industries(db_path, output_dir)
     print()
 
-    export_basic_industries(db_path, output_dir)
+    basic_industries = export_basic_industries(db_path, output_dir)
+    print()
+
+    # Drop files left over from previous runs before measuring, so the
+    # reported total reflects what is actually being deployed.
+    print("Cleaning up stale exports...")
+    cleanup_stale_exports(output_dir, {
+        'sectors': {s['slug'] for s in sectors},
+        'industries': {i['slug'] for i in industries},
+        'basic-industries': {bi['slug'] for bi in basic_industries},
+    }, dry_run=dry_run_cleanup)
     print()
 
     # Calculate total size
@@ -374,4 +430,5 @@ def build_all(db_path='data/vamana.db', output_dir='data/api'):
 
 
 if __name__ == '__main__':
-    build_all()
+    import sys
+    build_all(dry_run_cleanup='--dry-run-cleanup' in sys.argv)

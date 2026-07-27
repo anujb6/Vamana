@@ -6,10 +6,14 @@ This script orchestrates the data pipeline:
 2. Fetch monthly price data from Yahoo Finance → SQLite
 3. Calculate RSI for individual stocks → SQLite
 4. Compute sector/industry/basic industry indices → SQLite
-5. Export SQLite to JSON API for GitHub Pages
+5. Export SQLite to JSON API for GitHub Pages, pruning stale files
 
 All data is stored in SQLite database (data/vamana.db)
 Static JSON API is exported to data/api/ for frontend
+
+The export step also removes API files it did not produce, so categories that
+were renamed or delisted since the last run do not linger on disk and in git.
+See cleanup_stale_exports() in scripts/build_static_api.py.
 """
 
 from data_loaders import monthly_data, rsi, symbol_data
