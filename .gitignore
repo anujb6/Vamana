@@ -8,5 +8,11 @@ __pycache__
 
 # NOTE: data/api/ directory is NOT ignored - it should be committed
 # The static JSON API files need to be deployed to GitHub Pages
+
+# Build artifact, not source. The frontend reads data/api/*.json, never the DB,
+# and every pipeline run added ~200MB to Git LFS that could not be reclaimed.
+# Regenerate with: python main.py
+data/vamana.db
+
 .claude/settings.json
 .claude/settings.local.json

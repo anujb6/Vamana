@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Charts Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <!-- Lightweight Charts from TradingView -->
-    <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
+    <link href="css/icons.css" rel="stylesheet">
+    <!-- Lightweight Charts from TradingView (self-hosted; deferred so it never blocks parsing) -->
+    <script defer src="js/lightweight-charts.standalone.production.js"></script>
     <style>
         :root {
             /* TradingView-inspired color scheme - Dark Theme */
@@ -891,6 +891,78 @@
                 margin: 10px 0;
             }
         }
+
+        /* ---- App status banner (loading / error feedback) ---- */
+        .app-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg-secondary, #1e222d);
+            border: 1px solid var(--border-color, #363a45);
+            color: var(--text-secondary, #a0aec0);
+        }
+
+        .app-status[hidden] {
+            display: none;
+        }
+
+        .app-status.is-error {
+            background: rgba(239, 83, 80, 0.12);
+            border-color: #ef5350;
+            color: #ef5350;
+        }
+
+        .app-status__spinner {
+            flex: 0 0 auto;
+            width: 16px;
+            height: 16px;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: app-status-spin 0.7s linear infinite;
+        }
+
+        .app-status.is-error .app-status__spinner {
+            display: none;
+        }
+
+        .app-status__retry {
+            margin-left: auto;
+            padding: 6px 14px;
+            border: 1px solid currentColor;
+            border-radius: 6px;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        .app-status__retry:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .app-status:not(.is-error) .app-status__retry {
+            display: none;
+        }
+
+        @keyframes app-status-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .app-status__spinner { animation: none; }
+        }
+
+        /* Placeholder shown in the stat cards until real data lands, so an
+           in-flight load never looks like a genuine count of zero. */
+        .value.is-pending {
+            color: var(--text-secondary, #a0aec0);
+            opacity: 0.5;
+        }
     </style>
 </head>
 
@@ -905,6 +977,14 @@
     </header>
 
     <div class="container">
+        <!-- Rendered visible so the page reports "loading" before any JS runs;
+             hidden by loadSymbolData() on success, switched to an error on failure. -->
+        <div class="app-status" id="app-status" role="status" aria-live="polite">
+            <span class="app-status__spinner" aria-hidden="true"></span>
+            <span id="app-status-text">Loading market data&hellip;</span>
+            <button type="button" class="app-status__retry" id="app-status-retry">Retry</button>
+        </div>
+
         <div class="search-bar">
             <i class="fas fa-search"></i>
             <input type="text" id="search-input" placeholder="Search sectors, industries...">
@@ -977,11 +1057,11 @@
                 <div class="stats">
                     <div class="stat-card">
                         <h3>Total Sectors</h3>
-                        <div class="value" id="sectors-count">0</div>
+                        <div class="value is-pending" id="sectors-count">&mdash;</div>
                     </div>
                     <div class="stat-card">
                         <h3>Companies</h3>
-                        <div class="value" id="sectors-companies">0</div>
+                        <div class="value is-pending" id="sectors-companies">&mdash;</div>
                     </div>
                 </div>
 
@@ -993,11 +1073,11 @@
                 <div class="stats">
                     <div class="stat-card">
                         <h3>Total Industries</h3>
-                        <div class="value" id="industries-count">0</div>
+                        <div class="value is-pending" id="industries-count">&mdash;</div>
                     </div>
                     <div class="stat-card">
                         <h3>Companies</h3>
-                        <div class="value" id="industries-companies">0</div>
+                        <div class="value is-pending" id="industries-companies">&mdash;</div>
                     </div>
                 </div>
 
@@ -1009,11 +1089,11 @@
                 <div class="stats">
                     <div class="stat-card">
                         <h3>Total Basic Industries</h3>
-                        <div class="value" id="basic-industries-count">0</div>
+                        <div class="value is-pending" id="basic-industries-count">&mdash;</div>
                     </div>
                     <div class="stat-card">
                         <h3>Companies</h3>
-                        <div class="value" id="basic-industries-companies">0</div>
+                        <div class="value is-pending" id="basic-industries-companies">&mdash;</div>
                     </div>
                 </div>
 
@@ -1089,6 +1169,7 @@
                 await loadSymbolData();
             } catch (error) {
                 console.error('Failed to initialize data client:', error);
+                setAppStatus(`Could not load data: ${error.message}`, { error: true });
             }
         };
 
@@ -1106,6 +1187,23 @@
         let sectorRsiData = {};
         let industryRsiData = {};
         let basicIndustryRsiData = {};
+
+        // ---- Status banner ----
+        // The banner starts visible in the markup, so a stalled load reads as
+        // "loading" rather than as a dashboard full of zeros.
+        function setAppStatus(message, { error = false } = {}) {
+            const el = document.getElementById('app-status');
+            const text = document.getElementById('app-status-text');
+            if (!el || !text) return;
+            text.textContent = message;
+            el.classList.toggle('is-error', error);
+            el.hidden = false;
+        }
+
+        function clearAppStatus() {
+            const el = document.getElementById('app-status');
+            if (el) el.hidden = true;
+        }
 
         // Back button handler - defined early so it's available for onclick
         function goBackToDashboard() {
@@ -1269,6 +1367,14 @@
                 rsiToggle.addEventListener('click', toggleRsiChart);
             }
             applyRsiCollapsed();
+
+            const retryBtn = document.getElementById('app-status-retry');
+            if (retryBtn) {
+                retryBtn.addEventListener('click', () => {
+                    setAppStatus('Loading market data…');
+                    window.initApp();
+                });
+            }
         });
 
         // Chart rendering functions
@@ -1633,8 +1739,10 @@
                 basicIndustriesRsi.forEach(bi => basicIndustryRsiData[bi.name] = bi.rsi);
 
                 updateDashboard();
+                clearAppStatus();
             } catch (error) {
                 console.error('Error loading data from database:', error);
+                setAppStatus(`Live data unavailable (${error.message}) — trying bundled CSV…`, { error: true });
                 await loadSymbolDataFromCSV();
             }
         }
@@ -1650,10 +1758,16 @@
                 symbolData = parseCSV(csvText);
 
                 updateDashboard();
+                setAppStatus('Showing bundled CSV data — RSI values are unavailable.', { error: true });
             } catch (error) {
                 console.error('Error loading CSV data:', error);
-                loadSampleData();
+                // There is no sample-data fallback (loadSampleData was never defined,
+                // so calling it threw ReferenceError and killed this handler silently).
+                // Render an empty dashboard and say so — inventing placeholder numbers
+                // on a financial dashboard would be worse than showing nothing.
+                symbolData = [];
                 updateDashboard();
+                setAppStatus(`Could not load any data: ${error.message}`, { error: true });
             }
         }
 
@@ -1864,6 +1978,10 @@
             document.getElementById('sectors-companies').textContent = symbolData.length;
             document.getElementById('industries-companies').textContent = symbolData.length;
             document.getElementById('basic-industries-companies').textContent = symbolData.length;
+
+            // Real numbers are in — drop the dimmed placeholder styling.
+            document.querySelectorAll('.value.is-pending')
+                .forEach(el => el.classList.remove('is-pending'));
         }
 
         function updateRsiFilterTab_below_40() {
