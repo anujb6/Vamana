@@ -1228,6 +1228,16 @@
         let candlestickSeries = null;
         let rsiSeries = null;
 
+        // Bars of empty space kept to the right of the newest candle.
+        const CHART_RIGHT_OFFSET = 5;
+
+        // Value lookups keyed by the same time strings passed to setData.
+        // setCrosshairPosition needs the target chart's own value at a given
+        // time to place its horizontal line; without these it had nothing to
+        // pass and used 0, drawing a stray line at zero on the price scale.
+        const closeByTime = new Map();
+        const rsiByTime = new Map();
+
         // Theme configuration for charts
         const chartThemes = {
             dark: {
@@ -1414,9 +1424,11 @@
                     borderColor: themeConfig.borderColor,
                     timeVisible: true,
                     secondsVisible: false,
-                    rightOffset: 5,
+                    rightOffset: CHART_RIGHT_OFFSET,
                     barSpacing: 8,
-                    minBarSpacing: 4,
+                    // 0.5 is the library minimum. The previous value of 4 put a
+                    // floor on how far bars could be compressed, capping zoom-out.
+                    minBarSpacing: 0.5,
                 },
                 rightPriceScale: {
                     borderColor: themeConfig.borderColor,
@@ -1425,10 +1437,18 @@
                         bottom: 0.1,
                     },
                 },
+                // Stated explicitly rather than relying on defaults, so it is
+                // obvious which interactions are meant to be available.
                 handleScale: {
+                    mouseWheel: true,
+                    pinch: true,
                     axisPressedMouseMove: true,
+                    axisDoubleClickReset: true,
                 },
                 handleScroll: {
+                    mouseWheel: true,
+                    pressedMouseMove: true,
+                    horzTouchDrag: true,
                     vertTouchDrag: false,
                 },
             };
@@ -1500,55 +1520,76 @@
             // Apply saved scale mode
             applyScaleMode();
 
-            // Sync crosshair between charts
-            candlestickChart.subscribeCrosshairMove((param) => {
-                if (param.time) {
-                    if (rsiSeries && rsiChart) {
-                        try {
-                            rsiChart.setCrosshairPosition(0, param.time, rsiSeries);
-                        } catch (error) {
-                            console.warn('Failed to set RSI crosshair position:', error);
-                        }
-                    }
-                    updateLegend(param);
+            // Sync crosshair between charts.
+            //
+            // The first argument to setCrosshairPosition places the horizontal
+            // line, so it has to be the target chart's own value at that time.
+            // It was hardcoded to 0, which drew a line pinned at zero on the
+            // price scale. Skip the sync when there is no value at that time
+            // (RSI needs 14 bars of history, so early bars have none) rather
+            // than falling back to a number that means nothing.
+            let syncingCrosshair = false;
+
+            function syncCrosshair(targetChart, targetSeries, value, time) {
+                if (!targetChart || !targetSeries || value === undefined) return;
+                syncingCrosshair = true;
+                try {
+                    targetChart.setCrosshairPosition(value, time, targetSeries);
+                } catch (error) {
+                    console.warn('Failed to sync crosshair position:', error);
+                } finally {
+                    syncingCrosshair = false;
                 }
+            }
+
+            // The guard wraps only the cross-setting call, not the legend
+            // refresh - the echoed move is exactly what updates the other
+            // chart's legend while the pointer is over this one.
+            candlestickChart.subscribeCrosshairMove((param) => {
+                if (!param.time) return;
+                if (!syncingCrosshair) {
+                    syncCrosshair(rsiChart, rsiSeries, rsiByTime.get(param.time), param.time);
+                }
+                updateLegend(param);
             });
 
             rsiChart.subscribeCrosshairMove((param) => {
-                if (param.time) {
-                    if (candlestickSeries && candlestickChart) {
-                        try {
-                            candlestickChart.setCrosshairPosition(0, param.time, candlestickSeries);
-                        } catch (error) {
-                            console.warn('Failed to set candlestick crosshair position:', error);
-                        }
-                    }
-                    updateRsiLegend(param);
+                if (!param.time) return;
+                if (!syncingCrosshair) {
+                    syncCrosshair(candlestickChart, candlestickSeries, closeByTime.get(param.time), param.time);
                 }
+                updateRsiLegend(param);
             });
 
-            // Sync time scale between charts
-            candlestickChart.timeScale().subscribeVisibleTimeRangeChange(() => {
-                const range = candlestickChart.timeScale().getVisibleRange();
-                if (range) {
-                    try {
-                        rsiChart.timeScale().setVisibleRange(range);
-                    } catch (e) {
-                        // Ignore errors during initial chart setup
-                    }
-                }
-            });
+            // Sync time scale between charts.
+            //
+            // Logical ranges, not time ranges. A time range can only describe
+            // spans that exist in the data, so echoing one back clamps the view
+            // to the last bar - which pinned the newest candle to the right edge
+            // and made rightOffset do nothing. Logical ranges are bar indices and
+            // may extend past the data, so the offset survives a round trip.
+            //
+            // The guard matters just as much: without it each chart's echo
+            // re-applied a range to the chart the user was actively zooming,
+            // overwriting the gesture on every wheel tick.
+            let syncingRange = false;
 
-            rsiChart.timeScale().subscribeVisibleTimeRangeChange(() => {
-                const range = rsiChart.timeScale().getVisibleRange();
-                if (range) {
+            function linkTimeScales(source, target) {
+                source.timeScale().subscribeVisibleLogicalRangeChange((range) => {
+                    if (syncingRange || !range) return;
+                    syncingRange = true;
                     try {
-                        candlestickChart.timeScale().setVisibleRange(range);
+                        target.timeScale().setVisibleLogicalRange(range);
                     } catch (e) {
                         // Ignore errors during initial chart setup
+                    } finally {
+                        syncingRange = false;
                     }
-                }
-            });
+                });
+            }
+
+            linkTimeScales(candlestickChart, rsiChart);
+            linkTimeScales(rsiChart, candlestickChart);
 
             return { candlestickChart, rsiChart, candlestickSeries, rsiSeries };
         }
@@ -1631,17 +1672,29 @@
                 close: parseFloat(d.close),
             })).filter(d => !isNaN(d.open) && !isNaN(d.close));
 
-            const rsiData = priceData
-                .filter(d => d.rsi !== null && d.rsi !== undefined && !isNaN(parseFloat(d.rsi)))
-                .map(d => ({
-                    time: d.date.split(' ')[0],
-                    value: parseFloat(d.rsi),
-                }));
+            // Whitespace entries - {time} with no value - for bars where RSI does
+            // not exist yet, since RSI needs 14 periods of history. This keeps both
+            // charts on an identical time axis, which is what lets them sync by
+            // logical range (bar index) without drifting 14 bars apart.
+            const rsiData = priceData.map(d => {
+                const time = d.date.split(' ')[0];
+                const value = parseFloat(d.rsi);
+                return (d.rsi === null || d.rsi === undefined || isNaN(value))
+                    ? { time }
+                    : { time, value };
+            });
+            const rsiPointCount = rsiData.reduce((n, d) => n + (d.value === undefined ? 0 : 1), 0);
 
             if (candlestickData.length === 0) {
                 console.error('No valid candlestick data after filtering');
                 return;
             }
+
+            // Rebuild the crosshair lookups for this series
+            closeByTime.clear();
+            rsiByTime.clear();
+            candlestickData.forEach(d => closeByTime.set(d.time, d.close));
+            rsiData.forEach(d => { if (d.value !== undefined) rsiByTime.set(d.time, d.value); });
 
             try {
                 candlestickSeries.setData(candlestickData);
@@ -1650,10 +1703,14 @@
                 return;
             }
 
-            if (rsiData.length === 0) {
+            if (rsiPointCount === 0) {
                 console.warn('No valid RSI data available for this symbol');
                 try {
-                    rsiSeries.setData([]);
+                    // Whitespace rather than [] so the RSI chart keeps the same
+                    // bars on its time scale as the candles. An empty series
+                    // would leave the two charts misaligned and let the linked
+                    // time scales fight each other. Renders nothing either way.
+                    rsiSeries.setData(rsiData);
                     const rsiEl = document.getElementById('legend-rsi');
                     if (rsiEl) {
                         rsiEl.textContent = 'N/A';
@@ -1681,12 +1738,17 @@
             }
 
             try {
-                candlestickChart.timeScale().fitContent();
-                if (rsiData.length > 0) {
-                    rsiChart.timeScale().fitContent();
-                }
+                // Not fitContent(): that fits the data exactly to the viewport,
+                // pinning the newest candle against the right edge and discarding
+                // rightOffset. Asking for a logical range that runs past the last
+                // bar keeps that breathing room. The RSI chart follows via the
+                // time scale link, so it is deliberately not set here.
+                candlestickChart.timeScale().setVisibleLogicalRange({
+                    from: 0,
+                    to: candlestickData.length - 1 + CHART_RIGHT_OFFSET,
+                });
             } catch (error) {
-                console.warn('Error fitting content:', error);
+                console.warn('Error setting initial visible range:', error);
             }
 
             try {
@@ -1698,12 +1760,17 @@
                     document.getElementById('legend-close').textContent = latest.close.toFixed(2);
                 }
 
-                if (rsiData.length > 0) {
-                    const latestRsi = rsiData[rsiData.length - 1];
-                    document.getElementById('legend-rsi').textContent = latestRsi.value.toFixed(2);
-                } else {
-                    document.getElementById('legend-rsi').textContent = 'N/A';
+                // rsiData now carries whitespace entries, so the final element is
+                // not guaranteed to hold a value. Walk back to the last one that does.
+                let latestRsi;
+                for (let i = rsiData.length - 1; i >= 0; i--) {
+                    if (rsiData[i].value !== undefined) {
+                        latestRsi = rsiData[i];
+                        break;
+                    }
                 }
+                document.getElementById('legend-rsi').textContent =
+                    latestRsi ? latestRsi.value.toFixed(2) : 'N/A';
             } catch (error) {
                 console.error('Error updating legend:', error);
             }
