@@ -356,8 +356,9 @@ def cleanup_stale_exports(output_dir, expected, dry_run=False):
         keep = {f'{slug}.json' for slug in slugs} | {'index.json'}
         stale.extend(p for p in sorted(target.glob('*.json')) if p.name not in keep)
 
-    # Leftovers from compress_api.py. Nothing reads them, and GitHub Pages
-    # negotiates compression itself rather than serving .gz variants directly.
+    # Pre-compressed leftovers from an older build step. Nothing reads them,
+    # and GitHub Pages negotiates compression itself rather than serving .gz
+    # variants directly.
     stale.extend(sorted(api_dir.rglob('*.gz')))
 
     if not stale:
